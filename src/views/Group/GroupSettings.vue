@@ -261,7 +261,7 @@ const copyURL = async (): Promise<void> => {
 
 onGroupResult(async ({ data }) => {
   if (!data) return;
-  editableGroup.value = data.group;
+  editableGroup.value = { ...data.group };
   try {
     avatarFile.value = await buildFileFromIMedia(editableGroup.value?.avatar);
     bannerFile.value = await buildFileFromIMedia(editableGroup.value?.banner);

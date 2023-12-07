@@ -8,6 +8,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Resources do
   alias Mobilizon.Federation.ActivityStream.Convertible
   alias Mobilizon.Resources.Resource
   alias Mobilizon.Service.Activity.Resource, as: ResourceActivity
+  alias Mobilizon.Service.Formatter.HTML
   alias Mobilizon.Service.RichMedia.Parser
   require Logger
 
@@ -20,21 +21,8 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Resources do
   @spec create(map(), map()) ::
           {:ok, Resource.t(), ActivityStream.t()}
           | {:error, Ecto.Changeset.t() | :creator_not_found | :group_not_found}
-  def create(%{type: type} = args, additional) do
-    args =
-      case type do
-        :folder ->
-          args
-
-        _ ->
-          case Parser.parse(Map.get(args, :resource_url)) do
-            {:ok, metadata} ->
-              Map.put(args, :metadata, metadata)
-
-            _ ->
-              args
-          end
-      end
+  def create(args, additional) do
+    args = prepare_args(args)
 
     with {:ok,
           %Resource{actor_id: group_id, creator_id: creator_id, parent_id: parent_id} = resource} <-
@@ -76,7 +64,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Resources do
         additional
       )
       when old_parent_id != parent_id do
-    move(old_resource, args, additional)
+    move(old_resource, prepare_args(args), additional)
   end
 
   # Simple rename
@@ -217,5 +205,24 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Resources do
           {:ok, Resource.t(), Resource.t()}
   defp parents(old_parent_id, new_parent_id) do
     {:ok, Resources.get_resource(old_parent_id), Resources.get_resource(new_parent_id)}
+  end
+
+  defp prepare_args(args) do
+    args =
+      case Map.get(args, :type, :link) do
+        :folder ->
+          args
+
+        _ ->
+          case Parser.parse(Map.get(args, :resource_url)) do
+            {:ok, metadata} ->
+              Map.put(args, :metadata, metadata)
+
+            _ ->
+              args
+          end
+      end
+
+    Map.update(args, :description, nil, &HTML.strip_tags/1)
   end
 end

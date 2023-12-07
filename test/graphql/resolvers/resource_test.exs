@@ -283,7 +283,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ResourceTest do
           }
         )
 
-      assert is_nil(res["errors"])
+      assert res["errors"] == nil
 
       assert res["data"]["resource"]["path"] == "/"
       assert String.starts_with?(res["data"]["resource"]["id"], "root_")

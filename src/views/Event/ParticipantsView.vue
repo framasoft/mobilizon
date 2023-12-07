@@ -189,16 +189,15 @@
           <p v-else>
             {{ props.row.metadata.message }}
           </p>
-          <button
-            type="button"
-            class="button is-text"
+          <o-button
+            variant="primary"
             v-if="props.row.metadata.message.length > MESSAGE_ELLIPSIS_LENGTH"
             @click.stop="toggleQueueDetails(props.row)"
           >
             {{
               openDetailedRows[props.row.id] ? t("View less") : t("View more")
             }}
-          </button>
+          </o-button>
         </div>
         <p v-else class="has-text-grey-dark">
           {{ t("No message") }}
@@ -212,7 +211,9 @@
         </span>
       </o-table-column>
       <template #detail="props">
-        <article v-html="nl2br(props.row.metadata.message)" />
+        <p>
+          {{ props.row.metadata.message }}
+        </p>
       </template>
       <template #empty>
         <EmptyContent icon="account-circle" :inline="true">
@@ -265,7 +266,6 @@ import {
   UPDATE_PARTICIPANT,
 } from "@/graphql/event";
 import { usernameWithDomain } from "@/types/actor";
-import { nl2br } from "@/utils/html";
 import { asyncForEach } from "@/utils/asyncForEach";
 import RouteName from "@/router/name";
 import { useCurrentActorClient } from "@/composition/apollo/actor";

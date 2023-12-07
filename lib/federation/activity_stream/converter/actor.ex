@@ -112,24 +112,38 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Actor do
       },
       "discoverable" => actor.visibility == :public,
       "openness" => actor.openness,
-      "manuallyApprovesFollowers" => actor.manually_approves_followers,
-      "publicKey" => %{
-        "id" => "#{actor.url}#main-key",
-        "owner" => actor.url,
-        "publicKeyPem" =>
-          if(is_nil(actor.domain) and not is_nil(actor.keys),
-            do: Utils.pem_to_public_key_pem(actor.keys),
-            else: actor.keys
-          )
-      }
+      "manuallyApprovesFollowers" => actor.manually_approves_followers
     }
 
     actor_data
+    |> add_keys(actor)
     |> add_endpoints(actor)
     |> maybe_add_members(actor)
     |> maybe_add_avatar_picture(actor)
     |> maybe_add_banner_picture(actor)
     |> maybe_add_physical_address(actor)
+  end
+
+  @spec add_keys(map(), ActorModel.t()) :: map()
+  defp add_keys(actor_data, %ActorModel{} = actor) do
+    keys =
+      if is_nil(actor.domain) and not is_nil(actor.keys) do
+        case Utils.pem_to_public_key_pem(actor.keys) do
+          {:error, :no_publickey_found} ->
+            raise "No publickey found in private keys"
+
+          public_key when is_binary(public_key) ->
+            public_key
+        end
+      else
+        actor.keys
+      end
+
+    Map.put(actor_data, "publicKey", %{
+      "id" => "#{actor.url}#main-key",
+      "owner" => actor.url,
+      "publicKeyPem" => keys
+    })
   end
 
   defp add_endpoints(%{"endpoints" => endpoints} = actor_data, %ActorModel{} = actor) do

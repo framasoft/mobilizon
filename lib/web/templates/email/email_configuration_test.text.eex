@@ -1,0 +1,3 @@
+<%= gettext "Well done!" %>
+==
+<%= gettext "If you received this email, the email configuration seems to be correct." %>

@@ -4,7 +4,7 @@ import { i18n } from "@/utils/i18n";
 const t = i18n.global.t;
 
 export enum ConversationRouteName {
-  CONVERSATION_LIST = "DISCUSSION_LIST",
+  CONVERSATION_LIST = "CONVERSATION_LIST",
   CONVERSATION = "CONVERSATION",
 }
 

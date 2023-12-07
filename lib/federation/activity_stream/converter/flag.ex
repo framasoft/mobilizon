@@ -60,6 +60,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Flag do
       "actor" => Relay.get_actor().url,
       "id" => report.url,
       "content" => report.content,
+      "mediaType" => "text/plain",
       "object" => object
     }
   end

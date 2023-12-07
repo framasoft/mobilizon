@@ -2,6 +2,28 @@
 
 import Config
 
+{:ok, _} = Application.ensure_all_started(:tls_certificate_check)
+
+loglevels = [
+  :emergency,
+  :alert,
+  :critical,
+  :error,
+  :warning,
+  :notice,
+  :info,
+  :debug
+]
+
+loglevel_env = System.get_env("MOBILIZON_LOGLEVEL", "error")
+
+loglevel =
+  if loglevel_env in Enum.map(loglevels, &to_string/1) do
+    String.to_existing_atom(loglevel_env)
+  else
+    :error
+  end
+
 listen_ip = System.get_env("MOBILIZON_INSTANCE_LISTEN_IP", "0.0.0.0")
 
 listen_ip =
@@ -43,22 +65,18 @@ config :mobilizon, Mobilizon.Storage.Repo,
   ssl: System.get_env("MOBILIZON_DATABASE_SSL", "false") == "true",
   pool_size: 10
 
+config :logger, level: loglevel
+
 config :mobilizon, Mobilizon.Web.Email.Mailer,
   adapter: Swoosh.Adapters.SMTP,
   relay: System.get_env("MOBILIZON_SMTP_SERVER", "localhost"),
   port: System.get_env("MOBILIZON_SMTP_PORT", "25"),
   username: System.get_env("MOBILIZON_SMTP_USERNAME", nil),
   password: System.get_env("MOBILIZON_SMTP_PASSWORD", nil),
-  tls: System.get_env("MOBILIZON_SMTP_TLS", :if_available),
-  allowed_tls_versions: [:"tlsv1.2", :"tlsv1.3"],
-  tls_options: [
-    verify: :verify_peer,
-    versions: [:"tlsv1.2", :"tlsv1.3"],
-    cacerts: :public_key.cacerts_get(),
-    server_name_indication: ~c"#{System.get_env("MOBILIZON_SMTP_SERVER", "localhost")}",
-    depth: 99
-  ],
-  ssl: System.get_env("MOBILIZON_SMTP_SSL", false),
+  tls: System.get_env("MOBILIZON_SMTP_TLS", "if_available"),
+  tls_options:
+    :tls_certificate_check.options(System.get_env("MOBILIZON_SMTP_SERVER", "localhost")),
+  ssl: System.get_env("MOBILIZON_SMTP_SSL", "false"),
   retries: 1,
   no_mx_lookups: false,
   auth: :if_available
@@ -86,4 +104,4 @@ config :mobilizon, :exports,
 config :tz_world,
   data_dir: System.get_env("MOBILIZON_TIMEZONES_DIR", "/var/lib/mobilizon/timezones")
 
-config :tzdata, :data_dir, System.get_env("MOBILIZON_TIMEZONES_DIR", "/var/lib/mobilizon/tzdata")
+config :tzdata, :data_dir, System.get_env("MOBILIZON_TZDATA_DIR", "/var/lib/mobilizon/tzdata")

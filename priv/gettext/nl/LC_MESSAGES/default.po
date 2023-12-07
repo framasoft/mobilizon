@@ -111,7 +111,7 @@ msgstr ""
 "U hebt een account op %{host} gemaakt met dit emailadres. U bent op één "
 "klik van de activering. Gelieve deze email te negeren als u dit niet was."
 
-#: lib/web/email/participation.ex:114
+#: lib/web/email/participation.ex:115
 #, elixir-autogen, elixir-format
 msgid "Your participation to event %{title} has been approved"
 msgstr "Uw deelname aan het evenement %{title} is goedgekeurd"
@@ -141,7 +141,7 @@ msgstr "U hebt een nieuw wachtwoord aangevraagd voor uw account op %{instance}."
 msgid "Warning"
 msgstr "Waarschuwing"
 
-#: lib/web/email/participation.ex:140
+#: lib/web/email/participation.ex:142
 #, elixir-autogen, elixir-format
 msgid "Confirm your participation to event %{title}"
 msgstr "Bevestig uw deelname aan het evenement %{title}"
@@ -992,7 +992,7 @@ msgstr ""
 
 #: lib/web/templates/email/event_participation_approved.html.heex:98
 #: lib/web/templates/email/event_participation_approved.text.eex:11
-#: lib/web/templates/email/event_participation_confirmed.html.heex:98
+#: lib/web/templates/email/event_participation_confirmed.html.heex:140
 #: lib/web/templates/email/event_participation_confirmed.text.eex:6
 #, elixir-autogen, elixir-format
 msgid "Would you wish to update or cancel your attendance, simply access the event page through the link above and click on the Attending button."
@@ -1312,7 +1312,7 @@ msgid "This is a demonstration site to test Mobilizon."
 msgstr "Dit is een demosite om de bètaversie van Mobilizon te testen."
 
 #: lib/service/metadata/actor.ex:86
-#: lib/service/metadata/actor.ex:92
+#: lib/service/metadata/actor.ex:93
 #: lib/service/metadata/instance.ex:60
 #: lib/service/metadata/instance.ex:66
 #, elixir-autogen, elixir-format
@@ -2028,11 +2028,30 @@ msgid "Participant registration date"
 msgstr ""
 
 #: lib/web/templates/email/anonymous_participation_confirmation.html.heex:113
+#: lib/web/templates/email/event_participation_confirmed.html.heex:122
 #, elixir-autogen, elixir-format
 msgid "Cancel my attendance"
 msgstr ""
 
 #: lib/web/templates/email/anonymous_participation_confirmation.html.heex:90
+#: lib/web/templates/email/event_participation_confirmed.html.heex:99
 #, elixir-autogen, elixir-format
 msgid "If you wish to cancel your participation, simply click on the link below."
+msgstr ""
+
+#: lib/web/email/admin.ex:142
+#, elixir-autogen, elixir-format
+msgid "Email configuration test for %{instance}"
+msgstr ""
+
+#: lib/web/templates/email/email_configuration_test.html.heex:47
+#: lib/web/templates/email/email_configuration_test.text.eex:3
+#, elixir-autogen, elixir-format
+msgid "If you received this email, the email configuration seems to be correct."
+msgstr ""
+
+#: lib/web/templates/email/email_configuration_test.html.heex:18
+#: lib/web/templates/email/email_configuration_test.text.eex:1
+#, elixir-autogen, elixir-format
+msgid "Well done!"
 msgstr ""

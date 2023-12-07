@@ -18,7 +18,7 @@ defmodule Mobilizon.Resources.Resource do
           summary: String.t(),
           url: String.t(),
           resource_url: String.t(),
-          type: atom(),
+          type: TypeEnum.t(),
           metadata: Metadata.t(),
           children: list(__MODULE__),
           parent: __MODULE__,

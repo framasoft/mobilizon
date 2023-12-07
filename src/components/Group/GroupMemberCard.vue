@@ -60,9 +60,9 @@
           </div>
         </div>
         <div
-          class="mt-3 prose dark:prose-invert lg:prose-xl line-clamp-2"
+          class="mt-3 prose dark:prose-invert lg:prose-xl prose-p:m-0 line-clamp-2"
           v-if="member.parent.summary"
-          v-html="htmlToText(member.parent.summary)"
+          v-html="member.parent.summary"
         />
       </div>
       <div>
@@ -95,7 +95,6 @@ import DotsHorizontal from "vue-material-design-icons/DotsHorizontal.vue";
 import AccountGroup from "vue-material-design-icons/AccountGroup.vue";
 import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
 import Tag from "@/components/TagElement.vue";
-import { htmlToText } from "@/utils/html";
 import { useI18n } from "vue-i18n";
 
 defineProps<{

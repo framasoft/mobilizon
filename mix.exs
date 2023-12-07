@@ -89,7 +89,7 @@ defmodule Mobilizon.Mixfile do
   end
 
   defp extra_applications(_env) do
-    [:logger, :runtime_tools, :guardian, :geolix, :crypto, :cachex]
+    [:tls_certificate_check, :logger, :runtime_tools, :guardian, :geolix, :crypto, :cachex]
   end
 
   def copy_files(%{path: target_path} = release) do
@@ -220,6 +220,7 @@ defmodule Mobilizon.Mixfile do
       {:exkismet, github: "tcitworld/exkismet"},
       {:rajska, github: "tcitworld/rajska", branch: "mobilizon"},
       {:hammer, "~> 6.1"},
+      {:tls_certificate_check, "~> 1.20"},
       # Dev and test dependencies
       {:phoenix_live_reload, "~> 1.2", only: [:dev, :e2e]},
       {:ex_machina, "~> 2.3", only: [:dev, :test]},
