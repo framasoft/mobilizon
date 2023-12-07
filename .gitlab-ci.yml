@@ -337,6 +337,7 @@ package-app:
           [
             "debian-bookworm",
             "debian-bullseye",
+            "debian-buster",
             "ubuntu-jammy",
             "ubuntu-focal",
             "ubuntu-bionic",
