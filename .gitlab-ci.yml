@@ -341,8 +341,6 @@ package-app:
             "ubuntu-jammy",
             "ubuntu-focal",
             "ubuntu-bionic",
-            "alpine-3.17.5",
-            "alpine-3.18.4",
             "fedora-38",
             "fedora-39",
           ]
