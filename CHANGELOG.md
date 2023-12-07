@@ -5,6 +5,55 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 4.0.1 (2023-12-07)
+
+### Security issues
+
+This release fixes different security issues reported by the potsda.mn collective. Please make sure to upgrade as soon as possible.
+
+### Added
+
+- Added a CLI task to test if emails configuration works properly
+
+### Fixed
+- Fixes XSS issues in groups descriptions, report contents, messages from anonymous participations and resources descriptions
+- Fixes Docker configuration that prevented the image to launch
+
+### Changed
+
+- Added back Debian Buster builds
+
+### Complete changelog
+
+* build(packages): add back Debian Buster as it seems people are still using it ([795ef24](https://framagit.org/framasoft/mobilizon/commits/795ef24))
+* build(packages): remove alpine packages as there's no demand for it ([0caaf2b](https://framagit.org/framasoft/mobilizon/commits/0caaf2b))
+* Translated using Weblate (Croatian) ([9c88fae](https://framagit.org/framasoft/mobilizon/commits/9c88fae))
+* Translated using Weblate (Croatian) ([623f4ee](https://framagit.org/framasoft/mobilizon/commits/623f4ee))
+* Translated using Weblate (Croatian) ([1162dd0](https://framagit.org/framasoft/mobilizon/commits/1162dd0))
+* Translated using Weblate (Galician) ([97c53bb](https://framagit.org/framasoft/mobilizon/commits/97c53bb))
+* Translated using Weblate (Galician) ([e08b057](https://framagit.org/framasoft/mobilizon/commits/e08b057))
+* Translated using Weblate (Galician) ([ec5e436](https://framagit.org/framasoft/mobilizon/commits/ec5e436))
+* Translated using Weblate (Korean) ([1a1ad52](https://framagit.org/framasoft/mobilizon/commits/1a1ad52))
+* Translated using Weblate (Korean) ([7b4c31d](https://framagit.org/framasoft/mobilizon/commits/7b4c31d))
+* fix: always consider report content as text ([ffff379](https://framagit.org/framasoft/mobilizon/commits/ffff379))
+* fix: sanitize descriptions from resources ([dc6647f](https://framagit.org/framasoft/mobilizon/commits/dc6647f))
+* fix(config): fix setting path for Mobilizon.Service.SiteMap ([7d725bd](https://framagit.org/framasoft/mobilizon/commits/7d725bd))
+* fix(docker): fix getting configuration value from env MOBILIZON_SMTP_TLS ([28063bd](https://framagit.org/framasoft/mobilizon/commits/28063bd)), closes [#1381](https://framagit.org/framasoft/mobilizon/issues/1381)
+* fix(docker): fix getting default value for MOBILIZON_SMTP_SSL env ([126727b](https://framagit.org/framasoft/mobilizon/commits/126727b))
+* fix(docker): use separate env for tzdata dir path ([9907f88](https://framagit.org/framasoft/mobilizon/commits/9907f88))
+* fix(emails): use tls_certificate_check to add tls config for mailer ([db38550](https://framagit.org/framasoft/mobilizon/commits/db38550))
+* fix(front): anonymous participant text is plain text, avoid using v-html ([2c12fbf](https://framagit.org/framasoft/mobilizon/commits/2c12fbf))
+* fix(front): fix editing group ([935799f](https://framagit.org/framasoft/mobilizon/commits/935799f))
+* fix(front): fix XSS because of bad operations when setting the group's summary ([ded59be](https://framagit.org/framasoft/mobilizon/commits/ded59be))
+* fix(front): put correct value for CONVERSATION_LIST enum value ([94bf2e5](https://framagit.org/framasoft/mobilizon/commits/94bf2e5))
+* fix(graphql): set default value for resource type parameter ([09f4132](https://framagit.org/framasoft/mobilizon/commits/09f4132))
+* feat(cli): add command to test emails send correctly ([7210f86](https://framagit.org/framasoft/mobilizon/commits/7210f86))
+* feat(docker): allow to configure loglevel at runtime through env variable ([4855af8](https://framagit.org/framasoft/mobilizon/commits/4855af8))
+* test: add new tests for XSS in actors summary ([58e50e3](https://framagit.org/framasoft/mobilizon/commits/58e50e3))
+* style: linting front-end ([41227d9](https://framagit.org/framasoft/mobilizon/commits/41227d9))
+* refactor(activitypub): handle failure finding public key in actor keys ([5b337f9](https://framagit.org/framasoft/mobilizon/commits/5b337f9))
+
+
 ## 4.0.0 (2023-12-05)
 
 ### Breaking changes
