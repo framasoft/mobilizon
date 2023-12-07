@@ -30,13 +30,22 @@
         <span dir="ltr">@{{ usernameWithDomain(actor) }}</span>
       </p>
       <div
-        v-if="full"
+        v-if="full && actor.type === ActorType.GROUP"
         class="only-first-child"
         :class="{
           'line-clamp-3': limit,
           'line-clamp-10': !limit,
         }"
         v-html="actor.summary"
+      />
+      <div
+        v-if="full && actor.type === ActorType.PERSON"
+        class="only-first-child"
+        :class="{
+          'line-clamp-3': limit,
+          'line-clamp-10': !limit,
+        }"
+        v-text="actor.summary"
       />
     </div>
     <div class="flex pr-2" v-if="actor.type === ActorType.PERSON">

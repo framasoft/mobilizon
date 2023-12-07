@@ -180,7 +180,7 @@
                   {
                     contact: formatList(
                       event.contacts.map((contact) =>
-                        displayNameAndUsername(contact)
+                        escapeHtml(displayNameAndUsername(contact))
                       )
                     ),
                   },
@@ -628,6 +628,7 @@ import { useHead } from "@unhead/vue";
 import { useProgrammatic } from "@oruga-ui/oruga-next";
 import type { Locale } from "date-fns";
 import sortBy from "lodash/sortBy";
+import { escapeHtml } from "@/utils/html";
 
 const DEFAULT_LIMIT_NUMBER_OF_PLACES = 10;
 

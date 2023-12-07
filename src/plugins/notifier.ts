@@ -1,3 +1,4 @@
+import { escapeHtml } from "@/utils/html";
 import { App } from "vue";
 
 export class Notifier {
@@ -21,7 +22,7 @@ export class Notifier {
 
   private notification(message: string, type: string) {
     this.app.config.globalProperties.$oruga.notification.open({
-      message,
+      message: escapeHtml(message),
       duration: 5000,
       position: "bottom-right",
       type,
