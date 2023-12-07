@@ -5,3 +5,13 @@ export const getValueFromMeta = (name: string): string | null => {
   }
   return null;
 };
+
+export function escapeHtml(html: string) {
+  const p = document.createElement("p");
+  p.appendChild(document.createTextNode(html.trim()));
+
+  const escapedContent = p.innerHTML;
+  p.remove();
+
+  return escapedContent;
+}

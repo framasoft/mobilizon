@@ -96,6 +96,7 @@ import { useI18n } from "vue-i18n";
 import { formatList } from "@/utils/i18n";
 import { displayName } from "@/types/actor";
 import { useCurrentActorClient } from "@/composition/apollo/actor";
+import { escapeHtml } from "@/utils/html";
 
 const props = defineProps<{
   conversation: IConversation;
@@ -137,7 +138,7 @@ const actualDate = computed((): string => {
 const formattedListOfParticipants = computed(() => {
   return formatList(
     otherParticipants.value.map(
-      (participant) => `<b>${displayName(participant)}</b>`
+      (participant) => `<b>${escapeHtml(displayName(participant))}</b>`
     )
   );
 });
