@@ -41,7 +41,9 @@ defmodule Mobilizon.Service.Formatter.HTML do
 
   def strip_tags_and_insert_spaces(html), do: html
 
-  @spec html_to_text(String.t()) :: String.t()
+  @spec html_to_text(String.t() | nil) :: String.t() | nil
+  def html_to_text(nil), do: nil
+
   def html_to_text(html) do
     html
     |> String.replace(~r/<li>/, "\\g{1}- ", global: true)

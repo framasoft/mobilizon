@@ -44,11 +44,13 @@ defmodule Mobilizon.Service.ICalendarTest do
       %Event{} = event = insert(:event, title: "I'm public")
       %Event{} = event2 = insert(:event, visibility: :private, title: "I'm private")
       %Event{} = event3 = insert(:event, title: "Another public")
+      %Event{} = event4 = insert(:event, title: "No description", description: nil)
 
       {:commit, ics} = ICalendarService.create_cache("instance")
       assert ics =~ event.title
       refute ics =~ event2.title
       assert ics =~ event3.title
+      assert ics =~ event4.title
     end
 
     test "with 50 events" do
