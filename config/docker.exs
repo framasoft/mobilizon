@@ -105,3 +105,8 @@ config :tz_world,
   data_dir: System.get_env("MOBILIZON_TIMEZONES_DIR", "/var/lib/mobilizon/timezones")
 
 config :tzdata, :data_dir, System.get_env("MOBILIZON_TZDATA_DIR", "/var/lib/mobilizon/tzdata")
+
+config :web_push_encryption, :vapid_details,
+  subject: System.get_env("MOBILIZON_WEB_PUSH_ENCRYPTION_SUBJECT", nil),
+  public_key: System.get_env("MOBILIZON_WEB_PUSH_ENCRYPTION_PUBLIC_KEY", nil),
+  private_key: System.get_env("MOBILIZON_WEB_PUSH_ENCRYPTION_PRIVATE_KEY", nil)

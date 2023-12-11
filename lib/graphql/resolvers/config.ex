@@ -85,6 +85,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Config do
 
   @spec build_config_cache :: map()
   defp build_config_cache do
+    webpush_public_key =
+      get_in(Application.get_env(:web_push_encryption, :vapid_details), [:public_key])
+
     %{
       name: Config.instance_name(),
       registrations_open: Config.instance_registrations_open?(),
@@ -170,9 +173,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Config do
         enabled: Config.get([:instance, :enable_instance_feeds])
       },
       web_push: %{
-        enabled: !is_nil(Application.get_env(:web_push_encryption, :vapid_details)),
+        enabled: is_binary(webpush_public_key) && String.trim(webpush_public_key) != "",
         public_key:
-          get_in(Application.get_env(:web_push_encryption, :vapid_details), [:public_key])
+          if(is_binary(webpush_public_key), do: String.trim(webpush_public_key), else: nil)
       },
       export_formats: Config.instance_export_formats(),
       analytics: FrontEndAnalytics.config(),
