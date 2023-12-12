@@ -1,14 +1,8 @@
 import { AUTH_USER_ACTOR_ID } from "@/constants";
-import { UPDATE_CURRENT_ACTOR_CLIENT, IDENTITIES } from "@/graphql/actor";
+import { UPDATE_CURRENT_ACTOR_CLIENT } from "@/graphql/actor";
 import { IPerson } from "@/types/actor";
-import { ICurrentUser } from "@/types/current-user.model";
 import { apolloClient } from "@/vue-apollo";
-import {
-  provideApolloClient,
-  useLazyQuery,
-  useMutation,
-} from "@vue/apollo-composable";
-import { computed } from "vue";
+import { provideApolloClient, useMutation } from "@vue/apollo-composable";
 
 export class NoIdentitiesException extends Error {}
 
@@ -38,38 +32,31 @@ export async function changeIdentity(identity: IPerson): Promise<void> {
   });
 }
 
-const { load: loadIdentities } = provideApolloClient(apolloClient)(() =>
-  useLazyQuery<{ loggedUser: Pick<ICurrentUser, "actors"> }>(IDENTITIES)
-);
-
 /**
  * We fetch from localStorage the latest actor ID used,
  * then fetch the current identities to set in cache
  * the current identity used
  */
-export async function initializeCurrentActor(): Promise<void> {
+export async function initializeCurrentActor(
+  identities: IPerson[] | undefined
+): Promise<void> {
   const actorId = localStorage.getItem(AUTH_USER_ACTOR_ID);
   console.debug("Initializing current actor", actorId);
 
   try {
-    const result = await loadIdentities();
-    if (!result) return;
+    if (!identities) {
+      console.debug("Failed to load user's identities", identities);
+      return;
+    }
 
-    console.debug("got identities", result);
-    const identities = computed(() => result.loggedUser?.actors);
-    console.debug(
-      "initializing current actor based on identities",
-      identities.value
-    );
-
-    if (identities.value && identities.value.length < 1) {
+    if (identities && identities.length < 1) {
       console.warn("Logged user has no identities!");
       throw new NoIdentitiesException();
     }
     const activeIdentity =
-      (identities.value || []).find(
+      (identities || []).find(
         (identity: IPerson | undefined) => identity?.id === actorId
-      ) || ((identities.value || [])[0] as IPerson);
+      ) || ((identities || [])[0] as IPerson);
 
     if (activeIdentity) {
       await changeIdentity(activeIdentity);

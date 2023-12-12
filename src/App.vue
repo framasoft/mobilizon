@@ -70,6 +70,7 @@ import { CONFIG } from "@/graphql/config";
 import { IConfig } from "@/types/config.model";
 import { useRouter } from "vue-router";
 import RouteName from "@/router/name";
+import { useLazyCurrentUserIdentities } from "./composition/apollo/actor";
 
 const { result: configResult } = useQuery<{ config: IConfig }>(
   CONFIG,
@@ -138,11 +139,15 @@ interval.value = window.setInterval(async () => {
   }
 }, 60000) as unknown as number;
 
+const { load: loadIdentities } = useLazyCurrentUserIdentities();
+
 onBeforeMount(async () => {
   console.debug("Before mount App");
   if (initializeCurrentUser()) {
     try {
-      await initializeCurrentActor();
+      const result = await loadIdentities();
+      if (!result) return;
+      await initializeCurrentActor(result.loggedUser.actors);
     } catch (err) {
       if (err instanceof NoIdentitiesException) {
         await router.push({
@@ -223,7 +228,7 @@ const initializeCurrentUser = () => {
     console.debug("Initialized current user", userData);
     return true;
   }
-  console.debug("Failed to initialize current user");
+  console.debug("We don't seem to have a currently logged-in user");
   return false;
 };
 

@@ -143,6 +143,7 @@ import { LoginError, LoginErrorCode } from "@/types/enums";
 import { useCurrentUserClient } from "@/composition/apollo/user";
 import { useHead } from "@unhead/vue";
 import { enumTransformer, useRouteQuery } from "vue-use-route-query";
+import { useLazyCurrentUserIdentities } from "@/composition/apollo/actor";
 
 const { t } = useI18n({ useScope: "global" });
 const router = useRouter();
@@ -235,12 +236,17 @@ const loginAction = (e: Event) => {
   });
 };
 
+const { load: loadIdentities } = useLazyCurrentUserIdentities();
+
 const { onDone: onCurrentUserMutationDone, mutate: updateCurrentUserMutation } =
   useMutation(UPDATE_CURRENT_USER_CLIENT);
 
 onCurrentUserMutationDone(async () => {
+  console.debug("Current user mutation done, now setuping actors…");
   try {
-    await initializeCurrentActor();
+    const result = await loadIdentities();
+    if (!result) return;
+    await initializeCurrentActor(result.loggedUser.actors);
   } catch (err: any) {
     if (err instanceof NoIdentitiesException && currentUser.value) {
       await router.push({
@@ -257,6 +263,7 @@ onCurrentUserMutationDone(async () => {
 });
 
 const setupClientUserAndActors = async (login: ILogin): Promise<void> => {
+  console.debug("Setuping client user and actors");
   updateCurrentUserMutation({
     id: login.user.id,
     email: credentials.email,
@@ -298,7 +305,7 @@ onMounted(() => {
   if (currentUser.value?.isLoggedIn) {
     console.debug(
       "Current user is already logged-in, redirecting to Homepage",
-      currentUser
+      currentUser.value
     );
     router.push("/");
   }
