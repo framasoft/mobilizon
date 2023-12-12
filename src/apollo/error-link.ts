@@ -9,7 +9,12 @@ let isRefreshing = false;
 let pendingRequests: any[] = [];
 
 const resolvePendingRequests = () => {
-  pendingRequests.map((callback) => callback());
+  console.debug("resolving pending requests");
+  pendingRequests.map((callback) => {
+    console.debug("calling callback", callback);
+    return callback();
+  });
+  console.debug("emptying pending requests after resolving them all");
   pendingRequests = [];
 };
 
@@ -21,7 +26,23 @@ const isAuthError = (graphQLError: GraphQLError | undefined) => {
 
 const errorLink = onError(
   ({ graphQLErrors, networkError, forward, operation }) => {
-    console.debug("We have an apollo error", [graphQLErrors, networkError]);
+    if (graphQLErrors) {
+      graphQLErrors.map(
+        (graphQLError: GraphQLError & { status_code?: number }) => {
+          if (graphQLError?.status_code !== 401) {
+            console.debug(
+              `[GraphQL error]: Message: ${graphQLError.message}, Location: ${graphQLError.locations}, Path: ${graphQLError.path}`
+            );
+          }
+        }
+      );
+    }
+
+    if (networkError) {
+      console.error(`[Network error]: ${networkError}`);
+      console.debug(JSON.stringify(networkError));
+    }
+
     if (
       graphQLErrors?.some((graphQLError) => isAuthError(graphQLError)) ||
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -67,6 +88,9 @@ const errorLink = onError(
             })
         ).filter((value) => Boolean(value));
       } else {
+        console.debug(
+          "Skipping refreshing as isRefreshing is already to true, adding requests to pending"
+        );
         forwardOperation = fromPromise(
           new Promise((resolve) => {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -77,23 +101,6 @@ const errorLink = onError(
       }
 
       return forwardOperation.flatMap(() => forward(operation));
-    }
-
-    if (graphQLErrors) {
-      graphQLErrors.map(
-        (graphQLError: GraphQLError & { status_code?: number }) => {
-          if (graphQLError?.status_code !== 401) {
-            console.debug(
-              `[GraphQL error]: Message: ${graphQLError.message}, Location: ${graphQLError.locations}, Path: ${graphQLError.path}`
-            );
-          }
-        }
-      );
-    }
-
-    if (networkError) {
-      console.error(`[Network error]: ${networkError}`);
-      console.debug(JSON.stringify(networkError));
     }
   }
 );
