@@ -346,6 +346,7 @@ import { Dialog } from "@/plugins/dialog";
 import { Snackbar } from "@/plugins/snackbar";
 import { useDeleteEvent } from "@/composition/apollo/event";
 import Tag from "@/components/TagElement.vue";
+import { escapeHtml } from "@/utils/html";
 import Bullhorn from "vue-material-design-icons/Bullhorn.vue";
 
 const props = defineProps<{
@@ -388,7 +389,7 @@ const openDeleteEventModal = (
       )}
       <br><br>
       ${t('To confirm, type your event title "{eventTitle}"', {
-        eventTitle: event.title,
+        eventTitle: escapeHtml(event.title),
       })}`,
     confirmText: t("Delete {eventTitle}", {
       eventTitle: event.title,
