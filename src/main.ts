@@ -1,4 +1,4 @@
-import { provide, createApp, h, computed, ref } from "vue";
+import { provide, createApp, h, ref } from "vue";
 import VueScrollTo from "vue-scrollto";
 // import VueAnnouncer from "@vue-a11y/announcer";
 // import VueSkipTo from "@vue-a11y/skip-to";
@@ -59,11 +59,7 @@ apolloClient
     instanceName.value = configData.config?.name;
   });
 
-const head = createHead({
-  titleTemplate: computed(() =>
-    instanceName.value ? `%s | ${instanceName.value}` : "%s"
-  ).value,
-});
+const head = createHead();
 app.use(head);
 
 app.mount("#app");
