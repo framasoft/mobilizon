@@ -100,13 +100,12 @@
         <span v-if="event.participantStats.notApproved > 0">
           <o-button
             variant="text"
-            @click="
-              gotToWithCheck(participation, {
-                name: RouteName.PARTICIPATIONS,
-                query: { role: ParticipantRole.NOT_APPROVED },
-                params: { eventId: event.uuid },
-              })
-            "
+            tag="router-link"
+            :to="{
+              name: RouteName.PARTICIPATIONS,
+              query: { role: ParticipantRole.NOT_APPROVED },
+              params: { eventId: event.uuid },
+            }"
           >
             {{
               $t(
