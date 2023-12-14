@@ -106,9 +106,23 @@
           {{ modalError }}
         </o-notification>
         <form @submit.prevent="createResource">
-          <p v-if="newResource.type !== 'folder'">
+          <p v-if="newResource.type === 'pad'">
             {{
               t("The pad will be created on {service}", {
+                service: newResourceHost,
+              })
+            }}
+          </p>
+          <p v-else-if="newResource.type === 'calc'">
+            {{
+              t("The calc will be created on {service}", {
+                service: newResourceHost,
+              })
+            }}
+          </p>
+          <p v-else-if="newResource.type === 'visio'">
+            {{
+              t("The videoconference will be created on {service}", {
                 service: newResourceHost,
               })
             }}
@@ -299,8 +313,12 @@ const modalError = ref("");
 const modalFieldErrors: Record<string, string> = reactive({});
 
 const resourceRenameInput = ref<any>();
-const modalNewResourceInput = ref<HTMLElement>();
-const modalNewResourceLinkInput = ref<HTMLElement>();
+const modalNewResourceInput = ref<{
+  $refs: { inputRef: HTMLInputElement };
+} | null>();
+const modalNewResourceLinkInput = ref<{
+  $refs: { inputRef: HTMLInputElement };
+} | null>();
 
 const actualPath = computed((): string => {
   const path = Array.isArray(props.path) ? props.path.join("/") : props.path;
@@ -420,14 +438,14 @@ const createSentenceForType = (type: string): string => {
 const createLinkModal = async (): Promise<void> => {
   createLinkResourceModal.value = true;
   await nextTick();
-  modalNewResourceLinkInput.value?.focus();
+  modalNewResourceLinkInput.value?.$refs.inputRef?.focus();
 };
 
 const createFolderModal = async (): Promise<void> => {
   newResource.type = "folder";
   createResourceModal.value = true;
   await nextTick();
-  modalNewResourceInput.value?.focus();
+  modalNewResourceInput.value?.$refs.inputRef?.focus();
 };
 
 const createResourceFromProvider = async (
@@ -437,7 +455,7 @@ const createResourceFromProvider = async (
   newResource.type = provider.software;
   createResourceModal.value = true;
   await nextTick();
-  modalNewResourceInput.value?.focus();
+  modalNewResourceInput.value?.$refs.inputRef?.focus();
 };
 
 const generateFullResourceUrl = (provider: IProvider): string => {
