@@ -8,7 +8,7 @@
       drag-drop
     >
       <div
-        class="w-100 rounded text-center p-4 rounded-xl border-dashed border-2 border-gray-600"
+        class="w-100 text-center p-4 rounded-xl border-dashed border-2 border-gray-600"
       >
         <span class="mx-auto flex w-fit">
           <Upload />
