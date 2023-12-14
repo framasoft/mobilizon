@@ -33,6 +33,7 @@
       </li>
     </breadcrumbs-nav>
     <DraggableList
+      v-if="resource.actor"
       :resources="resource.children.elements"
       :isRoot="resource.path === '/'"
       :group="resource.actor"
