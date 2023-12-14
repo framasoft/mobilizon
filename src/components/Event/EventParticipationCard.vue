@@ -324,7 +324,6 @@ import {
   organizerDisplayName,
 } from "@/types/event.model";
 import { displayNameAndUsername, IPerson } from "@/types/actor";
-import { CURRENT_ACTOR_CLIENT } from "@/graphql/actor";
 import RouteName from "@/router/name";
 import { changeIdentity } from "@/utils/identity";
 import LazyImageWrapper from "@/components/Image/LazyImageWrapper.vue";
@@ -340,7 +339,6 @@ import AccountGroup from "vue-material-design-icons/AccountGroup.vue";
 import Video from "vue-material-design-icons/Video.vue";
 import { useProgrammatic } from "@oruga-ui/oruga-next";
 import { computed, inject } from "vue";
-import { useQuery } from "@vue/apollo-composable";
 import { useI18n } from "vue-i18n";
 import { Dialog } from "@/plugins/dialog";
 import { Snackbar } from "@/plugins/snackbar";
@@ -348,6 +346,7 @@ import { useDeleteEvent } from "@/composition/apollo/event";
 import Tag from "@/components/TagElement.vue";
 import { escapeHtml } from "@/utils/html";
 import Bullhorn from "vue-material-design-icons/Bullhorn.vue";
+import { useCurrentActorClient } from "@/composition/apollo/actor";
 
 const props = defineProps<{
   participation: IParticipant;
@@ -356,8 +355,7 @@ const props = defineProps<{
 
 const emit = defineEmits(["eventDeleted"]);
 
-const { result: currentActorResult } = useQuery(CURRENT_ACTOR_CLIENT);
-const currentActor = computed(() => currentActorResult.value?.currentActor);
+const { currentActor } = useCurrentActorClient();
 const { t } = useI18n({ useScope: "global" });
 
 const dialog = inject<Dialog>("dialog");
@@ -456,7 +454,7 @@ const gotToWithCheck = async (
   route: RouteLocationRaw
 ): Promise<any> => {
   if (
-    participation.actor.id !== currentActor.value.id &&
+    participation.actor.id !== currentActor.value?.id &&
     participation.event.organizerActor
   ) {
     const organizerActor = participation.event.organizerActor as IPerson;
