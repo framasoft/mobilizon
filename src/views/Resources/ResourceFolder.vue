@@ -99,7 +99,7 @@
       v-model:active="createResourceModal"
       has-modal-card
       :close-button-aria-label="t('Close')"
-      trap-focus
+      :autoFocus="false"
     >
       <section class="w-full md:w-[640px]">
         <o-notification variant="danger" v-if="modalError">
@@ -147,7 +147,7 @@
       has-modal-card
       aria-modal
       :close-button-aria-label="t('Close')"
-      trap-focus
+      :autoFocus="false"
       :width="640"
     >
       <div class="w-full md:w-[640px]">
