@@ -396,6 +396,7 @@ const openDeleteEventModal = (
       placeholder: event.title,
       pattern: escapeRegExp(event.title),
     },
+    hasInput: true,
     onConfirm: () => callback(event),
   });
 };
