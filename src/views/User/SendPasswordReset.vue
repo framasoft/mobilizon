@@ -26,15 +26,19 @@
           required
           type="email"
           v-model="emailValue"
+          expanded
         />
       </o-field>
-      <p class="control">
+      <p class="my-4 flex gap-2">
         <o-button variant="primary" native-type="submit">
           {{ t("Submit") }}
         </o-button>
-        <router-link :to="{ name: RouteName.LOGIN }" class="button is-text">{{
-          t("Cancel")
-        }}</router-link>
+        <o-button
+          tag="router-link"
+          :to="{ name: RouteName.LOGIN }"
+          variant="text"
+          >{{ t("Cancel") }}</o-button
+        >
       </p>
     </form>
     <div v-else>
