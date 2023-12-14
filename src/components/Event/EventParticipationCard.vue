@@ -273,6 +273,28 @@
             </div>
           </o-dropdown-item>
 
+          <o-dropdown-item
+            aria-role="listitem"
+            has-link
+            v-if="
+              ![
+                ParticipantRole.PARTICIPANT,
+                ParticipantRole.NOT_APPROVED,
+              ].includes(participation.role)
+            "
+          >
+            <router-link
+              class="flex gap-1"
+              :to="{
+                name: RouteName.ANNOUNCEMENTS,
+                params: { eventId: participation.event?.uuid },
+              }"
+            >
+              <Bullhorn />
+              {{ t("Announcements") }}
+            </router-link>
+          </o-dropdown-item>
+
           <o-dropdown-item aria-role="listitem">
             <router-link
               class="flex gap-1"
@@ -324,6 +346,7 @@ import { Dialog } from "@/plugins/dialog";
 import { Snackbar } from "@/plugins/snackbar";
 import { useDeleteEvent } from "@/composition/apollo/event";
 import Tag from "@/components/TagElement.vue";
+import Bullhorn from "vue-material-design-icons/Bullhorn.vue";
 
 const props = defineProps<{
   participation: IParticipant;
