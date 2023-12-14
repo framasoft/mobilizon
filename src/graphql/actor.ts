@@ -453,7 +453,7 @@ export const DELETE_PERSON = gql`
  * Prefer CREATE_PERSON when creating another identity
  */
 export const REGISTER_PERSON = gql`
-  mutation (
+  mutation RegisterPerson(
     $preferredUsername: String!
     $name: String!
     $summary: String!

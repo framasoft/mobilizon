@@ -36,7 +36,7 @@
             keypath="{instanceName} is an instance of {mobilizon_link}, a free software built with the community."
           >
             <template #instanceName>
-              <b>{{ config?.name }}</b>
+              <b>{{ instanceName }}</b>
             </template>
             <template #mobilizon_link>
               <a href="https://joinmobilizon.org">{{ t("Mobilizon") }}</a>
@@ -57,7 +57,10 @@
             }}
           </span>
         </p>
-        <SentryFeedback />
+        <SentryFeedback
+          v-if="sentryProvider"
+          :providerConfig="sentryProvider"
+        />
 
         <p class="prose dark:prose-invert" v-if="!sentryEnabled">
           {{
@@ -84,7 +87,7 @@
         <div class="buttons" v-if="!sentryEnabled">
           <o-tooltip
             :label="tooltipConfig.label"
-            :type="tooltipConfig.type"
+            :variant="tooltipConfig.variant"
             :active="copied !== false"
             always
           >
@@ -101,12 +104,13 @@
 </template>
 <script lang="ts" setup>
 import { checkProviderConfig } from "@/services/statistics";
-import { IAnalyticsConfig } from "@/types/config.model";
+import { IAnalyticsConfig, IConfig } from "@/types/config.model";
 import { computed, defineAsyncComponent, ref } from "vue";
-import { useQueryLoading } from "@vue/apollo-composable";
+import { useQuery, useQueryLoading } from "@vue/apollo-composable";
 import { useI18n } from "vue-i18n";
 import { useHead } from "@unhead/vue";
 import { useAnalytics } from "@/composition/apollo/config";
+import { INSTANCE_NAME } from "@/graphql/config";
 const SentryFeedback = defineAsyncComponent(
   () => import("./Feedback/SentryFeedback.vue")
 );
@@ -125,6 +129,12 @@ const { t } = useI18n({ useScope: "global" });
 useHead({
   title: computed(() => t("Error")),
 });
+
+const { result: instanceConfig } = useQuery<{ config: Pick<IConfig, "name"> }>(
+  INSTANCE_NAME
+);
+
+const instanceName = computed(() => instanceConfig.value?.config.name);
 
 const copyErrorToClipboard = async (): Promise<void> => {
   try {

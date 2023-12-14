@@ -6,7 +6,7 @@ import {
 } from "@/graphql/actor";
 import { IPerson } from "@/types/actor";
 import { ICurrentUser } from "@/types/current-user.model";
-import { useQuery } from "@vue/apollo-composable";
+import { useLazyQuery, useQuery } from "@vue/apollo-composable";
 import { computed, Ref, unref } from "vue";
 import { useCurrentUserClient } from "./user";
 
@@ -20,6 +20,12 @@ export function useCurrentActorClient() {
     () => currentActorResult.value?.currentActor
   );
   return { currentActor, error, loading };
+}
+
+export function useLazyCurrentUserIdentities() {
+  return useLazyQuery<{
+    loggedUser: Pick<ICurrentUser, "actors">;
+  }>(IDENTITIES);
 }
 
 export function useCurrentUserIdentities() {

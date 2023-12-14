@@ -34,7 +34,7 @@ if (!import.meta.env.VITE_HISTOIRE_ENV) {
 
 const retryLink = new RetryLink();
 
-export const fullLink = authMiddleware
-  .concat(retryLink)
+export const fullLink = retryLink
   .concat(errorLink)
+  .concat(authMiddleware)
   .concat(link ?? uploadLink);
