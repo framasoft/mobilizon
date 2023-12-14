@@ -10,9 +10,9 @@
       </div>
     </div>
     <o-field
-      grouped
       :label="$t('Find or add an element')"
       label-for="event-metadata-autocomplete"
+      class="flex-wrap justify-center gap-2"
     >
       <o-autocomplete
         expanded
@@ -27,6 +27,7 @@
         id="event-metadata-autocomplete"
         @select="addElement"
         dir="auto"
+        class="flex-1 min-w-[200px]"
       >
         <template v-slot="props">
           <div class="dark:bg-violet-3 p-1 flex items-center gap-1">

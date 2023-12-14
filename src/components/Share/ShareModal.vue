@@ -13,19 +13,17 @@
             <o-tooltip
               :label="t('URL copied to clipboard')"
               :active="showCopiedTooltip"
-              always
               variant="success"
               position="left"
-            >
-              <o-button
-                variant="primary"
-                icon-right="content-paste"
-                native-type="button"
-                @click="copyURL"
-                @keyup.enter="copyURL"
-                :title="t('Copy URL to clipboard')"
-              />
-            </o-tooltip>
+            />
+            <o-button
+              variant="primary"
+              icon-right="content-paste"
+              native-type="button"
+              @click="copyURL"
+              @keyup.enter="copyURL"
+              :title="t('Copy URL to clipboard')"
+            />
           </p>
         </o-field>
         <div class="flex flex-wrap gap-1">
@@ -132,7 +130,7 @@ const props = withDefaults(
 
 const { t } = useI18n({ useScope: "global" });
 
-const URLInput = ref<{ $refs: { input: HTMLInputElement } } | null>(null);
+const URLInput = ref<{ $refs: { inputRef: HTMLInputElement } } | null>(null);
 
 const showCopiedTooltip = ref(false);
 
@@ -162,7 +160,7 @@ const mastodonShare = computed((): string | undefined =>
 );
 
 const copyURL = (): void => {
-  URLInput.value?.$refs.input.select();
+  URLInput.value?.$refs.inputRef.select();
   document.execCommand("copy");
   showCopiedTooltip.value = true;
   setTimeout(() => {

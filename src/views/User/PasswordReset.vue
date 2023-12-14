@@ -19,6 +19,7 @@
           password-reveal
           minlength="6"
           v-model="credentials.password"
+          expanded
         />
       </o-field>
       <o-field :label="$t('Password (confirmation)')">
@@ -29,6 +30,7 @@
           password-reveal
           minlength="6"
           v-model="credentials.passwordConfirmation"
+          expanded
         />
       </o-field>
       <button class="button is-primary">

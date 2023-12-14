@@ -22,22 +22,24 @@ export const orugaConfig = {
     roundedClass: "rounded",
     variantClass: "input-",
     iconRightClass: "input-icon-right",
+    sizeClass: "input-size-",
   },
-  inputitems: {
-    itemClass: "inputitems-item",
-    containerClass: "rounded",
+  taginput: {
+    itemClass: "taginput-item",
+    rootClass: "taginput",
   },
   autocomplete: {
-    menuClass: "autocomplete-menu",
+    rootClass: "autocomplete",
     itemClass: "autocomplete-item",
+    itemGroupTitleClass: "autocomplete-item-group-title",
   },
   icon: {
     variantClass: "icon-",
   },
   checkbox: {
     rootClass: "checkbox",
-    checkClass: "checkbox-check",
-    checkCheckedClass: "checkbox-checked",
+    inputClass: "checkbox-check",
+    inputCheckedClass: "checkbox-checked",
     labelClass: "checkbox-label",
   },
   dropdown: {
@@ -62,14 +64,15 @@ export const orugaConfig = {
   },
   switch: {
     labelClass: "switch-label",
-    checkCheckedClass: "switch-check-checked",
+    switchCheckedClass: "switch-check-checked",
   },
   select: {
     selectClass: "select",
   },
   radio: {
-    checkCheckedClass: "radio-checked",
-    checkClass: "form-radio",
+    rootClass: "radio",
+    inputCheckedClass: "radio-checked",
+    inputClass: "form-radio",
     labelClass: "radio-label",
   },
   notification: {
@@ -90,8 +93,8 @@ export const orugaConfig = {
     linkClass: "pagination-link",
     linkCurrentClass: "pagination-link-current",
     linkDisabledClass: "pagination-link-disabled",
-    nextBtnClass: "pagination-next",
-    prevBtnClass: "pagination-previous",
+    nextButtonClass: "pagination-next",
+    prevButtonClass: "pagination-previous",
     ellipsisClass: "pagination-ellipsis",
   },
   tabs: {
@@ -99,7 +102,7 @@ export const orugaConfig = {
     navTabsClass: "tabs-nav",
     navTypeClass: "tabs-nav-",
     navSizeClass: "tabs-nav-",
-    tabItemWrapperClass: "tabs-nav-item-wrapper",
+    itemWrapperClass: "tabs-nav-item-wrapper",
     itemHeaderTypeClass: "tabs-nav-item-",
     itemHeaderActiveClass: "tabs-nav-item-active-",
   },

@@ -15,6 +15,7 @@
         <o-input
           aria-required="true"
           required
+          expanded
           v-model="group.name"
           id="group-display-name"
         />

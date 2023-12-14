@@ -60,6 +60,7 @@
             type="email"
             id="account-email"
             v-model="newEmail"
+            expanded
           />
         </o-field>
         <p class="help">{{ t("You'll receive a confirmation email.") }}</p>
@@ -72,6 +73,7 @@
             password-reveal
             minlength="6"
             v-model="passwordForEmailChange"
+            expanded
           />
         </o-field>
         <o-button class="mt-2" variant="primary" nativeType="submit">
@@ -117,6 +119,7 @@
             minlength="6"
             id="account-old-password"
             v-model="oldPassword"
+            expanded
           />
         </o-field>
         <o-field :label="t('New password')" label-for="account-new-password">
@@ -128,6 +131,7 @@
             minlength="6"
             id="account-new-password"
             v-model="newPassword"
+            expanded
           />
         </o-field>
         <o-button class="mt-2" variant="primary" nativeType="submit">
@@ -243,7 +247,7 @@ import {
 } from "../../graphql/user";
 import RouteName from "../../router/name";
 import { logout, SELECTED_PROVIDERS } from "../../utils/auth";
-import { useProgrammatic } from "@oruga-ui/oruga-next";
+import { useOruga } from "@oruga-ui/oruga-next";
 
 const { t } = useI18n({ useScope: "global" });
 
@@ -341,12 +345,12 @@ const {
   DELETE_ACCOUNT
 );
 
-const { oruga } = useProgrammatic();
+const { notification } = useOruga();
 
 deleteAccountMutationDone(async () => {
   console.debug("Deleted account, logging out client...");
   await logout(false);
-  oruga.notification.open({
+  notification.open({
     message: t("Your account has been successfully deleted"),
     variant: "success",
     position: "bottom-right",
