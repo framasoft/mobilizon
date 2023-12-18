@@ -2,11 +2,15 @@ defmodule Mobilizon.Web.NodeInfoControllerTest do
   use Mobilizon.Web.ConnCase
 
   alias Mobilizon.Config
+  alias Mobilizon.Federation.ActivityPub.Relay
 
   use Mobilizon.Web, :verified_routes
 
   test "Get node info schemas", %{conn: conn} do
     conn = get(conn, url(~p"/.well-known/nodeinfo"))
+
+    relay = Relay.get_actor()
+    relay_url = relay.url
 
     assert json_response(conn, 200) == %{
              "links" => [
@@ -17,6 +21,10 @@ defmodule Mobilizon.Web.NodeInfoControllerTest do
                %{
                  "href" => url(~p"/.well-known/nodeinfo/2.1"),
                  "rel" => "http://nodeinfo.diaspora.software/ns/schema/2.1"
+               },
+               %{
+                 "href" => relay_url,
+                 "rel" => "https://www.w3.org/ns/activitystreams#Application"
                }
              ]
            }

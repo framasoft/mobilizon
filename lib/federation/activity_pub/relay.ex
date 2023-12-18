@@ -13,7 +13,7 @@ defmodule Mobilizon.Federation.ActivityPub.Relay do
 
   alias Mobilizon.Federation.ActivityPub.{Actions, Activity, Transmogrifier}
   alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
-  alias Mobilizon.Federation.WebFinger
+  alias Mobilizon.Federation.{NodeInfo, WebFinger}
   alias Mobilizon.GraphQL.API.Follows
   alias Mobilizon.Service.Workers.Background
   import Mobilizon.Federation.ActivityPub.Utils, only: [create_full_domain_string: 1]
@@ -192,10 +192,10 @@ defmodule Mobilizon.Federation.ActivityPub.Relay do
         check_actor(address)
 
       !is_nil(host) ->
-        uri
-        |> create_full_domain_string()
-        |> then(&Kernel.<>("relay@", &1))
-        |> check_actor()
+        case NodeInfo.application_actor(host) do
+          nil -> check_actor("relay@#{host}")
+          actor_url when is_binary(actor_url) -> {:ok, actor_url}
+        end
 
       true ->
         {:error, :bad_url}

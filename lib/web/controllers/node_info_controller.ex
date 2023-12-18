@@ -7,13 +7,17 @@ defmodule Mobilizon.Web.NodeInfoController do
   use Mobilizon.Web, :controller
 
   alias Mobilizon.Config
+  alias Mobilizon.Federation.ActivityPub.Relay
   alias Mobilizon.Service.Statistics
 
   @node_info_supported_versions ["2.0", "2.1"]
   @node_info_schema_uri "http://nodeinfo.diaspora.software/ns/schema/"
+  @application_uri "https://www.w3.org/ns/activitystreams#Application"
 
   @spec schemas(Plug.Conn.t(), any) :: Plug.Conn.t()
   def schemas(conn, _params) do
+    relay = Relay.get_actor()
+
     links =
       @node_info_supported_versions
       |> Enum.map(fn version ->
@@ -22,6 +26,12 @@ defmodule Mobilizon.Web.NodeInfoController do
           href: url(~p"/.well-known/nodeinfo/#{version}")
         }
       end)
+      |> Kernel.++([
+        %{
+          rel: @application_uri,
+          href: relay.url
+        }
+      ])
 
     json(conn, %{
       links: links
