@@ -50,7 +50,7 @@ LABEL org.opencontainers.image.title="mobilizon" \
     org.opencontainers.image.revision=$VCS_REF \
     org.opencontainers.image.created=$BUILD_DATE
 
-RUN apk add --no-cache curl openssl ca-certificates ncurses-libs file postgresql-client libgcc libstdc++ imagemagick python3 py3-pip py3-pillow py3-cffi py3-brotli gcc g++ musl-dev python3-dev pango libxslt-dev ttf-cantarell openssl1.1-compat
+RUN apk add --no-cache curl openssl ca-certificates ncurses-libs file postgresql-client libgcc libstdc++ imagemagick python3 py3-pip py3-pillow py3-cffi py3-brotli gcc g++ musl-dev python3-dev pango libxslt-dev ttf-cantarell
 RUN pip --no-cache-dir install weasyprint pyexcel-ods3
 
 # Create every data directory
