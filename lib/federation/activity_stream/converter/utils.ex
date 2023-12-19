@@ -278,8 +278,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Utils do
   end
 
   @spec get_address(map | binary | nil) :: Address.t() | nil
-  def get_address(address_url) when is_binary(address_url) do
-    get_address(%{"id" => address_url})
+  def get_address(text_address) when is_binary(text_address) do
+    get_address(%{"type" => "Place", "name" => text_address})
   end
 
   def get_address(%{"id" => url} = map) when is_map(map) and is_binary(url) do

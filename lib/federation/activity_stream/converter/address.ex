@@ -24,16 +24,23 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Address do
     }
 
     res =
-      if is_nil(object["address"]) or not is_map(object["address"]) do
-        res
-      else
-        Map.merge(res, %{
-          "country" => object["address"]["addressCountry"],
-          "postal_code" => object["address"]["postalCode"],
-          "region" => object["address"]["addressRegion"],
-          "street" => object["address"]["streetAddress"],
-          "locality" => object["address"]["addressLocality"]
-        })
+      cond do
+        is_binary(object["address"]) ->
+          Map.merge(res, %{
+            "street" => object["address"]
+          })
+
+        is_map(object["address"]) ->
+          Map.merge(res, %{
+            "country" => object["address"]["addressCountry"],
+            "postal_code" => object["address"]["postalCode"],
+            "region" => object["address"]["addressRegion"],
+            "street" => object["address"]["streetAddress"],
+            "locality" => object["address"]["addressLocality"]
+          })
+
+        is_nil(object["address"]) ->
+          res
       end
 
     latitude = Map.get(object, "latitude")
