@@ -25,9 +25,10 @@ defmodule Mobilizon.Federation.NodeInfo do
 
   defp extract_application_actor(body) do
     body
-    |> Enum.find(%{rel: @application_uri, href: nil}, fn %{rel: rel, href: href} ->
+    |> Map.get("links", [])
+    |> Enum.find(%{"rel" => @application_uri, "href" => nil}, fn %{"rel" => rel, "href" => href} ->
       rel == @application_uri and is_binary(href)
     end)
-    |> Map.get(:href)
+    |> Map.get("href")
   end
 end

@@ -1,0 +1,8 @@
+{
+    "links": [
+        {
+            "rel": "http:\/\/nodeinfo.diaspora.software\/ns\/schema\/2.0",
+            "href": "https:\/\/event-federation.eu\/wp-json\/activitypub\/1.0\/nodeinfo"
+        }
+    ]
+}
