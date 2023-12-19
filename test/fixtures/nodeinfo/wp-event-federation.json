@@ -1,0 +1,12 @@
+{
+    "links": [
+        {
+            "rel": "http:\/\/nodeinfo.diaspora.software\/ns\/schema\/2.0",
+            "href": "https:\/\/event-federation.eu\/wp-json\/activitypub\/1.0\/nodeinfo"
+        },
+        {
+            "rel": "https://www.w3.org/ns/activitystreams#Application",
+            "href": "https://event-federation.eu/actor-relay"
+        }
+    ]
+}
