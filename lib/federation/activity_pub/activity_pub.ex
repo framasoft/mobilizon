@@ -135,7 +135,7 @@ defmodule Mobilizon.Federation.ActivityPub do
 
     %Page{total: total_events, elements: events} =
       if actor_id == relay_actor_id do
-        Events.list_public_local_events(page, limit)
+        Events.list_public_local_events(page, limit, :publish_at, :desc)
       else
         Events.list_public_events_for_actor(actor, page, limit)
       end
