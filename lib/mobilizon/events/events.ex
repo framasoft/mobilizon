@@ -387,13 +387,15 @@ defmodule Mobilizon.Events do
     |> Repo.stream()
   end
 
-  @spec list_public_local_events(integer | nil, integer | nil) :: Page.t(Event.t())
-  def list_public_local_events(page \\ nil, limit \\ nil) do
+  @spec list_public_local_events(integer | nil, integer | nil, atom | nil, atom | nil) ::
+          Page.t(Event.t())
+  def list_public_local_events(page \\ nil, limit \\ nil, sort \\ nil, direction \\ nil) do
     Event
     |> filter_public_visibility()
     |> filter_draft()
     |> filter_local()
     |> preload_for_event()
+    |> event_order_by(sort, direction)
     |> Page.build_page(page, limit)
   end
 

@@ -21,7 +21,7 @@ defmodule Mobilizon.Service.Export.Feed do
 
   @behaviour Cachable
 
-  @item_limit 500
+  @item_limit 5000
 
   @spec version :: String.t()
   defp version, do: Config.instance_version()

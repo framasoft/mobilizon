@@ -96,8 +96,8 @@ defmodule Mobilizon.Service.Export.Common do
 
   @spec fetch_instance_public_content(integer()) :: {:ok, list(Event.t()), list(Post.t())}
   def fetch_instance_public_content(limit) do
-    %Page{elements: events} = Events.list_public_local_events(1, limit)
-    %Page{elements: posts} = Posts.list_public_local_posts(1, limit)
+    %Page{elements: events} = Events.list_public_local_events(1, limit, :begins_on, :desc)
+    %Page{elements: posts} = Posts.list_public_local_posts(1, limit, :publish_at, :desc)
     {:ok, events, posts}
   end
 

@@ -22,11 +22,13 @@ defmodule Mobilizon.Posts do
     :private
   ])
 
-  @spec list_public_local_posts(integer | nil, integer | nil) :: Page.t(Post.t())
-  def list_public_local_posts(page \\ nil, limit \\ nil) do
+  @spec list_public_local_posts(integer | nil, integer | nil, atom | nil, atom | nil) ::
+          Page.t(Post.t())
+  def list_public_local_posts(page \\ nil, limit \\ nil, sort \\ nil, direction \\ nil) do
     Post
     |> filter_public()
     |> filter_local()
+    |> order_posts(sort, direction)
     |> preload_post_associations()
     |> Page.build_page(page, limit)
   end
@@ -170,5 +172,14 @@ defmodule Mobilizon.Posts do
   @spec preload_post_associations(Ecto.Queryable.t(), list()) :: Ecto.Query.t()
   defp preload_post_associations(query, associations \\ @post_preloads) do
     preload(query, ^associations)
+  end
+
+  @spec order_posts(Ecto.Queryable.t(), atom | nil, atom | nil) :: Ecto.Queryable.t()
+  def order_posts(query, nil, _direction), do: query
+  def order_posts(query, _sort, nil), do: query
+
+  def order_posts(query, sort, direction) do
+    order_by_param = Keyword.new([{direction, sort}])
+    order_by(query, ^order_by_param)
   end
 end
