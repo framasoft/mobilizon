@@ -2,8 +2,8 @@
   <li
     class="setting-menu-item"
     :class="{
-      'cursor-pointer bg-mbz-yellow-alt-500 dark:bg-mbz-purple-500': isActive,
-      'bg-mbz-yellow-alt-100 hover:bg-mbz-yellow-alt-200 dark:bg-mbz-purple-300 dark:hover:bg-mbz-purple-400 dark:text-white':
+      'cursor-pointer bg-mbz-yellow-alt-500 dark:bg-mbz-purple-600': isActive,
+      'bg-mbz-yellow-alt-100 hover:bg-mbz-yellow-alt-200 dark:bg-mbz-purple-500 dark:hover:bg-mbz-purple-600 dark:text-white':
         !isActive,
     }"
   >

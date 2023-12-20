@@ -72,21 +72,65 @@
             name: RouteName.INSTANCE,
             params: { domain: instance.domain },
           }"
-          class="flex items-center mb-2 rounded bg-mbz-yellow-alt-300 dark:bg-mbz-purple-400 p-4 flex-wrap justify-center gap-x-2 gap-y-3"
+          class="flex items-center mb-2 rounded bg-mbz-yellow-alt-300 hover:bg-mbz-yellow-alt-200 dark:bg-mbz-purple-600 dark:hover:bg-mbz-purple-700 p-4 flex-wrap justify-center gap-x-2 gap-y-3"
           v-for="instance in instances.elements"
           :key="instance.domain"
         >
           <div class="grow overflow-hidden flex items-center gap-1">
             <img
               class="w-12"
-              v-if="instance.hasRelay"
+              v-if="instance.software === 'Mobilizon'"
               src="/img/logo.svg"
               alt=""
             />
-            <CloudQuestion v-else :size="36" />
+            <mastodon-logo
+              class="w-8 mx-2"
+              alt=""
+              v-else-if="instance.software?.toLowerCase() === 'mastodon'"
+            />
+            <img
+              class="w-8 mx-2"
+              v-else-if="instance.software?.toLowerCase() === 'gancio'"
+              src="/img/gancio.png"
+              alt=""
+            />
+            <img
+              class="w-8 mx-2"
+              v-else-if="instance.software?.toLowerCase() === 'wordpress'"
+              src="/img/wordpress-logo.svg"
+              alt=""
+            />
+            <CloudQuestion class="mx-1.5" v-else :size="36" />
 
             <div class="">
-              <h3 class="text-lg truncate">{{ instance.domain }}</h3>
+              <h3
+                class="text-lg truncate font-bold text-slate-800 dark:text-slate-100"
+                v-if="instance.instanceName"
+              >
+                {{ instance.instanceName }}
+              </h3>
+              <h3
+                class="text-lg truncate font-bold text-slate-800 dark:text-slate-100"
+                v-else
+              >
+                {{ instance.domain }}
+              </h3>
+              <p
+                v-if="instance.instanceName"
+                class="inline-flex gap-2 text-slate-700 dark:text-slate-300"
+              >
+                <span class="capitalize" v-if="instance.software">{{
+                  instance.software
+                }}</span>
+                -
+                <span>{{ instance.domain }}</span>
+              </p>
+              <p
+                v-else-if="instance.software"
+                class="capitalize text-slate-700 dark:text-slate-300"
+              >
+                {{ instance.software }}
+              </p>
               <span
                 class="text-sm"
                 v-if="instance.followedStatus === InstanceFollowStatus.APPROVED"
@@ -186,6 +230,7 @@ import { useRouter } from "vue-router";
 import { useHead } from "@unhead/vue";
 import CloudQuestion from "../../../node_modules/vue-material-design-icons/CloudQuestion.vue";
 import { Notifier } from "@/plugins/notifier";
+import MastodonLogo from "@/components/Share/MastodonLogo.vue";
 
 const INSTANCES_PAGE_LIMIT = 10;
 

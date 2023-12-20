@@ -490,19 +490,35 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
         context: %{current_user: %User{role: role}}
       })
       when is_admin(role) do
-    remote_relay = Actors.get_relay(domain)
+    remote_relay = Instances.get_instance_actor(domain)
     local_relay = Relay.get_actor()
 
-    result = %{
-      has_relay: !is_nil(remote_relay),
-      relay_address:
-        if(is_nil(remote_relay),
-          do: nil,
-          else: "#{remote_relay.preferred_username}@#{remote_relay.domain}"
-        ),
-      follower_status: follow_status(remote_relay, local_relay),
-      followed_status: follow_status(local_relay, remote_relay)
-    }
+    result =
+      if is_nil(remote_relay) do
+        %{
+          has_relay: false,
+          relay_address: nil,
+          follower_status: nil,
+          followed_status: nil,
+          software: nil,
+          software_version: nil
+        }
+      else
+        %{
+          has_relay: !is_nil(remote_relay.actor),
+          relay_address:
+            if(is_nil(remote_relay.actor),
+              do: nil,
+              else: Actor.preferred_username_and_domain(remote_relay.actor)
+            ),
+          follower_status: follow_status(remote_relay.actor, local_relay),
+          followed_status: follow_status(local_relay, remote_relay.actor),
+          instance_name: remote_relay.instance_name,
+          instance_description: remote_relay.instance_description,
+          software: remote_relay.software,
+          software_version: remote_relay.software_version
+        }
+      end
 
     case Instances.instance(domain) do
       nil -> {:error, :not_found}
