@@ -227,6 +227,16 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
     field(:relay_address, :string,
       description: "If this instance has a relay, it's federated username"
     )
+
+    field(:instance_name, :string, description: "This instance's name")
+
+    field(:instance_description, :string, description: "This instance's description")
+
+    field(:software, :string, description: "The software this instance declares running")
+
+    field(:software_version, :string,
+      description: "The software version this instance declares running"
+    )
   end
 
   @desc """

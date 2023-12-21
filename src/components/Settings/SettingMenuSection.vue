@@ -1,6 +1,6 @@
 <template>
   <li
-    class="bg-mbz-yellow-alt-300 text-violet-2 dark:bg-mbz-purple-500 dark:text-zinc-100 text-xl"
+    class="bg-mbz-yellow-alt-300 text-violet-2 dark:bg-mbz-purple-700 dark:text-zinc-100 text-xl"
   >
     <router-link
       class="cursor-pointer my-2 mx-0 py-2 px-3 font-medium block no-underline"

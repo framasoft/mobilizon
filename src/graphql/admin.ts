@@ -81,6 +81,10 @@ export const INSTANCE_FRAGMENT = gql`
   fragment InstanceFragment on Instance {
     domain
     hasRelay
+    instanceName
+    instanceDescription
+    software
+    softwareVersion
     relayAddress
     followerStatus
     followedStatus

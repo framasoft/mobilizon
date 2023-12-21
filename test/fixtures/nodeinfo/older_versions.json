@@ -1,0 +1,8 @@
+{
+    "links": [
+        {
+            "rel": "http://nodeinfo.diaspora.software/ns/schema/1.1",
+            "href": "https://mobilizon.fr/.well-known/nodeinfo/1.1"
+        }
+    ]
+}

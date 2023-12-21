@@ -1638,5 +1638,8 @@
   "Return to the event page": "Return to the event page",
   "Cancel participation": "Cancel participation",
   "Add a recipient": "Add a recipient",
-  "Announcements for {eventTitle}": "Announcements for {eventTitle}"
+  "Announcements for {eventTitle}": "Announcements for {eventTitle}",
+  "Visit {instance_domain}": "Visit {instance_domain}",
+  "Software details: {software_details}": "Software details: {software_details}",
+  "Only instances with an application actor can be followed": "Only instances with an application actor can be followed"
 }

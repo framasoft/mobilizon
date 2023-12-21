@@ -1632,5 +1632,8 @@
   "Return to the event page": "Retourner à la page de l'événement",
   "Cancel participation": "Annuler la participation",
   "Add a recipient": "Ajouter un·e destinataire",
-  "Announcements for {eventTitle}": "Annonces pour {eventTitle}"
+  "Announcements for {eventTitle}": "Annonces pour {eventTitle}",
+  "Visit {instance_domain}": "Visiter {instance_domain}",
+  "Software details: {software_details}": "Détails du logiciel : {software_details}",
+  "Only instances with an application actor can be followed": "Seules les instances avec un acteur application peuvent être suivies"
 }
