@@ -21,7 +21,7 @@ defmodule Mobilizon.Federation.NodeInfo do
       {:ok, body} ->
         extract_application_actor(body)
 
-      {:error, :node_info_meta_http_error} ->
+      {:error, _err} ->
         nil
     end
   end
