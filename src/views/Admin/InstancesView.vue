@@ -72,11 +72,11 @@
             name: RouteName.INSTANCE,
             params: { domain: instance.domain },
           }"
-          class="flex items-center mb-2 rounded bg-mbz-yellow-alt-300 hover:bg-mbz-yellow-alt-200 dark:bg-mbz-purple-600 dark:hover:bg-mbz-purple-700 p-4 flex-wrap justify-center gap-x-2 gap-y-3"
+          class="min-w-0 flex items-center mb-2 rounded bg-mbz-yellow-alt-300 hover:bg-mbz-yellow-alt-200 dark:bg-mbz-purple-600 dark:hover:bg-mbz-purple-700 p-4 flex-wrap md:flex-nowrap justify-center gap-x-2 gap-y-3"
           v-for="instance in instances.elements"
           :key="instance.domain"
         >
-          <div class="grow overflow-hidden flex items-center gap-1">
+          <div class="flex-1 overflow-hidden flex items-center gap-1">
             <img
               class="w-12"
               v-if="instance.software === 'Mobilizon'"
@@ -104,7 +104,7 @@
 
             <div class="">
               <h3
-                class="text-lg truncate font-bold text-slate-800 dark:text-slate-100"
+                class="text-lg truncate font-bold line-clamp-1 text-slate-800 dark:text-slate-100"
                 v-if="instance.instanceName"
               >
                 {{ instance.instanceName }}
@@ -115,52 +115,62 @@
               >
                 {{ instance.domain }}
               </h3>
-              <p
-                v-if="instance.instanceName"
-                class="inline-flex gap-2 text-slate-700 dark:text-slate-300"
-              >
-                <span class="capitalize" v-if="instance.software">{{
-                  instance.software
-                }}</span>
-                -
-                <span>{{ instance.domain }}</span>
-              </p>
-              <p
-                v-else-if="instance.software"
-                class="capitalize text-slate-700 dark:text-slate-300"
-              >
-                {{ instance.software }}
-              </p>
-              <span
-                class="text-sm"
-                v-if="instance.followedStatus === InstanceFollowStatus.APPROVED"
-              >
-                <o-icon icon="inbox-arrow-down" />
-                {{ t("Followed") }}</span
-              >
-              <span
-                class="text-sm"
-                v-else-if="
-                  instance.followedStatus === InstanceFollowStatus.PENDING
-                "
-              >
-                <o-icon icon="inbox-arrow-down" />
-                {{ t("Followed, pending response") }}</span
-              >
-              <span
-                class="text-sm"
-                v-if="instance.followerStatus == InstanceFollowStatus.APPROVED"
-              >
-                <o-icon icon="inbox-arrow-up" />
-                {{ t("Follows us") }}</span
-              >
-              <span
-                class="text-sm"
-                v-if="instance.followerStatus == InstanceFollowStatus.PENDING"
-              >
-                <o-icon icon="inbox-arrow-up" />
-                {{ t("Follows us, pending approval") }}</span
-              >
+              <div>
+                <div class="flex flex-wrap gap-x-2 gap-y-1">
+                  <p
+                    v-if="instance.instanceName"
+                    class="min-w-0 inline-flex gap-1 truncate text-slate-700 dark:text-slate-300"
+                  >
+                    <o-icon icon="web" />
+                    <span>{{ instance.domain }}</span>
+                  </p>
+                  <p
+                    v-if="instance.software"
+                    class="capitalize text-slate-700 dark:text-slate-300 inline-flex gap-1"
+                  >
+                    <o-icon icon="server" />
+                    {{ instance.software }}
+                  </p>
+                </div>
+                <div>
+                  <p
+                    class="inline-flex gap-1 text-slate-700 dark:text-slate-300"
+                    v-if="
+                      instance.followedStatus === InstanceFollowStatus.APPROVED
+                    "
+                  >
+                    <o-icon icon="inbox-arrow-down" />
+                    {{ t("Followed") }}
+                  </p>
+                  <p
+                    class="inline-flex gap-1 text-slate-700 dark:text-slate-300"
+                    v-else-if="
+                      instance.followedStatus === InstanceFollowStatus.PENDING
+                    "
+                  >
+                    <o-icon icon="inbox-arrow-down" />
+                    {{ t("Followed, pending response") }}
+                  </p>
+                  <p
+                    class="inline-flex gap-1 text-slate-700 dark:text-slate-300"
+                    v-if="
+                      instance.followerStatus == InstanceFollowStatus.APPROVED
+                    "
+                  >
+                    <o-icon icon="inbox-arrow-up" />
+                    {{ t("Follows us") }}
+                  </p>
+                  <p
+                    class="inline-flex gap-1 text-slate-700 dark:text-slate-300"
+                    v-else-if="
+                      instance.followerStatus == InstanceFollowStatus.PENDING
+                    "
+                  >
+                    <o-icon icon="inbox-arrow-up" />
+                    {{ t("Follows us, pending approval") }}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
           <div class="flex-none flex gap-3 ltr:ml-3 rtl:mr-3">
