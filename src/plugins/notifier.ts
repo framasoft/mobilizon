@@ -26,7 +26,6 @@ export class Notifier {
       duration: 5000,
       position: "bottom-right",
       type,
-      hasIcon: true,
     });
   }
 }

@@ -103,6 +103,7 @@
               v-model="credentials.email"
               @blur="showGravatar = true"
               @focus="showGravatar = false"
+              expanded
             />
           </o-field>
 
@@ -120,6 +121,7 @@
               password-reveal
               minlength="6"
               v-model="credentials.password"
+              expanded
             />
           </o-field>
 

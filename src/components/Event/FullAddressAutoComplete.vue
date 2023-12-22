@@ -23,9 +23,9 @@
           :data="addressData"
           v-model="queryTextWithDefault"
           :placeholder="placeholderWithDefault"
-          :customFormatter="(elem: IAddress) => addressFullName(elem)"
-          :debounceTyping="debounceDelay"
-          @typing="asyncData"
+          :formatter="(elem: IAddress) => addressFullName(elem)"
+          :debounce="debounceDelay"
+          @input="asyncData"
           :icon="canShowLocateMeButton ? null : 'map-marker'"
           expanded
           @select="setSelected"
@@ -114,30 +114,39 @@
               required
               v-model="selected.description"
               id="addressNameInput"
+              expanded
             />
           </o-field>
 
           <o-field :label="t('Street')" labelFor="streetInput">
-            <o-input v-model="selected.street" id="streetInput" />
+            <o-input v-model="selected.street" id="streetInput" expanded />
           </o-field>
 
           <o-field grouped>
             <o-field :label="t('Postal Code')" labelFor="postalCodeInput">
-              <o-input v-model="selected.postalCode" id="postalCodeInput" />
+              <o-input
+                v-model="selected.postalCode"
+                id="postalCodeInput"
+                expanded
+              />
             </o-field>
 
             <o-field :label="t('Locality')" labelFor="localityInput">
-              <o-input v-model="selected.locality" id="localityInput" />
+              <o-input
+                v-model="selected.locality"
+                id="localityInput"
+                expanded
+              />
             </o-field>
           </o-field>
 
           <o-field grouped>
             <o-field :label="t('Region')" labelFor="regionInput">
-              <o-input v-model="selected.region" id="regionInput" />
+              <o-input v-model="selected.region" id="regionInput" expanded />
             </o-field>
 
             <o-field :label="t('Country')" labelFor="countryInput">
-              <o-input v-model="selected.country" id="countryInput" />
+              <o-input v-model="selected.country" id="countryInput" expanded />
             </o-field>
           </o-field>
         </section>

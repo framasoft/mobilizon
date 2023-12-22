@@ -667,7 +667,7 @@ import EventMinimalistCard from "@/components/Event/EventMinimalistCard.vue";
 import MultiPostListItem from "@/components/Post/MultiPostListItem.vue";
 import { Address, addressFullName } from "@/types/address.model";
 import InvitationsList from "@/components/Group/InvitationsList.vue";
-import addMinutes from "date-fns/addMinutes";
+import { addMinutes } from "date-fns";
 import { JOIN_GROUP } from "@/graphql/member";
 import { MemberRole, Openness, PostVisibility } from "@/types/enums";
 import { IMember } from "@/types/actor/member.model";

@@ -11,7 +11,7 @@
         <HelpCircleOutline :size="16" />
       </o-tooltip>
     </template>
-    <o-inputitems
+    <o-taginput
       v-model="tagsStrings"
       :data="filteredTags"
       :allow-autocomplete="true"
@@ -21,11 +21,11 @@
       :maxlength="20"
       :maxitems="10"
       :placeholder="$t('Eg: Stockholm, Dance, Chess…')"
-      @typing="debouncedGetFilteredTags"
+      @input="debouncedGetFilteredTags"
       :id="id"
       dir="auto"
     >
-    </o-inputitems>
+    </o-taginput>
   </o-field>
 </template>
 <script lang="ts" setup>

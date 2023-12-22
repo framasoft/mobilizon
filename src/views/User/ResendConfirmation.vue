@@ -14,6 +14,7 @@
           type="email"
           id="emailAddress"
           v-model="emailValue"
+          expanded
         />
       </o-field>
       <p class="flex flex-wrap gap-1 mt-2">

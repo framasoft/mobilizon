@@ -1,5 +1,5 @@
 <template>
-  <o-inputitems
+  <o-taginput
     :modelValue="modelValueWithDisplayName"
     @update:modelValue="(val: IActor[]) => $emit('update:modelValue', val)"
     :data="availableActors"
@@ -8,12 +8,12 @@
     :open-on-focus="false"
     field="displayName"
     :placeholder="t('Add a recipient')"
-    @typing="getActors"
+    @input="getActors"
   >
     <template #default="props">
       <ActorInline :actor="props.option" />
     </template>
-  </o-inputitems>
+  </o-taginput>
 </template>
 
 <script setup lang="ts">

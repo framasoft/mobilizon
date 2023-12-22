@@ -240,49 +240,46 @@
           <o-tooltip
             :label="$t('URL copied to clipboard')"
             :active="showCopiedTooltip.atom"
-            always
             variant="success"
             position="left"
+          />
+          <o-button
+            tag="a"
+            icon-left="rss"
+            @click="
+              (e: Event) =>
+                copyURL(e, tokenToURL(feedToken.token, 'atom'), 'atom')
+            "
+            @keyup.enter="
+              (e: Event) =>
+                copyURL(e, tokenToURL(feedToken.token, 'atom'), 'atom')
+            "
+            :href="tokenToURL(feedToken.token, 'atom')"
+            target="_blank"
+            >{{ $t("RSS/Atom Feed") }}</o-button
           >
-            <o-button
-              tag="a"
-              icon-left="rss"
-              @click="
-                (e: Event) =>
-                  copyURL(e, tokenToURL(feedToken.token, 'atom'), 'atom')
-              "
-              @keyup.enter="
-                (e: Event) =>
-                  copyURL(e, tokenToURL(feedToken.token, 'atom'), 'atom')
-              "
-              :href="tokenToURL(feedToken.token, 'atom')"
-              target="_blank"
-              >{{ $t("RSS/Atom Feed") }}</o-button
-            >
-          </o-tooltip>
+
           <o-tooltip
             :label="$t('URL copied to clipboard')"
             :active="showCopiedTooltip.ics"
-            always
             variant="success"
             position="left"
+          />
+          <o-button
+            tag="a"
+            @click="
+              (e: Event) =>
+                copyURL(e, tokenToURL(feedToken.token, 'ics'), 'ics')
+            "
+            @keyup.enter="
+              (e: Event) =>
+                copyURL(e, tokenToURL(feedToken.token, 'ics'), 'ics')
+            "
+            icon-left="calendar-sync"
+            :href="tokenToURL(feedToken.token, 'ics')"
+            target="_blank"
+            >{{ $t("ICS/WebCal Feed") }}</o-button
           >
-            <o-button
-              tag="a"
-              @click="
-                (e: Event) =>
-                  copyURL(e, tokenToURL(feedToken.token, 'ics'), 'ics')
-              "
-              @keyup.enter="
-                (e: Event) =>
-                  copyURL(e, tokenToURL(feedToken.token, 'ics'), 'ics')
-              "
-              icon-left="calendar-sync"
-              :href="tokenToURL(feedToken.token, 'ics')"
-              target="_blank"
-              >{{ $t("ICS/WebCal Feed") }}</o-button
-            >
-          </o-tooltip>
           <o-button
             icon-left="refresh"
             variant="text"

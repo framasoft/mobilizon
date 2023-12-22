@@ -52,6 +52,7 @@
         <o-input
           aria-required="true"
           required
+          expanded
           id="email"
           type="email"
           v-model="credentials.email"
@@ -63,6 +64,7 @@
           aria-required="true"
           id="password"
           required
+          expanded
           type="password"
           password-reveal
           v-model="credentials.password"

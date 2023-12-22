@@ -18,7 +18,7 @@ exports[`CommentTree > renders a comment tree with comments 1`] = `
         </div>
       </div>
       <div data-v-5d0380ab=\\"\\" class=\\"\\">
-        <o-button-stub data-v-5d0380ab=\\"\\" variant=\\"primary\\" iconleft=\\"send\\" rounded=\\"false\\" outlined=\\"false\\" loading=\\"false\\" expanded=\\"false\\" inverted=\\"false\\" nativetype=\\"submit\\" tag=\\"button\\" disabled=\\"false\\" iconboth=\\"false\\"></o-button-stub>
+        <o-button-stub data-v-5d0380ab=\\"\\" variant=\\"primary\\" iconleft=\\"send\\" rounded=\\"false\\" outlined=\\"false\\" loading=\\"false\\" expanded=\\"false\\" inverted=\\"false\\" nativetype=\\"submit\\" tag=\\"button\\" disabled=\\"false\\"></o-button-stub>
       </div>
     </article>
   </form>
@@ -56,7 +56,7 @@ exports[`CommentTree > renders an empty comment tree 1`] = `
         </div>
       </div>
       <div data-v-5d0380ab=\\"\\" class=\\"\\">
-        <o-button-stub data-v-5d0380ab=\\"\\" variant=\\"primary\\" iconleft=\\"send\\" rounded=\\"false\\" outlined=\\"false\\" loading=\\"false\\" expanded=\\"false\\" inverted=\\"false\\" nativetype=\\"submit\\" tag=\\"button\\" disabled=\\"false\\" iconboth=\\"false\\"></o-button-stub>
+        <o-button-stub data-v-5d0380ab=\\"\\" variant=\\"primary\\" iconleft=\\"send\\" rounded=\\"false\\" outlined=\\"false\\" loading=\\"false\\" expanded=\\"false\\" inverted=\\"false\\" nativetype=\\"submit\\" tag=\\"button\\" disabled=\\"false\\"></o-button-stub>
       </div>
     </article>
   </form>
