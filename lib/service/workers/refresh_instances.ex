@@ -48,16 +48,17 @@ defmodule Mobilizon.Service.Workers.RefreshInstances do
         end
 
       with instance_metadata <- fetch_instance_metadata(domain),
-           :ok <- Logger.debug("Ready to save instance actor details"),
+           args <- %{
+             domain: domain,
+             actor_id: actor_id,
+             instance_name: get_in(instance_metadata, ["metadata", "nodeName"]),
+             instance_description: get_in(instance_metadata, ["metadata", "nodeDescription"]),
+             software: get_in(instance_metadata, ["software", "name"]),
+             software_version: get_in(instance_metadata, ["software", "version"])
+           },
+           :ok <- Logger.debug("Ready to save instance actor details #{inspect(args)}"),
            {:ok, %InstanceActor{}} <-
-             Instances.create_instance_actor(%{
-               domain: domain,
-               actor_id: actor_id,
-               instance_name: get_in(instance_metadata, ["metadata", "nodeName"]),
-               instance_description: get_in(instance_metadata, ["metadata", "nodeDescription"]),
-               software: get_in(instance_metadata, ["software", "name"]),
-               software_version: get_in(instance_metadata, ["software", "version"])
-             }) do
+             Instances.create_instance_actor(args) do
         Logger.info("Saved instance actor details for domain #{host}")
       else
         err ->
