@@ -5,6 +5,7 @@ defmodule Mobilizon.Federation.NodeInfo do
 
   alias Mobilizon.Service.HTTP.WebfingerClient
   require Logger
+  import Mobilizon.Service.HTTP.Utils, only: [is_content_type?: 2]
 
   @application_uri "https://www.w3.org/ns/activitystreams#Application"
   @nodeinfo_rel_2_0 "http://nodeinfo.diaspora.software/ns/schema/2.0"
@@ -31,7 +32,9 @@ defmodule Mobilizon.Federation.NodeInfo do
 
     with {:ok, endpoint} when is_binary(endpoint) <- fetch_nodeinfo_details(host),
          :ok <- Logger.debug("Going to get NodeInfo information from URL #{endpoint}"),
-         {:ok, %{body: body, status: code}} when code in 200..299 <- WebfingerClient.get(endpoint) do
+         {:ok, %{body: body, status: code, headers: headers}} when code in 200..299 <-
+           WebfingerClient.get(endpoint),
+         {:ok, body} <- validate_json_response(body, headers) do
       Logger.debug("Found nodeinfo information for domain #{host}")
       {:ok, body}
     else
@@ -58,8 +61,8 @@ defmodule Mobilizon.Federation.NodeInfo do
     prefix = if @env !== :dev, do: "https", else: "http"
 
     case WebfingerClient.get("#{prefix}://#{host}/.well-known/nodeinfo") do
-      {:ok, %{body: body, status: code}} when code in 200..299 ->
-        {:ok, body}
+      {:ok, %{body: body, status: code, headers: headers}} when code in 200..299 ->
+        validate_json_response(body, headers)
 
       err ->
         Logger.debug("Failed to fetch NodeInfo data #{inspect(err)}")
@@ -101,5 +104,20 @@ defmodule Mobilizon.Federation.NodeInfo do
     Enum.find(links, fn %{"rel" => rel, "href" => href} ->
       rel == relation and is_binary(href)
     end)
+  end
+
+  @spec validate_json_response(map() | String.t(), list()) ::
+          {:ok, String.t()} | {:error, :bad_content_type | :body_not_json}
+  defp validate_json_response(body, headers) do
+    cond do
+      !is_content_type?(headers, "application/json") ->
+        {:error, :bad_content_type}
+
+      !is_map(body) ->
+        {:error, :body_not_json}
+
+      true ->
+        {:ok, body}
+    end
   end
 end
