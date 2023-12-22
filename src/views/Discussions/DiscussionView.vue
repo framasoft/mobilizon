@@ -65,6 +65,7 @@
             <o-input
               :value="discussion.title"
               v-model="newTitle"
+              expanded
               id="discussion-title"
             />
           </o-field>

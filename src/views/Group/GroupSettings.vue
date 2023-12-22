@@ -27,7 +27,11 @@
     >
       <form @submit.prevent="updateGroup(buildVariables)" v-if="editableGroup">
         <o-field :label="t('Group name')" label-for="group-settings-name">
-          <o-input v-model="editableGroup.name" id="group-settings-name" />
+          <o-input
+            v-model="editableGroup.name"
+            id="group-settings-name"
+            expanded
+          />
         </o-field>
         <o-field :label="t('Group short description')">
           <Editor
@@ -83,24 +87,22 @@
               )
             }}</small>
           </o-radio>
-          <p class="pl-6">
+          <p class="pl-6 flex items-center gap-2">
             <code>{{ group.url }}</code>
             <o-tooltip
               v-if="canShowCopyButton"
               :label="t('URL copied to clipboard')"
               :active="showCopiedTooltip"
-              always
               variant="success"
               position="left"
-            >
-              <o-button
-                variant="primary"
-                icon-right="content-paste"
-                native-type="button"
-                @click="copyURL"
-                @keyup.enter="copyURL"
-              />
-            </o-tooltip>
+            />
+            <o-button
+              variant="primary"
+              icon-right="content-paste"
+              native-type="button"
+              @click="copyURL"
+              @keyup.enter="copyURL"
+            />
           </p>
         </div>
 

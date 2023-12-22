@@ -29,6 +29,7 @@
             v-model="editablePost.title"
             id="post-title"
             dir="auto"
+            expanded
           />
         </o-field>
 

@@ -71,6 +71,7 @@
                 ref="resourceRenameInput"
                 aria-required="true"
                 v-model="updatedResource.title"
+                expanded
               />
             </o-field>
 
@@ -133,6 +134,7 @@
               aria-required="true"
               v-model="newResource.title"
               id="new-resource-title"
+              expanded
             />
           </o-field>
 
@@ -167,6 +169,7 @@
                 id="new-resource-url"
                 type="url"
                 required
+                expanded
                 v-model="newResource.resourceUrl"
                 @blur="previewResource"
                 ref="modalNewResourceLinkInput"
@@ -187,6 +190,7 @@
                 aria-required="true"
                 v-model="newResource.title"
                 id="new-resource-link-title"
+                expanded
               />
             </o-field>
 
@@ -200,6 +204,7 @@
                 type="textarea"
                 v-model="newResource.summary"
                 id="new-resource-summary"
+                expanded
               />
             </o-field>
 

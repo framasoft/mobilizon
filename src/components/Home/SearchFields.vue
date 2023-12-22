@@ -17,6 +17,7 @@
       autocomplete="off"
       autocorrect="off"
       maxlength="1024"
+      expanded
     />
     <full-address-auto-complete
       :resultType="AddressSearchType.ADMINISTRATIVE"
@@ -102,7 +103,7 @@ const submit = () => {
 const { t } = useI18n({ useScope: "global" });
 </script>
 <style scoped>
-#search-anchor :deep(.o-ctrl-input) {
+#search-anchor :deep(.o-input__wrapper) {
   flex: 1;
 }
 </style>

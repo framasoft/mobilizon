@@ -10,7 +10,11 @@
     <section v-if="settingsToWrite">
       <form @submit.prevent="updateSettings">
         <o-field :label="t('Instance Name')" label-for="instance-name">
-          <o-input v-model="settingsToWrite.instanceName" id="instance-name" />
+          <o-input
+            v-model="settingsToWrite.instanceName"
+            id="instance-name"
+            expanded
+          />
         </o-field>
         <div class="field flex flex-col">
           <label class="" for="instance-description">{{
@@ -74,7 +78,7 @@
           <small>
             {{ t("Main languages you/your moderators speak") }}
           </small>
-          <o-inputitems
+          <o-taginput
             v-model="instanceLanguages"
             :data="filteredLanguages"
             allow-autocomplete
@@ -82,11 +86,11 @@
             field="name"
             icon="label"
             :placeholder="t('Select languages')"
-            @typing="getFilteredLanguages"
+            @input="getFilteredLanguages"
             id="instance-languages"
           >
             <template #empty>{{ t("No languages found") }}</template>
-          </o-inputitems>
+          </o-taginput>
         </div>
         <div class="field flex flex-col">
           <label class="" for="instance-long-description">{{

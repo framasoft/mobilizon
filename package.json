@@ -29,6 +29,7 @@
     "@framasoft/socket": "^1.0.0",
     "@framasoft/socket-apollo-link": "^1.0.0",
     "@oruga-ui/oruga-next": "^0.8.2",
+    "@oruga-ui/theme-oruga": "^0.2.0",
     "@sentry/tracing": "^7.1",
     "@sentry/vue": "^7.1",
     "@tiptap/core": "^2.0.0-beta.41",

@@ -235,7 +235,7 @@ import { useLazyQuery, useMutation } from "@vue/apollo-composable";
 import { UPDATE_DEFAULT_ACTOR } from "@/graphql/actor";
 import { changeIdentity } from "@/utils/identity";
 import { useRegistrationConfig } from "@/composition/apollo/config";
-import { useProgrammatic } from "@oruga-ui/oruga-next";
+import { useOruga } from "@oruga-ui/oruga-next";
 import {
   UNREAD_ACTOR_CONVERSATIONS,
   UNREAD_ACTOR_CONVERSATIONS_SUBSCRIPTION,
@@ -350,12 +350,12 @@ onDone(({ data }) => {
 
 const showMobileMenu = ref(false);
 
-const { oruga } = useProgrammatic();
+const { notification } = useOruga();
 
 const performLogout = async () => {
   console.debug("Logging out client...");
   await logout();
-  oruga.notification.open({
+  notification.open({
     message: t("You have been logged-out"),
     variant: "success",
     position: "bottom-right",

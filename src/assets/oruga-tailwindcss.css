@@ -139,22 +139,29 @@ body {
   @apply pl-10;
 }
 
-/* InputItems */
-.inputitems-item {
+/* TagInput */
+.taginput {
+  @apply rounded bg-white dark:bg-zinc-700;
+}
+.taginput-item {
   @apply bg-primary mr-2;
 }
 
-.inputitems-item:first-child {
+.taginput-item:first-child {
   @apply ml-2;
 }
 
 /* Autocomplete */
-.autocomplete-menu {
-  @apply max-h-[200px] drop-shadow-md text-black;
+.autocomplete {
+  @apply max-h-[200px] drop-shadow-md text-black z-10;
 }
 
 .autocomplete-item {
   @apply py-1.5 px-4 text-start;
+}
+
+.autocomplete-item-group-title {
+  @apply opacity-50 py-0 px-2;
 }
 
 /* Dropdown */
@@ -218,6 +225,9 @@ body {
 }
 
 /* Radio */
+.radio {
+  @apply mr-2;
+}
 .form-radio {
   @apply bg-none text-primary accent-primary;
 }

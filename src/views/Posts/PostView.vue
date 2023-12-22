@@ -100,7 +100,7 @@
           </div>
           <o-dropdown position="bottom-left" aria-role="list">
             <template #trigger>
-              <o-button role="button" icon-right="dots-horizontal">
+              <o-button icon-right="dots-horizontal">
                 {{ t("Actions") }}
               </o-button>
             </template>

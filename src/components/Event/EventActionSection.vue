@@ -381,7 +381,7 @@ import { ApolloCache, FetchResult } from "@apollo/client/core";
 import { useMutation } from "@vue/apollo-composable";
 import { useCreateReport } from "@/composition/apollo/report";
 import { useDeleteEvent } from "@/composition/apollo/event";
-import { useProgrammatic } from "@oruga-ui/oruga-next";
+import { useOruga } from "@oruga-ui/oruga-next";
 import ExternalParticipationButton from "./ExternalParticipationButton.vue";
 import AccountMultiple from "vue-material-design-icons/AccountMultiple.vue";
 import Bullhorn from "vue-material-design-icons/Bullhorn.vue";
@@ -619,11 +619,11 @@ onJoinEventMutationDone(({ data }) => {
   }
 });
 
-const { oruga } = useProgrammatic();
+const { notification } = useOruga();
 
 onJoinEventMutationError((error) => {
   if (error.message) {
-    oruga.notification.open({
+    notification.open({
       message: error.message,
       variant: "danger",
       position: "bottom-right",

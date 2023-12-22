@@ -56,7 +56,7 @@ import ConversationListItem from "../../components/Conversations/ConversationLis
 import EmptyContent from "../../components/Utils/EmptyContent.vue";
 import { useHead } from "@unhead/vue";
 import { IPerson } from "@/types/actor";
-import { useProgrammatic } from "@oruga-ui/oruga-next";
+import { useOruga } from "@oruga-ui/oruga-next";
 import { arrayTransformer } from "@/utils/route";
 
 const page = useRouteQuery("page", 1, integerTransformer);
@@ -89,14 +89,14 @@ const conversations = computed(
     }
 );
 
-const { oruga } = useProgrammatic();
+const { modal } = useOruga();
 
 const NewConversation = defineAsyncComponent(
   () => import("@/components/Conversations/NewConversation.vue")
 );
 
 const openNewMessageModal = () => {
-  oruga.modal.open({
+  modal.open({
     component: NewConversation,
     props: {
       personMentions: personMentions.value,

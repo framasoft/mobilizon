@@ -337,7 +337,7 @@ import ViewCompact from "vue-material-design-icons/ViewCompact.vue";
 import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
 import AccountGroup from "vue-material-design-icons/AccountGroup.vue";
 import Video from "vue-material-design-icons/Video.vue";
-import { useProgrammatic } from "@oruga-ui/oruga-next";
+import { useOruga } from "@oruga-ui/oruga-next";
 import { computed, inject } from "vue";
 import { useI18n } from "vue-i18n";
 import { Dialog } from "@/plugins/dialog";
@@ -401,7 +401,7 @@ const openDeleteEventModal = (
   });
 };
 
-const { oruga } = useProgrammatic();
+const { notification } = useOruga();
 const snackbar = inject<Snackbar>("snackbar");
 
 const {
@@ -419,7 +419,7 @@ onDeleteEventDone(() => {
    */
   emit("eventDeleted", props.participation.event.id);
 
-  oruga.notification.open({
+  notification.open({
     message: t("Event {eventTitle} deleted", {
       eventTitle: props.participation.event.title,
     }),
@@ -460,7 +460,7 @@ const gotToWithCheck = async (
   ) {
     const organizerActor = participation.event.organizerActor as IPerson;
     await changeIdentity(organizerActor);
-    oruga.notification.open({
+    notification.open({
       message: t(
         "Current identity has been changed to {identityName} in order to manage this event.",
         {

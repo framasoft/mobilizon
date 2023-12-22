@@ -18,7 +18,7 @@ import { notifierPlugin } from "./plugins/notifier";
 import FloatingVue from "floating-vue";
 import "floating-vue/dist/style.css";
 import Oruga from "@oruga-ui/oruga-next";
-import "@oruga-ui/oruga-next/dist/oruga.css";
+import "@oruga-ui/theme-oruga/dist/oruga.css";
 import "./assets/oruga-tailwindcss.css";
 import { orugaConfig } from "./oruga-config";
 import MaterialIcon from "./components/core/MaterialIcon.vue";

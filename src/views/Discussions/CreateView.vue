@@ -36,6 +36,7 @@
         <o-input
           aria-required="true"
           required
+          expanded
           v-model="discussion.title"
           id="discussion-title"
         />

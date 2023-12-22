@@ -31,6 +31,7 @@
           v-model="event.title"
           id="title"
           dir="auto"
+          expanded
         />
       </o-field>
 
@@ -72,7 +73,6 @@
           :locale="$i18n.locale.replace('_', '-')"
           v-model="beginsOn"
           horizontal-time-picker
-          editable
           :tz-offset="tzOffset(beginsOn)"
           :first-day-of-week="firstDayOfWeek"
           :datepicker="{
@@ -99,7 +99,6 @@
           horizontal-time-picker
           :min-datetime="beginsOn"
           :tz-offset="tzOffset(endsOn)"
-          editable
           :first-day-of-week="firstDayOfWeek"
           :datepicker="{
             id: 'ends-on-field',
@@ -145,6 +144,7 @@
           v-model="event.onlineAddress"
           placeholder="URL"
           id="website-url"
+          expanded
         />
       </o-field>
 
@@ -373,44 +373,55 @@
             <o-radio
               v-model="event.status"
               name="status"
-              class="mr-2 p-2 rounded border"
-              :class="{
-                'btn-warning': event.status === EventStatus.TENTATIVE,
-                'btn-outlined-warning': event.status !== EventStatus.TENTATIVE,
-              }"
               variant="warning"
               :native-value="EventStatus.TENTATIVE"
             >
-              <o-icon icon="calendar-question" />
-              {{ t("Tentative: Will be confirmed later") }}
+              <div
+                class="mr-2 p-2 rounded border flex gap-x-1"
+                :class="{
+                  'btn-warning': event.status === EventStatus.TENTATIVE,
+                  'btn-outlined-warning':
+                    event.status !== EventStatus.TENTATIVE,
+                }"
+              >
+                <o-icon icon="calendar-question" />
+                {{ t("Tentative: Will be confirmed later") }}
+              </div>
             </o-radio>
             <o-radio
               v-model="event.status"
               name="status"
               variant="success"
-              class="mr-2 p-2 rounded border"
-              :class="{
-                'btn-success': event.status === EventStatus.CONFIRMED,
-                'btn-outlined-success': event.status !== EventStatus.CONFIRMED,
-              }"
               :native-value="EventStatus.CONFIRMED"
             >
-              <o-icon icon="calendar-check" />
-              {{ t("Confirmed: Will happen") }}
+              <div
+                class="mr-2 p-2 rounded border flex gap-x-1"
+                :class="{
+                  'btn-success': event.status === EventStatus.CONFIRMED,
+                  'btn-outlined-success':
+                    event.status !== EventStatus.CONFIRMED,
+                }"
+              >
+                <o-icon icon="calendar-check" />
+                {{ t("Confirmed: Will happen") }}
+              </div>
             </o-radio>
             <o-radio
               v-model="event.status"
               name="status"
-              class="p-2 rounded border"
-              :class="{
-                'btn-danger': event.status === EventStatus.CANCELLED,
-                'btn-outlined-danger': event.status !== EventStatus.CANCELLED,
-              }"
               variant="danger"
               :native-value="EventStatus.CANCELLED"
             >
-              <o-icon icon="calendar-remove" />
-              {{ t("Cancelled: Won't happen") }}
+              <div
+                class="p-2 rounded border flex gap-x-1"
+                :class="{
+                  'btn-danger': event.status === EventStatus.CANCELLED,
+                  'btn-outlined-danger': event.status !== EventStatus.CANCELLED,
+                }"
+              >
+                <o-icon icon="calendar-remove" />
+                {{ t("Cancelled: Won't happen") }}
+              </div>
             </o-radio>
           </o-field>
         </fieldset>
@@ -625,7 +636,7 @@ import { useMutation } from "@vue/apollo-composable";
 import { Dialog } from "@/plugins/dialog";
 import { Notifier } from "@/plugins/notifier";
 import { useHead } from "@unhead/vue";
-import { useProgrammatic } from "@oruga-ui/oruga-next";
+import { useOruga } from "@oruga-ui/oruga-next";
 import type { Locale } from "date-fns";
 import sortBy from "lodash/sortBy";
 import { escapeHtml } from "@/utils/html";
@@ -806,10 +817,10 @@ const {
     postRefetchQueries(updatedData?.createEvent),
 }));
 
-const { oruga } = useProgrammatic();
+const { notification } = useOruga();
 
 onCreateEventMutationDone(async ({ data }) => {
-  oruga.notification.open({
+  notification.open({
     message: (event.value.draft
       ? t("The event has been created as a draft")
       : t("The event has been published")) as string,
@@ -852,7 +863,7 @@ const {
 }));
 
 onEditEventMutationDone(() => {
-  oruga.notification.open({
+  notification.open({
     message: updateEventMessage.value,
     variant: "success",
     position: "bottom-right",

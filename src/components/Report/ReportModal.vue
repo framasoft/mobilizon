@@ -55,6 +55,7 @@
             id="additional-comments"
             autofocus
             ref="reportAdditionalCommentsInput"
+            expanded
           />
         </o-field>
 

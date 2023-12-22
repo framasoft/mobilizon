@@ -387,6 +387,7 @@
           <o-input
             type="textarea"
             v-model="noteContent"
+            expanded
             id="newNoteInput"
           ></o-input>
         </o-field>

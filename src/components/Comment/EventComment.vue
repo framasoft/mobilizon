@@ -235,7 +235,7 @@ import type { Locale } from "date-fns";
 import ReportModal from "@/components/Report/ReportModal.vue";
 import { useCreateReport } from "@/composition/apollo/report";
 import { Snackbar } from "@/plugins/snackbar";
-import { useProgrammatic } from "@oruga-ui/oruga-next";
+import { useOruga } from "@oruga-ui/oruga-next";
 import RouteName from "@/router/name";
 
 const router = useRouter();
@@ -372,7 +372,7 @@ const reportComment = async (
 };
 
 const snackbar = inject<Snackbar>("snackbar");
-const { oruga } = useProgrammatic();
+const { notification } = useOruga();
 
 onCreateReportError((e) => {
   isReportModalActive.value = false;
@@ -387,7 +387,7 @@ onCreateReportError((e) => {
 
 oneCreateReportDone(() => {
   isReportModalActive.value = false;
-  oruga.notification.open({
+  notification.open({
     message: t("Comment from {'@'}{username} reported", {
       username: props.comment.actor?.preferredUsername,
     }),
