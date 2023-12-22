@@ -22,6 +22,7 @@ defmodule Mobilizon.Service.RichMedia.Parser do
   alias Mobilizon.Service.RichMedia.Parsers.Fallback
   alias Plug.Conn.Utils
   require Logger
+  import Mobilizon.Service.HTTP.Utils
 
   defp parsers do
     Mobilizon.Config.get([:rich_media, :parsers])
@@ -74,7 +75,7 @@ defmodule Mobilizon.Service.RichMedia.Parser do
                 opts: @options
               )},
            {:is_html, _response_headers, true} <-
-             {:is_html, response_headers, is_html(response_headers)} do
+             {:is_html, response_headers, is_html?(response_headers)} do
         body
         |> convert_utf8(response_headers)
         |> maybe_parse()
@@ -107,43 +108,21 @@ defmodule Mobilizon.Service.RichMedia.Parser do
   defp get_data_for_media(response_headers, url) do
     data = %{title: get_filename_from_headers(response_headers) || get_filename_from_url(url)}
 
-    if is_image(response_headers) do
+    if is_image?(response_headers) do
       Map.put(data, :image_remote_url, url)
     else
       data
     end
   end
 
-  @spec is_html(Enum.t()) :: boolean
-  def is_html(headers) do
-    headers
-    |> get_header("Content-Type")
-    |> content_type_header_matches(["text/html", "application/xhtml"])
+  @spec is_html?(Enum.t()) :: boolean
+  defp is_html?(headers) do
+    is_content_type?(headers, ["text/html", "application/xhtml"])
   end
 
-  @spec is_image(Enum.t()) :: boolean
-  defp is_image(headers) do
-    headers
-    |> get_header("Content-Type")
-    |> content_type_header_matches(["image/"])
-  end
-
-  @spec content_type_header_matches(String.t() | nil, Enum.t()) :: boolean
-  defp content_type_header_matches(header, content_types)
-  defp content_type_header_matches(nil, _content_types), do: false
-
-  defp content_type_header_matches(header, content_types) when is_binary(header) do
-    Enum.any?(content_types, fn content_type -> String.starts_with?(header, content_type) end)
-  end
-
-  @spec get_header(Enum.t(), String.t()) :: String.t() | nil
-  defp get_header(headers, key) do
-    key = String.downcase(key)
-
-    case List.keyfind(headers, key, 0) do
-      {^key, value} -> String.downcase(value)
-      nil -> nil
-    end
+  @spec is_image?(Enum.t()) :: boolean
+  defp is_image?(headers) do
+    is_content_type?(headers, ["image/"])
   end
 
   @spec get_filename_from_headers(Enum.t()) :: String.t() | nil
