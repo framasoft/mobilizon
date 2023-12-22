@@ -22,15 +22,16 @@ defmodule Mobilizon.Instances do
 
     order_by_options = Keyword.new([{direction, order_by}])
 
-    subquery =
-      Actor
-      |> where(
-        [a],
-        a.preferred_username == "relay" and a.type == :Application and not is_nil(a.domain)
-      )
-      |> join(:left, [a], f1 in Follower, on: f1.target_actor_id == a.id)
-      |> join(:left, [a], f2 in Follower, on: f2.actor_id == a.id)
-      |> select([a, f1, f2], %{
+    query =
+      Instance
+      |> join(:left, [i], ia in InstanceActor, on: i.domain == ia.domain)
+      |> join(:left, [_i, ia], a in Actor, on: ia.actor_id == a.id)
+      |> join(:left, [_i, _ia, a], f1 in Follower, on: f1.target_actor_id == a.id)
+      |> join(:left, [_i, _ia, a], f2 in Follower, on: f2.actor_id == a.id)
+      |> select([i, ia, a, f1, f2], %{
+        instance: i,
+        instance_actor: ia,
+        actor: a,
         domain: a.domain,
         has_relay: fragment(@is_null_fragment, a.id),
         following: fragment(@is_null_fragment, f2.id),
@@ -38,13 +39,6 @@ defmodule Mobilizon.Instances do
         follower: fragment(@is_null_fragment, f1.id),
         follower_approved: f1.approved
       })
-
-    query =
-      Instance
-      |> join(:left, [i], s in subquery(subquery), on: i.domain == s.domain)
-      |> join(:left, [i], ia in InstanceActor, on: i.domain == ia.domain)
-      |> join(:left, [_i, _s, ia], a in Actor, on: ia.actor_id == a.id)
-      |> select([i, s, ia, a], {i, s, ia, a})
       |> order_by(^order_by_options)
 
     query =
@@ -93,17 +87,17 @@ defmodule Mobilizon.Instances do
     SQL.query!(Repo, "REFRESH MATERIALIZED VIEW instances")
   end
 
-  defp convert_instance_meta(
-         {instance,
-          %{
-            domain: _domain,
-            follower: follower,
-            follower_approved: follower_approved,
-            following: following,
-            following_approved: following_approved,
-            has_relay: has_relay
-          }, instance_meta, instance_actor}
-       ) do
+  defp convert_instance_meta(%{
+         instance: instance,
+         instance_actor: instance_meta,
+         actor: instance_actor,
+         domain: _domain,
+         follower: follower,
+         follower_approved: follower_approved,
+         following: following,
+         following_approved: following_approved,
+         has_relay: has_relay
+       }) do
     instance
     |> Map.put(:follower_status, follow_status(following, following_approved))
     |> Map.put(:followed_status, follow_status(follower, follower_approved))
