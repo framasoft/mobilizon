@@ -60,15 +60,10 @@ import { useCurrentUserIdentities } from "@/composition/apollo/actor";
 import { computed } from "vue";
 import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
 import { useI18n } from "vue-i18n";
-import { useHead } from "@unhead/vue";
 
 const { identities } = useCurrentUserIdentities();
 
 const { t } = useI18n({ useScope: "global" });
-
-useHead({
-  title: computed(() => t("Identities")),
-});
 
 const props = defineProps<{
   modelValue: IPerson;
