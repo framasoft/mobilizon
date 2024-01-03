@@ -24,7 +24,12 @@ defmodule Mobilizon.Federation.NodeInfoTest do
           url: "https://event-federation.eu/.well-known/nodeinfo"
         },
         _opts ->
-          {:ok, %Tesla.Env{status: 200, body: nodeinfo_data}}
+          {:ok,
+           %Tesla.Env{
+             status: 200,
+             body: nodeinfo_data,
+             headers: [{"content-type", "application/json"}]
+           }}
       end)
 
       assert "https://event-federation.eu/actor-relay" ==
@@ -76,7 +81,12 @@ defmodule Mobilizon.Federation.NodeInfoTest do
           url: "https://mobilizon.fr/.well-known/nodeinfo"
         },
         _opts ->
-          {:ok, %Tesla.Env{status: 200, body: nodeinfo_end_point_data}}
+          {:ok,
+           %Tesla.Env{
+             status: 200,
+             body: nodeinfo_end_point_data,
+             headers: [{"content-type", "application/json"}]
+           }}
       end)
 
       WebfingerClientMock
@@ -86,7 +96,12 @@ defmodule Mobilizon.Federation.NodeInfoTest do
           url: "https://mobilizon.fr/.well-known/nodeinfo/2.1"
         },
         _opts ->
-          {:ok, %Tesla.Env{status: 200, body: nodeinfo_data}}
+          {:ok,
+           %Tesla.Env{
+             status: 200,
+             body: nodeinfo_data,
+             headers: [{"content-type", "application/json"}]
+           }}
       end)
 
       assert {:ok, data} = NodeInfo.nodeinfo("mobilizon.fr")
@@ -107,7 +122,12 @@ defmodule Mobilizon.Federation.NodeInfoTest do
           url: "https://event-federation.eu/.well-known/nodeinfo"
         },
         _opts ->
-          {:ok, %Tesla.Env{status: 200, body: nodeinfo_end_point_data}}
+          {:ok,
+           %Tesla.Env{
+             status: 200,
+             body: nodeinfo_end_point_data,
+             headers: [{"content-type", "application/json"}]
+           }}
       end)
 
       WebfingerClientMock
@@ -117,7 +137,12 @@ defmodule Mobilizon.Federation.NodeInfoTest do
           url: "https://event-federation.eu/wp-json/activitypub/1.0/nodeinfo"
         },
         _opts ->
-          {:ok, %Tesla.Env{status: 200, body: nodeinfo_wp_data}}
+          {:ok,
+           %Tesla.Env{
+             status: 200,
+             body: nodeinfo_wp_data,
+             headers: [{"content-type", "application/json"}]
+           }}
       end)
 
       assert {:ok, data} = NodeInfo.nodeinfo("event-federation.eu")
@@ -138,7 +163,12 @@ defmodule Mobilizon.Federation.NodeInfoTest do
           url: "https://somewhere.tld/.well-known/nodeinfo"
         },
         _opts ->
-          {:ok, %Tesla.Env{status: 200, body: nodeinfo_end_point_data}}
+          {:ok,
+           %Tesla.Env{
+             status: 200,
+             body: nodeinfo_end_point_data,
+             headers: [{"content-type", "application/json"}]
+           }}
       end)
 
       assert {:error, :no_node_info_endpoint_found} = NodeInfo.nodeinfo("somewhere.tld")
@@ -169,7 +199,12 @@ defmodule Mobilizon.Federation.NodeInfoTest do
           url: "https://mobilizon.fr/.well-known/nodeinfo"
         },
         _opts ->
-          {:ok, %Tesla.Env{status: 200, body: nodeinfo_end_point_data}}
+          {:ok,
+           %Tesla.Env{
+             status: 200,
+             body: nodeinfo_end_point_data,
+             headers: [{"content-type", "application/json"}]
+           }}
       end)
 
       WebfingerClientMock

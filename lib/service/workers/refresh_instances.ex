@@ -20,21 +20,16 @@ defmodule Mobilizon.Service.Workers.RefreshInstances do
     Instances.refresh()
 
     Instances.all_domains()
-    |> Enum.each(&refresh_instance_actor/1)
+    |> Enum.each(fn %Instance{domain: domain} -> refresh_instance_actor(domain) end)
   end
 
-  @spec refresh_instance_actor(Instance.t()) ::
-          {:ok, Mobilizon.Actors.Actor.t()}
-          | {:error,
-             ActivityPubActor.make_actor_errors()
-             | Mobilizon.Federation.WebFinger.finger_errors()}
-  def refresh_instance_actor(%Instance{domain: nil}) do
+  @spec refresh_instance_actor(String.t() | nil) ::
+          {:ok, Mobilizon.Actors.Actor.t()} | {:error, Ecto.Changeset.t()} | {:error, atom}
+  def refresh_instance_actor(nil) do
     {:error, :not_remote_instance}
   end
 
-  @spec refresh_instance_actor(Instance.t()) ::
-          {:ok, InstanceActor.t()} | {:error, Ecto.Changeset.t()} | {:error, atom}
-  def refresh_instance_actor(%Instance{domain: domain}) do
+  def refresh_instance_actor(domain) do
     %Actor{url: url} = Relay.get_actor()
     %URI{host: host} = URI.new!(url)
 
@@ -48,16 +43,17 @@ defmodule Mobilizon.Service.Workers.RefreshInstances do
         end
 
       with instance_metadata <- fetch_instance_metadata(domain),
-           :ok <- Logger.debug("Ready to save instance actor details"),
+           args <- %{
+             domain: domain,
+             actor_id: actor_id,
+             instance_name: get_in(instance_metadata, ["metadata", "nodeName"]),
+             instance_description: get_in(instance_metadata, ["metadata", "nodeDescription"]),
+             software: get_in(instance_metadata, ["software", "name"]),
+             software_version: get_in(instance_metadata, ["software", "version"])
+           },
+           :ok <- Logger.debug("Ready to save instance actor details #{inspect(args)}"),
            {:ok, %InstanceActor{}} <-
-             Instances.create_instance_actor(%{
-               domain: domain,
-               actor_id: actor_id,
-               instance_name: get_in(instance_metadata, ["metadata", "nodeName"]),
-               instance_description: get_in(instance_metadata, ["metadata", "nodeDescription"]),
-               software: get_in(instance_metadata, ["software", "name"]),
-               software_version: get_in(instance_metadata, ["software", "version"])
-             }) do
+             Instances.create_instance_actor(args) do
         Logger.info("Saved instance actor details for domain #{host}")
       else
         err ->

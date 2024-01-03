@@ -16,6 +16,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
   alias Mobilizon.Reports.{Note, Report}
   alias Mobilizon.Service.Auth.Authenticator
   alias Mobilizon.Service.Statistics
+  alias Mobilizon.Service.Workers.RefreshInstances
   alias Mobilizon.Storage.Page
   alias Mobilizon.Users.User
   alias Mobilizon.Web.Email
@@ -546,6 +547,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
     case Relay.follow(domain) do
       {:ok, _activity, _follow} ->
         Instances.refresh()
+        RefreshInstances.refresh_instance_actor(domain)
         get_instance(parent, args, resolution)
 
       {:error, :follow_pending} ->

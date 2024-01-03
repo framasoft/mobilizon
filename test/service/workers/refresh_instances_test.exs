@@ -5,7 +5,6 @@ defmodule Mobilizon.Service.Workers.RefreshInstancesTest do
 
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Federation.ActivityPub.Relay
-  alias Mobilizon.Instances.Instance
   alias Mobilizon.Service.Workers.RefreshInstances
 
   use Mobilizon.DataCase
@@ -14,7 +13,7 @@ defmodule Mobilizon.Service.Workers.RefreshInstancesTest do
     test "unless if local actor" do
       # relay = Mobilizon.Web.Relay.get_actor()
       assert {:error, :not_remote_instance} ==
-               RefreshInstances.refresh_instance_actor(%Instance{domain: nil})
+               RefreshInstances.refresh_instance_actor(nil)
     end
 
     test "unless if local relay actor" do
@@ -22,7 +21,7 @@ defmodule Mobilizon.Service.Workers.RefreshInstancesTest do
       %URI{host: domain} = URI.new!(url)
 
       assert {:error, :not_remote_instance} ==
-               RefreshInstances.refresh_instance_actor(%Instance{domain: domain})
+               RefreshInstances.refresh_instance_actor(domain)
     end
   end
 end
