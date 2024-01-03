@@ -95,7 +95,7 @@
 
 <script lang="ts" setup>
 import EventComment from "@/components/Comment/EventComment.vue";
-import IdentityPickerWrapper from "@/views/Account/IdentityPickerWrapper.vue";
+import IdentityPickerWrapper from "@/components/Account/IdentityPickerWrapper.vue";
 import { CommentModeration } from "@/types/enums";
 import { CommentModel, IComment } from "../../types/comment.model";
 import {

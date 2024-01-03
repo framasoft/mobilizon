@@ -340,7 +340,7 @@ import { IActor, IPerson } from "@/types/actor";
 import { IEvent } from "@/types/event.model";
 import ParticipationSection from "@/components/Participation/ParticipationSection.vue";
 import ReportModal from "@/components/Report/ReportModal.vue";
-import IdentityPicker from "@/views/Account/IdentityPicker.vue";
+import IdentityPicker from "@/components/Account/IdentityPicker.vue";
 import { EventJoinOptions, ParticipantRole, MemberRole } from "@/types/enums";
 import { GRAPHQL_API_ENDPOINT } from "@/api/_entrypoint";
 import { computed, defineAsyncComponent, inject, onMounted, ref } from "vue";
