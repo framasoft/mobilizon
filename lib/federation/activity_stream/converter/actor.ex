@@ -76,14 +76,13 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Actor do
   def as_to_model_data(_), do: {:error, :actor_not_allowed_type}
 
   defp add_endpoints_to_model(actor, data) do
-    # TODO: Remove fallbacks in 3.0
     endpoints = %{
-      members_url: get_in(data, ["endpoints", "members"]) || data["members"],
-      resources_url: get_in(data, ["endpoints", "resources"]) || data["resources"],
-      todos_url: get_in(data, ["endpoints", "todos"]) || data["todos"],
-      events_url: get_in(data, ["endpoints", "events"]) || data["events"],
-      posts_url: get_in(data, ["endpoints", "posts"]) || data["posts"],
-      discussions_url: get_in(data, ["endpoints", "discussions"]) || data["discussions"],
+      members_url: get_in(data, ["endpoints", "members"]),
+      resources_url: get_in(data, ["endpoints", "resources"]),
+      todos_url: get_in(data, ["endpoints", "todos"]),
+      events_url: get_in(data, ["endpoints", "events"]),
+      posts_url: get_in(data, ["endpoints", "posts"]),
+      discussions_url: get_in(data, ["endpoints", "discussions"]),
       shared_inbox_url: data["endpoints"]["sharedInbox"]
     }
 

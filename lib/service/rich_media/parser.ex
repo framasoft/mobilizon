@@ -11,9 +11,7 @@ defmodule Mobilizon.Service.RichMedia.Parser do
     max_body: 2_000_000,
     timeout: 10_000,
     recv_timeout: 20_000,
-    follow_redirect: true,
-    # TODO: Remove me once Hackney/HTTPoison fixes their issue with TLS1.3 and OTP 23
-    ssl: [{:versions, [:"tlsv1.2"]}]
+    follow_redirect: true
   ]
 
   alias Mobilizon.Config

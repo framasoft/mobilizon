@@ -1163,14 +1163,10 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
     end
   end
 
-  # Before 1.0.4 the object of a "Remove" activity was an actor's URL
-  # instead of the member's URL.
-  # TODO: Remove in 1.2
   @spec get_remove_object(map() | String.t()) :: {:ok, integer()}
   defp get_remove_object(object) do
     case object |> Utils.get_url() |> ActivityPub.fetch_object_from_url() do
       {:ok, %Member{actor: %Actor{id: person_id}}} -> {:ok, person_id}
-      {:ok, %Actor{id: person_id}} -> {:ok, person_id}
       _ -> {:error, :remove_object_not_found}
     end
   end

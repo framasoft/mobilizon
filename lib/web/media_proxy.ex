@@ -71,13 +71,7 @@ defmodule Mobilizon.Web.MediaProxy do
   @compile {:no_warn_undefined, {:crypto, :mac, 4}}
   @compile {:no_warn_undefined, {:crypto, :hmac, 3}}
   defp sha_hmac(key, url) do
-    # :crypto.hmac was removed in OTP24, but :crypto.mac was added in OTP 22.1
-    # TODO: Remove me when we don't support OTP 21/22 anymore
-    if function_exported?(:crypto, :mac, 4) do
-      :crypto.mac(:hmac, :sha, key, url)
-    else
-      :crypto.hmac(:sha, key, url)
-    end
+    :crypto.mac(:hmac, :sha, key, url)
   end
 
   @spec filename(String.t()) :: String.t() | nil

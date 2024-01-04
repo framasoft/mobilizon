@@ -124,6 +124,4 @@ defmodule Mobilizon.Web.Email.Member do
       :ok
     end
   end
-
-  # TODO : def send_confirmation_to_inviter()
 end
