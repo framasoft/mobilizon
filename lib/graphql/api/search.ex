@@ -25,8 +25,8 @@ defmodule Mobilizon.GraphQL.API.Search do
 
     cond do
       # Some URLs could be domain.tld/@username, so keep this condition above
-      # the `is_handle` function
-      is_url(term) ->
+      # the `handle?` function
+      url?(term) ->
         # skip, if it's not an actor
         case process_from_url(term) do
           %Page{total: _total, elements: [%Actor{} = _actor]} = page ->
@@ -36,11 +36,11 @@ defmodule Mobilizon.GraphQL.API.Search do
             {:ok, %{total: 0, elements: []}}
         end
 
-      is_handle(term) ->
+      handle?(term) ->
         {:ok, process_from_username(term)}
 
       true ->
-        if is_global_search(args) do
+        if global_search?(args) do
           service = GlobalSearch.service()
 
           {:ok, service.search_groups(Keyword.new(args, fn {k, v} -> {k, v} end))}
@@ -75,7 +75,7 @@ defmodule Mobilizon.GraphQL.API.Search do
   def search_events(%{term: term} = args, page \\ 1, limit \\ 10) do
     term = String.trim(term)
 
-    if is_url(term) do
+    if url?(term) do
       # skip, if it's not an event
       case process_from_url(term) do
         %Page{total: _total, elements: [%Event{} = event]} = page ->
@@ -89,7 +89,7 @@ defmodule Mobilizon.GraphQL.API.Search do
           {:ok, %{total: 0, elements: []}}
       end
     else
-      if is_global_search(args) do
+      if global_search?(args) do
         service = GlobalSearch.service()
 
         {:ok, service.search_events(Keyword.new(args, fn {k, v} -> {k, v} end))}
@@ -140,17 +140,17 @@ defmodule Mobilizon.GraphQL.API.Search do
     end
   end
 
-  @spec is_url(String.t()) :: boolean
-  defp is_url(search), do: String.starts_with?(search, ["http://", "https://"])
+  @spec url?(String.t()) :: boolean
+  defp url?(search), do: String.starts_with?(search, ["http://", "https://"])
 
-  @spec is_handle(String.t()) :: boolean
-  defp is_handle(search), do: String.match?(search, ~r/@/)
+  @spec handle?(String.t()) :: boolean
+  defp handle?(search), do: String.match?(search, ~r/@/)
 
-  defp is_global_search(%{search_target: :global}) do
+  defp global_search?(%{search_target: :global}) do
     global_search_enabled?()
   end
 
-  defp is_global_search(_), do: global_search_enabled?() && global_search_default?()
+  defp global_search?(_), do: global_search_enabled?() && global_search_default?()
 
   defp global_search_enabled? do
     Application.get_env(:mobilizon, :search) |> get_in([:global]) |> get_in([:is_enabled])

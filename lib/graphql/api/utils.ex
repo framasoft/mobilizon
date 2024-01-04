@@ -68,6 +68,6 @@ defmodule Mobilizon.GraphQL.API.Utils do
 
   @spec check_actor_owns_media?(integer() | String.t(), integer() | String.t()) :: boolean()
   defp check_actor_owns_media?(actor_id, media_actor_id) do
-    actor_id == media_actor_id || Mobilizon.Actors.is_member?(media_actor_id, actor_id)
+    actor_id == media_actor_id || Mobilizon.Actors.member?(media_actor_id, actor_id)
   end
 end

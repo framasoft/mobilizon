@@ -14,17 +14,17 @@ defmodule Mobilizon.Federation.ActivityPub.Visibility do
 
   @public "https://www.w3.org/ns/activitystreams#Public"
 
-  @spec is_public?(Activity.t() | map()) :: boolean()
-  def is_public?(%{data: %{"type" => "Tombstone"}}), do: false
-  def is_public?(%{data: data}), do: is_public?(data)
-  def is_public?(%Activity{data: data}), do: is_public?(data)
+  @spec public?(Activity.t() | map()) :: boolean()
+  def public?(%{data: %{"type" => "Tombstone"}}), do: false
+  def public?(%{data: data}), do: public?(data)
+  def public?(%Activity{data: data}), do: public?(data)
 
-  def is_public?(data) when is_map(data) do
+  def public?(data) when is_map(data) do
     @public in make_list(Map.get(data, "to", []))
   end
 
-  def is_public?(%Comment{deleted_at: deleted_at}), do: !is_nil(deleted_at)
-  def is_public?(err), do: raise(ArgumentError, message: "Invalid argument #{inspect(err)}")
+  def public?(%Comment{deleted_at: deleted_at}), do: !is_nil(deleted_at)
+  def public?(err), do: raise(ArgumentError, message: "Invalid argument #{inspect(err)}")
 
   defp make_list(data) when is_list(data), do: data
   defp make_list(data), do: [data]

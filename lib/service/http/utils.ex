@@ -13,8 +13,8 @@ defmodule Mobilizon.Service.HTTP.Utils do
     end
   end
 
-  @spec is_content_type?(Enum.t(), String.t() | list(String.t())) :: boolean
-  def is_content_type?(headers, content_type) do
+  @spec content_type_matches?(Enum.t(), String.t() | list(String.t())) :: boolean
+  def content_type_matches?(headers, content_type) do
     headers
     |> get_header("Content-Type")
     |> content_type_header_matches(content_type)

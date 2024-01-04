@@ -23,7 +23,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Discussion do
           }
         }
       ) do
-    with {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
+    with {:member, true} <- {:member, Actors.member?(actor_id, group_id)},
          {:ok, %Actor{type: :Group} = group} <- Actors.get_group_by_actor_id(group_id) do
       {:ok, Discussions.find_discussions_for_actor(group, page, limit)}
     else
@@ -45,7 +45,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Discussion do
       }) do
     case Discussions.get_discussion(id) do
       %Discussion{actor_id: actor_id} = discussion ->
-        if Actors.is_member?(creator_id, actor_id) do
+        if Actors.member?(creator_id, actor_id) do
           {:ok, discussion}
         else
           {:error, :unauthorized}
@@ -63,7 +63,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Discussion do
       }) do
     with %Discussion{actor_id: actor_id} = discussion <-
            Discussions.get_discussion_by_slug(slug),
-         {:member, true} <- {:member, Actors.is_member?(creator_id, actor_id)} do
+         {:member, true} <- {:member, Actors.member?(creator_id, actor_id)} do
       {:ok, discussion}
     else
       nil -> {:error, dgettext("errors", "Discussion not found")}
@@ -105,7 +105,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Discussion do
           }
         }
       ) do
-    if Actors.is_member?(creator_id, group_id) do
+    if Actors.member?(creator_id, group_id) do
       case Comments.create_discussion(%{
              title: title,
              text: text,
@@ -150,7 +150,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Discussion do
             }
           } = _discussion} <-
            {:no_discussion, Discussions.get_discussion(discussion_id)},
-         {:member, true} <- {:member, Actors.is_member?(creator_id, actor_id)},
+         {:member, true} <- {:member, Actors.member?(creator_id, actor_id)},
          {:ok, _activity, %Discussion{} = discussion} <-
            Comments.create_discussion(%{
              text: text,
@@ -183,7 +183,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Discussion do
       ) do
     with {:no_discussion, %Discussion{actor_id: actor_id} = discussion} <-
            {:no_discussion, Discussions.get_discussion(discussion_id)},
-         {:member, true} <- {:member, Actors.is_member?(creator_id, actor_id)},
+         {:member, true} <- {:member, Actors.member?(creator_id, actor_id)},
          {:ok, _activity, %Discussion{} = discussion} <-
            Actions.Update.update(
              discussion,
@@ -213,7 +213,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Discussion do
       }) do
     with {:no_discussion, %Discussion{actor_id: actor_id} = discussion} <-
            {:no_discussion, Discussions.get_discussion(discussion_id)},
-         {:member, true} <- {:member, Actors.is_member?(creator_id, actor_id)},
+         {:member, true} <- {:member, Actors.member?(creator_id, actor_id)},
          {:ok, _activity, %Discussion{} = discussion} <-
            Actions.Delete.delete(discussion, actor) do
       {:ok, discussion}

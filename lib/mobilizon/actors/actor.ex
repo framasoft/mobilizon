@@ -209,8 +209,8 @@ defmodule Mobilizon.Actors.Actor do
   @doc """
   Checks whether actor visibility is public.
   """
-  @spec is_public_visibility?(t) :: boolean
-  def is_public_visibility?(%__MODULE__{visibility: visibility}) do
+  @spec public_visibility?(t) :: boolean
+  def public_visibility?(%__MODULE__{visibility: visibility}) do
     visibility in [:public, :unlisted]
   end
 

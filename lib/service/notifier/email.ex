@@ -12,8 +12,8 @@ defmodule Mobilizon.Service.Notifier.Email do
 
   import Mobilizon.Service.DateTime,
     only: [
-      is_delay_ok_since_last_notification_sent?: 1,
-      is_delay_ok_since_last_notification_sent?: 2
+      delay_ok_since_last_notification_sent?: 1,
+      delay_ok_since_last_notification_sent?: 2
     ]
 
   require Logger
@@ -129,7 +129,7 @@ defmodule Mobilizon.Service.Notifier.Email do
 
   # Delay ok since last notification
   defp match_group_notifications_setting(:one_hour, _, %DateTime{} = last_notification_sent, _) do
-    is_delay_ok_since_last_notification_sent?(last_notification_sent)
+    delay_ok_since_last_notification_sent?(last_notification_sent)
   end
 
   # Delay ok since last notification
@@ -139,7 +139,7 @@ defmodule Mobilizon.Service.Notifier.Email do
          %DateTime{} = last_notification_sent,
          options
        ) do
-    is_delay_ok_since_last_notification_sent?(last_notification_sent, 3_600 * 23) and
+    delay_ok_since_last_notification_sent?(last_notification_sent, 3_600 * 23) and
       Keyword.get(options, :recap, false) != false
   end
 
@@ -149,7 +149,7 @@ defmodule Mobilizon.Service.Notifier.Email do
          %DateTime{} = last_notification_sent,
          options
        ) do
-    is_delay_ok_since_last_notification_sent?(last_notification_sent, 3_600 * 24 * 6) and
+    delay_ok_since_last_notification_sent?(last_notification_sent, 3_600 * 24 * 6) and
       Keyword.get(options, :recap, false) != false
   end
 

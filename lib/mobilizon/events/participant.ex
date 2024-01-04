@@ -49,8 +49,8 @@ defmodule Mobilizon.Events.Participant do
   We start by fetching the list of organizers and if there's only one of them
   and that it's the actor requesting leaving the event we return true.
   """
-  @spec is_not_only_organizer(integer | String.t(), integer | String.t()) :: boolean
-  def is_not_only_organizer(event_id, actor_id) do
+  @spec not_only_organizer?(integer | String.t(), integer | String.t()) :: boolean
+  def not_only_organizer?(event_id, actor_id) do
     case Events.list_organizers_participants_for_event(event_id) do
       [%__MODULE__{actor: %Actor{id: participant_actor_id}}] ->
         participant_actor_id == actor_id

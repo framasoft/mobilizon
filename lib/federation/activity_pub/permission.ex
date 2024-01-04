@@ -44,13 +44,13 @@ defmodule Mobilizon.Federation.ActivityPub.Permission do
       ) do
     case object |> Ownable.permissions() |> get_in([:create]) do
       :member ->
-        Actors.is_member?(actor_id, group_id)
+        Actors.member?(actor_id, group_id)
 
       :moderator ->
-        Actors.is_moderator?(actor_id, group_id)
+        Actors.moderator?(actor_id, group_id)
 
       :administrator ->
-        Actors.is_administrator?(actor_id, group_id)
+        Actors.administrator?(actor_id, group_id)
 
       _ ->
         false
@@ -122,21 +122,21 @@ defmodule Mobilizon.Federation.ActivityPub.Permission do
               "Checking if activity actor #{actor_url} is a moderator from group from #{object.url}"
             )
 
-            Actors.is_moderator?(actor_id, group_id)
+            Actors.moderator?(actor_id, group_id)
 
           :administrator ->
             Logger.debug(
               "Checking if activity actor #{actor_url} is an administrator from group from #{object.url}"
             )
 
-            Actors.is_administrator?(actor_id, group_id)
+            Actors.administrator?(actor_id, group_id)
 
           _ ->
             Logger.debug(
               "Checking if activity actor #{actor_url} is a member from group from #{object.url}"
             )
 
-            Actors.is_member?(actor_id, group_id)
+            Actors.member?(actor_id, group_id)
         end
 
       _ ->

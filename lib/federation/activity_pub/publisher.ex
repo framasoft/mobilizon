@@ -21,10 +21,10 @@ defmodule Mobilizon.Federation.ActivityPub.Publisher do
     Logger.debug("Publishing an activity")
     Logger.debug(inspect(activity, pretty: true))
 
-    public = Visibility.is_public?(activity)
+    public = Visibility.public?(activity)
     Logger.debug("is public ? #{public}")
 
-    if public && is_create_activity?(activity) && Config.get([:instance, :allow_relay]) do
+    if public && create_activity?(activity) && Config.get([:instance, :allow_relay]) do
       Logger.info(fn -> "Relaying #{activity.data["id"]} out" end)
 
       Relay.publish(activity)
@@ -125,9 +125,9 @@ defmodule Mobilizon.Federation.ActivityPub.Publisher do
     end)
   end
 
-  @spec is_create_activity?(Activity.t()) :: boolean
-  defp is_create_activity?(%Activity{data: %{"type" => "Create"}}), do: true
-  defp is_create_activity?(_), do: false
+  @spec create_activity?(Activity.t()) :: boolean
+  defp create_activity?(%Activity{data: %{"type" => "Create"}}), do: true
+  defp create_activity?(_), do: false
 
   @spec convert_members_in_recipients(list(String.t())) :: {list(String.t()), list(Actor.t())}
   defp convert_members_in_recipients(recipients) do

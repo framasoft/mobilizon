@@ -25,7 +25,7 @@ defmodule Mobilizon.Web.EmailView do
   defdelegate datetime_tz_convert(datetime, timezone), to: DateTimeRenderer
   defdelegate datetime_relative(datetime, locale \\ "en"), to: DateTimeRenderer
   defdelegate render_address(address), to: Address
-  defdelegate is_same_day?(one, two), to: DateTimeRenderer
+  defdelegate same_day?(one, two), to: DateTimeRenderer
   defdelegate display_name(actor), to: Actor
   defdelegate preferred_username_and_domain(actor), to: Actor
 

@@ -5,7 +5,7 @@ defmodule Mobilizon.Federation.NodeInfo do
 
   alias Mobilizon.Service.HTTP.WebfingerClient
   require Logger
-  import Mobilizon.Service.HTTP.Utils, only: [is_content_type?: 2]
+  import Mobilizon.Service.HTTP.Utils, only: [content_type_matches?: 2]
 
   @application_uri "https://www.w3.org/ns/activitystreams#Application"
   @nodeinfo_rel_2_0 "http://nodeinfo.diaspora.software/ns/schema/2.0"
@@ -110,7 +110,7 @@ defmodule Mobilizon.Federation.NodeInfo do
           {:ok, String.t()} | {:error, :bad_content_type | :body_not_json}
   defp validate_json_response(body, headers) do
     cond do
-      !is_content_type?(headers, "application/json") ->
+      !content_type_matches?(headers, "application/json") ->
         {:error, :bad_content_type}
 
       !is_map(body) ->

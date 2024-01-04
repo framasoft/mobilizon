@@ -55,9 +55,10 @@ defmodule Mobilizon.Actors.Member do
   @doc """
   Checks whether the member is an administrator (admin or creator) of the group.
   """
-  def is_administrator(%__MODULE__{role: :administrator}), do: true
-  def is_administrator(%__MODULE__{role: :creator}), do: true
-  def is_administrator(%__MODULE__{}), do: false
+  @spec administrator?(t()) :: boolean()
+  def administrator?(%__MODULE__{role: :administrator}), do: true
+  def administrator?(%__MODULE__{role: :creator}), do: true
+  def administrator?(%__MODULE__{}), do: false
 
   @doc false
   @spec changeset(t | Ecto.Schema.t(), map) :: Ecto.Changeset.t()

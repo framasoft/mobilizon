@@ -23,7 +23,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Followers do
       ) do
     followers = group_followers(group, args)
 
-    if Actors.is_moderator?(actor_id, group_id) or is_moderator(user_role) do
+    if Actors.moderator?(actor_id, group_id) or is_moderator(user_role) do
       {:ok, followers}
     else
       {:ok, %Page{followers | elements: []}}
@@ -48,7 +48,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Followers do
     with %Follower{target_actor: %Actor{type: :Group, id: group_id}} = follower <-
            Actors.get_follower(follower_id),
          {:member, true} <-
-           {:member, Actors.is_moderator?(actor_id, group_id)},
+           {:member, Actors.moderator?(actor_id, group_id)},
          {:ok, _activity, %Follower{} = follower} <-
            (if approved do
               Actions.Accept.accept(:follow, follower)

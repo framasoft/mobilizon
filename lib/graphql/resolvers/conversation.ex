@@ -26,7 +26,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Conversation do
         }
       )
       when not is_nil(attributed_to_id) do
-    if Actors.is_member?(actor_id, attributed_to_id) do
+    if Actors.member?(actor_id, attributed_to_id) do
       {:ok,
        event_id
        |> Conversations.find_conversations_for_event(attributed_to_id, page, limit)
@@ -103,7 +103,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Conversation do
         {:error, :not_found}
 
       %ConversationParticipant{actor_id: actor_id} = conversation_participant ->
-        if actor_id == performing_actor_id or Actors.is_member?(performing_actor_id, actor_id) do
+        if actor_id == performing_actor_id or Actors.member?(performing_actor_id, actor_id) do
           {:ok, conversation_participant_to_view(conversation_participant)}
         else
           {:error, :not_found}
@@ -121,7 +121,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Conversation do
         }
       ) do
     if conversation_actor_id == performing_actor_id or
-         Actors.is_member?(performing_actor_id, conversation_actor_id) do
+         Actors.member?(performing_actor_id, conversation_actor_id) do
       {:ok,
        Mobilizon.Discussions.get_comments_in_reply_to_comment_id(origin_comment_id, page, limit)}
     else
@@ -184,7 +184,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Conversation do
          {:valid_actor, true} <-
            {:valid_actor,
             actor_id == current_actor_id or
-              Actors.is_member?(current_actor_id, actor_id)},
+              Actors.member?(current_actor_id, actor_id)},
          {:ok, %ConversationParticipant{} = conversation_participant} <-
            Conversations.update_conversation_participant(conversation_participant, %{
              unread: !read
@@ -269,7 +269,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Conversation do
 
         to_string(current_actor_id) in participant_ids or
           Enum.any?(participant_ids, fn participant_id ->
-            Actors.is_member?(current_actor_id, participant_id) and
+            Actors.member?(current_actor_id, participant_id) and
               attributed_to_id == participant_id
           end)
     end

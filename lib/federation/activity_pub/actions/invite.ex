@@ -25,7 +25,7 @@ defmodule Mobilizon.Federation.ActivityPub.Actions.Invite do
       ) do
     Logger.debug("Handling #{actor_url} invite to #{group_url} sent to #{target_actor_url}")
 
-    if is_able_to_invite?(actor, group) do
+    if able_to_invite?(actor, group) do
       with {:ok, %Member{url: member_url} = member} <-
              Actors.create_member(%{
                parent_id: group_id,
@@ -64,8 +64,8 @@ defmodule Mobilizon.Federation.ActivityPub.Actions.Invite do
     end
   end
 
-  @spec is_able_to_invite?(Actor.t(), Actor.t()) :: boolean
-  defp is_able_to_invite?(%Actor{domain: actor_domain, id: actor_id}, %Actor{
+  @spec able_to_invite?(Actor.t(), Actor.t()) :: boolean
+  defp able_to_invite?(%Actor{domain: actor_domain, id: actor_id}, %Actor{
          domain: group_domain,
          id: group_id
        }) do
@@ -76,7 +76,7 @@ defmodule Mobilizon.Federation.ActivityPub.Actions.Invite do
       # If local group, we'll send the invite
       case Actors.get_member(actor_id, group_id) do
         {:ok, %Member{} = admin_member} ->
-          Member.is_administrator(admin_member)
+          Member.administrator?(admin_member)
 
         _ ->
           false

@@ -15,7 +15,7 @@
         document.documentElement.classList.remove('dark')
       }
     </script>
-    <%= if is_root(assigns) do %>
+    <%= if root?(assigns) do %>
       <link rel="preload" href="/img/shape-1.svg" as="image" />
       <link rel="preload" href="/img/shape-2.svg" as="image" />
       <link rel="preload" href="/img/shape-3.svg" as="image" />

@@ -710,8 +710,8 @@ defmodule Mobilizon.Actors do
   @doc """
   Returns whether the `actor_id` is a confirmed member for the group `parent_id`
   """
-  @spec is_member?(integer | String.t(), integer | String.t()) :: boolean()
-  def is_member?(actor_id, parent_id) do
+  @spec member?(integer | String.t(), integer | String.t()) :: boolean()
+  def member?(actor_id, parent_id) do
     match?(
       {:ok, %Member{}},
       get_member(actor_id, parent_id, @member_roles)
@@ -721,8 +721,8 @@ defmodule Mobilizon.Actors do
   @doc """
   Returns whether the `actor_id` is a moderator for the group `parent_id`
   """
-  @spec is_moderator?(integer | String.t(), integer | String.t()) :: boolean()
-  def is_moderator?(actor_id, parent_id) do
+  @spec moderator?(integer | String.t(), integer | String.t()) :: boolean()
+  def moderator?(actor_id, parent_id) do
     match?(
       {:ok, %Member{}},
       get_member(actor_id, parent_id, @moderator_roles)
@@ -732,8 +732,8 @@ defmodule Mobilizon.Actors do
   @doc """
   Returns whether the `actor_id` is an administrator for the group `parent_id`
   """
-  @spec is_administrator?(integer | String.t(), integer | String.t()) :: boolean()
-  def is_administrator?(actor_id, parent_id) do
+  @spec administrator?(integer | String.t(), integer | String.t()) :: boolean()
+  def administrator?(actor_id, parent_id) do
     match?(
       {:ok, %Member{}},
       get_member(actor_id, parent_id, @administrator_roles)
@@ -922,8 +922,8 @@ defmodule Mobilizon.Actors do
   @doc """
   Returns whether the member is the last administrator for a group
   """
-  @spec is_only_administrator?(integer | String.t(), integer | String.t()) :: boolean()
-  def is_only_administrator?(member_id, group_id) do
+  @spec only_administrator?(integer | String.t(), integer | String.t()) :: boolean()
+  def only_administrator?(member_id, group_id) do
     Member
     |> where(
       [m],
