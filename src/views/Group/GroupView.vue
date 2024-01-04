@@ -1086,7 +1086,10 @@ const physicalAddress = computed((): Address | null => {
 });
 
 const ableToReport = computed((): boolean => {
-  return anonymousReportsConfig.value?.allowed === true;
+  return (
+    currentActor.value?.id !== undefined ||
+    anonymousReportsConfig.value?.allowed === true
+  );
 });
 
 const organizedEvents = computed((): Paginate<IEvent> => {
