@@ -269,6 +269,20 @@ watch([filterDomain, followStatus], () => {
 
 const instances = computed(() => instancesResult.value?.instances);
 
+const instancesTotal = computed(() => instancesResult.value?.instances.total);
+const currentPageInstancesNumber = computed(
+  () => instancesResult.value?.instances.elements.length
+);
+
+// If we didn't found any instances on this page
+watch(instancesTotal, (newInstancesTotal) => {
+  if (newInstancesTotal === 0) {
+    instancePage.value = 1;
+  } else if (currentPageInstancesNumber.value === 0) {
+    instancePage.value = instancePage.value - 1;
+  }
+});
+
 const { t } = useI18n({ useScope: "global" });
 useHead({
   title: computed(() => t("Federation")),
