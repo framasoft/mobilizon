@@ -54,15 +54,14 @@
           >
         </o-field>
         <o-field
-          :label="t('Domain')"
+          :label="t('Domain or instance name')"
           label-for="domain-filter"
           class="flex-auto"
         >
           <o-input
             id="domain-filter"
             :placeholder="t('mobilizon-instance.tld')"
-            :value="filterDomain"
-            @input="debouncedUpdateDomainFilter"
+            v-model="filterDomain"
           />
         </o-field>
       </div>
@@ -223,7 +222,6 @@ import { Paginate } from "@/types/paginate";
 import RouteName from "../../router/name";
 import { IInstance } from "@/types/instance.model";
 import EmptyContent from "@/components/Utils/EmptyContent.vue";
-import debounce from "lodash/debounce";
 import {
   InstanceFilterFollowStatus,
   InstanceFollowStatus,
@@ -254,12 +252,16 @@ const followStatus = useRouteQuery(
 
 const { result: instancesResult } = useQuery<{
   instances: Paginate<IInstance>;
-}>(INSTANCES, () => ({
-  page: instancePage.value,
-  limit: INSTANCES_PAGE_LIMIT,
-  filterDomain: filterDomain.value,
-  filterFollowStatus: followStatus.value,
-}));
+}>(
+  INSTANCES,
+  () => ({
+    page: instancePage.value,
+    limit: INSTANCES_PAGE_LIMIT,
+    filterDomain: filterDomain.value,
+    filterFollowStatus: followStatus.value,
+  }),
+  { debounce: 500 }
+);
 
 const instances = computed(() => instancesResult.value?.instances);
 
@@ -275,13 +277,6 @@ const newRelayAddress = ref("");
 // relayFollowings: Paginate<IFollower> = { elements: [], total: 0 };
 
 // relayFollowers: Paginate<IFollower> = { elements: [], total: 0 };
-
-const updateDomainFilter = (event: InputEvent) => {
-  const newValue = (event.target as HTMLInputElement).value;
-  filterDomain.value = newValue;
-};
-
-const debouncedUpdateDomainFilter = debounce(updateDomainFilter, 500);
 
 const hasFilter = computed((): boolean => {
   return (

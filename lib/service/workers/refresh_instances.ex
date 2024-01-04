@@ -13,6 +13,7 @@ defmodule Mobilizon.Service.Workers.RefreshInstances do
   alias Mobilizon.Instances.{Instance, InstanceActor}
   alias Oban.Job
   require Logger
+  import Mobilizon.Storage.Ecto, only: [convert_ecto_errors: 1]
 
   @impl Oban.Worker
   @spec perform(Oban.Job.t()) :: :ok
@@ -56,6 +57,10 @@ defmodule Mobilizon.Service.Workers.RefreshInstances do
              Instances.create_instance_actor(args) do
         Logger.info("Saved instance actor details for domain #{host}")
       else
+        {:error, %Ecto.Changeset{} = changeset} ->
+          Logger.error("Unable to save instance \"#{domain}\" metadata")
+          Logger.debug(convert_ecto_errors(changeset))
+
         err ->
           Logger.error(inspect(err))
       end

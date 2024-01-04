@@ -93,7 +93,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Members do
           atom()
         ) :: boolean
   defp check_admins_left?(member_id, group_id, current_role, updated_role) do
-    Actors.is_only_administrator?(member_id, group_id) && current_role == :administrator &&
+    Actors.only_administrator?(member_id, group_id) && current_role == :administrator &&
       updated_role != :administrator
   end
 end

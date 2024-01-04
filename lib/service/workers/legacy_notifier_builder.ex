@@ -81,7 +81,7 @@ defmodule Mobilizon.Service.Workers.LegacyNotifierBuilder do
          options
        ) do
     mentionned_actor_ids
-    |> Enum.filter(&Actors.is_member?(&1, Keyword.fetch!(options, :group_id)))
+    |> Enum.filter(&Actors.member?(&1, Keyword.fetch!(options, :group_id)))
     |> users_from_actor_ids(Keyword.fetch!(options, :author_id))
   end
 

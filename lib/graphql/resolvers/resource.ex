@@ -32,7 +32,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Resource do
           }
         } = _resolution
       ) do
-    with {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
+    with {:member, true} <- {:member, Actors.member?(actor_id, group_id)},
          %Page{} = page <- Resources.get_resources_for_group(group, page, limit) do
       {:ok, page}
     else
@@ -60,7 +60,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Resource do
           }
         } = _resolution
       ) do
-    with {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
+    with {:member, true} <- {:member, Actors.member?(actor_id, group_id)},
          %Page{} = page <- Resources.get_resources_for_folder(parent, page, limit) do
       {:ok, page}
     end
@@ -83,7 +83,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Resource do
     Logger.debug("Getting resource for group with username #{username}")
 
     with {:group, %Actor{id: group_id}} <- {:group, Actors.get_actor_by_name(username, :Group)},
-         {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
+         {:member, true} <- {:member, Actors.member?(actor_id, group_id)},
          {:resource, %Resource{} = resource} <-
            {:resource, Resources.get_resource_by_group_and_path_with_preloads(group_id, path)} do
       {:ok, resource}
@@ -109,7 +109,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Resource do
           }
         } = _resolution
       ) do
-    if Actors.is_member?(actor_id, group_id) do
+    if Actors.member?(actor_id, group_id) do
       parent = get_eventual_parent(args)
 
       if check_resource_owned_by_group(parent, group_id) do
@@ -155,7 +155,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Resource do
       ) do
     case Resources.get_resource_with_preloads(resource_id) do
       %Resource{actor_id: group_id} = resource ->
-        if Actors.is_member?(actor_id, group_id) do
+        if Actors.member?(actor_id, group_id) do
           case Actions.Update.update(resource, args, true, %{"actor" => actor_url}) do
             {:ok, _, %Resource{} = resource} ->
               {:ok, resource}
@@ -192,7 +192,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Resource do
       ) do
     with {:resource, %Resource{parent_id: _parent_id, actor_id: group_id} = resource} <-
            {:resource, Resources.get_resource_with_preloads(resource_id)},
-         {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
+         {:member, true} <- {:member, Actors.member?(actor_id, group_id)},
          {:ok, _, %Resource{} = resource} <-
            Actions.Delete.delete(resource, actor) do
       {:ok, resource}

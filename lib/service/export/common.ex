@@ -16,7 +16,7 @@ defmodule Mobilizon.Service.Export.Common do
   def fetch_actor_event_feed(name, limit) do
     case Actors.get_actor_by_name(name) do
       %Actor{} = actor ->
-        if Actor.is_public_visibility?(actor) do
+        if Actor.public_visibility?(actor) do
           %Page{elements: events} = Events.list_public_upcoming_events_for_actor(actor, 1, limit)
           %Page{elements: posts} = Posts.get_public_posts_for_group(actor, 1, limit)
           {:ok, actor, events, posts}

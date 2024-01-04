@@ -216,7 +216,7 @@ defmodule Mobilizon.Service.Export.ICalendar do
   end
 
   defp clear_actor_feed(%Actor{preferred_username: preferred_username} = actor) do
-    if Actor.is_public_visibility?(actor) do
+    if Actor.public_visibility?(actor) do
       Cachex.del(:ics, "actor_#{preferred_username}")
     end
   end

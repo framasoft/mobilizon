@@ -18,7 +18,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Activity do
   def group_activity(%Actor{type: :Group, id: group_id}, %{page: page, limit: limit} = args, %{
         context: %{current_user: %User{role: role}, current_actor: %Actor{id: actor_id}}
       }) do
-    if Actors.is_member?(actor_id, group_id) or is_moderator(role) do
+    if Actors.member?(actor_id, group_id) or is_moderator(role) do
       %Page{total: total, elements: elements} =
         Activities.list_group_activities_for_member(
           group_id,

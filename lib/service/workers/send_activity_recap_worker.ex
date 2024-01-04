@@ -16,7 +16,7 @@ defmodule Mobilizon.Service.Workers.SendActivityRecapWorker do
     only: [
       is_between_hours?: 1,
       is_between_hours_on_first_day?: 1,
-      is_delay_ok_since_last_notification_sent?: 1
+      delay_ok_since_last_notification_sent?: 1
     ]
 
   @impl Oban.Worker
@@ -108,7 +108,7 @@ defmodule Mobilizon.Service.Workers.SendActivityRecapWorker do
       "Testing if it's less than an hour since the last time we sent an activity recap"
     )
 
-    is_delay_ok_since_last_notification_sent?(last_notification_sent)
+    delay_ok_since_last_notification_sent?(last_notification_sent)
   end
 
   # If we're between notification hours

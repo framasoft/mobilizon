@@ -515,8 +515,8 @@ defmodule Mobilizon.Events do
     |> Page.build_page(page, limit)
   end
 
-  @spec is_user_moderator_for_event?(integer | String.t(), integer | String.t()) :: boolean
-  def is_user_moderator_for_event?(user_id, event_id) do
+  @spec user_moderator_for_event?(integer | String.t(), integer | String.t()) :: boolean
+  def user_moderator_for_event?(user_id, event_id) do
     Participant
     |> join(:inner, [p], a in Actor, on: p.actor_id == a.id)
     |> where([p, _a], p.event_id == ^event_id)
@@ -1492,14 +1492,14 @@ defmodule Mobilizon.Events do
   end
 
   @spec filter_online(Ecto.Query.t(), map()) :: Ecto.Query.t()
-  defp filter_online(query, %{type: :online}), do: is_online_fragment(query, true)
+  defp filter_online(query, %{type: :online}), do: online_fragment_check(query, true)
 
-  defp filter_online(query, %{type: :in_person}), do: is_online_fragment(query, false)
+  defp filter_online(query, %{type: :in_person}), do: online_fragment_check(query, false)
 
   defp filter_online(query, _), do: query
 
-  @spec is_online_fragment(Ecto.Query.t(), boolean()) :: Ecto.Query.t()
-  defp is_online_fragment(query, value) do
+  @spec online_fragment_check(Ecto.Query.t(), boolean()) :: Ecto.Query.t()
+  defp online_fragment_check(query, value) do
     where(query, [q], fragment("(?->>'is_online')::bool = ?", q.options, ^value))
   end
 

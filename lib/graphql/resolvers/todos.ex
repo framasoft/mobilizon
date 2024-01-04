@@ -26,7 +26,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Todos do
           context: %{current_actor: %Actor{id: actor_id}}
         } = _resolution
       ) do
-    with {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
+    with {:member, true} <- {:member, Actors.member?(actor_id, group_id)},
          %Page{} = page <- Todos.get_todo_lists_for_group(group, page, limit) do
       {:ok, page}
     else
@@ -50,7 +50,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Todos do
           context: %{current_actor: %Actor{id: actor_id}}
         } = _resolution
       ) do
-    with {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
+    with {:member, true} <- {:member, Actors.member?(actor_id, group_id)},
          %Page{} = page <- Todos.get_todos_for_todo_list(todo_list, page, limit) do
       {:ok, page}
     else
@@ -70,7 +70,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Todos do
       ) do
     with {:todo, %TodoList{actor_id: group_id} = todo} <-
            {:todo, Todos.get_todo_list(todo_list_id)},
-         {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)} do
+         {:member, true} <- {:member, Actors.member?(actor_id, group_id)} do
       {:ok, todo}
     else
       {:todo, nil} ->
@@ -93,7 +93,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Todos do
           context: %{current_actor: %Actor{id: actor_id}}
         } = _resolution
       ) do
-    with {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
+    with {:member, true} <- {:member, Actors.member?(actor_id, group_id)},
          {:ok, _, %TodoList{} = todo_list} <-
            Actions.Create.create(
              :todo_list,
@@ -121,7 +121,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Todos do
   #   with {:is_owned, %Actor{} = actor} <- User.owns_actor(user, actor_id),
   #        {:todo_list, %TodoList{actor_id: group_id} = todo_list} <-
   #          {:todo_list, Todos.get_todo_list(todo_list_id)},
-  #        {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
+  #        {:member, true} <- {:member, Actors.member?(actor_id, group_id)},
   #        {:ok, _, %TodoList{} = todo} <-
   #          Actions.Update.update_todo_list(todo_list, actor, true, %{}) do
   #     {:ok, todo}
@@ -144,7 +144,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Todos do
   #   with {:is_owned, %Actor{} = actor} <- User.owns_actor(user, actor_id),
   #        {:todo_list, %TodoList{actor_id: group_id} = todo_list} <-
   #          {:todo_list, Todos.get_todo_list(todo_list_id)},
-  #        {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
+  #        {:member, true} <- {:member, Actors.member?(actor_id, group_id)},
   #        {:ok, _, %TodoList{} = todo} <-
   #          Actions.Delete.delete_todo_list(todo_list, actor, true, %{}) do
   #     {:ok, todo}
@@ -169,7 +169,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Todos do
            {:todo, Todos.get_todo(todo_id)},
          {:todo_list, %TodoList{actor_id: group_id}} <-
            {:todo_list, Todos.get_todo_list(todo_list_id)},
-         {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)} do
+         {:member, true} <- {:member, Actors.member?(actor_id, group_id)} do
       {:ok, todo}
     else
       {:todo, nil} ->
@@ -194,7 +194,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Todos do
       ) do
     with {:todo_list, %TodoList{actor_id: group_id} = _todo_list} <-
            {:todo_list, Todos.get_todo_list(todo_list_id)},
-         {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
+         {:member, true} <- {:member, Actors.member?(actor_id, group_id)},
          {:ok, _, %Todo{} = todo} <-
            Actions.Create.create(
              :todo,
@@ -228,7 +228,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Todos do
            {:todo, Todos.get_todo(todo_id)},
          {:todo_list, %TodoList{actor_id: group_id}} <-
            {:todo_list, Todos.get_todo_list(todo_list_id)},
-         {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
+         {:member, true} <- {:member, Actors.member?(actor_id, group_id)},
          {:ok, _, %Todo{} = todo} <-
            Actions.Update.update(todo, args, true, %{}) do
       {:ok, todo}
@@ -259,7 +259,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Todos do
   #          {:todo, Todos.get_todo(todo_id)},
   #        {:todo_list, %TodoList{actor_id: group_id}} <-
   #          {:todo_list, Todos.get_todo_list(todo_list_id)},
-  #        {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
+  #        {:member, true} <- {:member, Actors.member?(actor_id, group_id)},
   #        {:ok, _, %Todo{} = todo} <-
   #          Actions.Delete.delete_todo(todo, actor, true, %{}) do
   #     {:ok, todo}

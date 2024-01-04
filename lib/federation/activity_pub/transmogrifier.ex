@@ -285,7 +285,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
          object_data when is_map(object_data) <-
            object |> Converter.Resource.as_to_model_data(),
          {:member, true} <-
-           {:member, Actors.is_member?(object_data.creator_id, object_data.actor_id)},
+           {:member, Actors.member?(object_data.creator_id, object_data.actor_id)},
          {:ok, %Activity{} = activity, %Resource{} = resource} <-
            Actions.Create.create(:resource, object_data, false) do
       {:ok, activity, resource}
@@ -1005,14 +1005,14 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   end
 
   # Comment initiates a whole discussion only if it has full title
-  @spec is_data_for_comment_or_discussion?(map()) :: boolean()
-  defp is_data_for_comment_or_discussion?(object_data) do
-    is_data_a_discussion_initialization?(object_data) and
+  @spec data_for_comment_or_discussion?(map()) :: boolean()
+  defp data_for_comment_or_discussion?(object_data) do
+    data_a_discussion_initialization?(object_data) and
       is_nil(object_data.discussion_id)
   end
 
   # Comment initiates a whole discussion only if it has full title
-  defp is_data_a_discussion_initialization?(object_data) do
+  defp data_a_discussion_initialization?(object_data) do
     not Map.has_key?(object_data, :title) or
       is_nil(object_data.title) or object_data.title == ""
   end
@@ -1034,7 +1034,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   @spec transform_object_data_for_discussion(map()) :: map()
   defp transform_object_data_for_discussion(object_data) do
     # Basic comment
-    if is_data_a_discussion_initialization?(object_data) do
+    if data_a_discussion_initialization?(object_data) do
       object_data
     else
       # Conversation
@@ -1138,8 +1138,8 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
     end
   end
 
-  defp is_group_object_gone(object_id) do
-    Logger.debug("is_group_object_gone #{object_id}")
+  defp group_object_gone_check(object_id) do
+    Logger.debug("Checking if group object #{object_id} is gone")
 
     case ActivityPub.fetch_object_from_url(object_id, force: true) do
       # comments are just emptied
@@ -1163,14 +1163,10 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
     end
   end
 
-  # Before 1.0.4 the object of a "Remove" activity was an actor's URL
-  # instead of the member's URL.
-  # TODO: Remove in 1.2
   @spec get_remove_object(map() | String.t()) :: {:ok, integer()}
   defp get_remove_object(object) do
     case object |> Utils.get_url() |> ActivityPub.fetch_object_from_url() do
       {:ok, %Member{actor: %Actor{id: person_id}}} -> {:ok, person_id}
-      {:ok, %Actor{id: person_id}} -> {:ok, person_id}
       _ -> {:error, :remove_object_not_found}
     end
   end
@@ -1196,7 +1192,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   @spec create_comment_or_discussion(map()) ::
           {:ok, Activity.t(), struct()} | {:error, atom() | Ecto.Changeset.t()}
   defp create_comment_or_discussion(object_data) do
-    if is_data_for_comment_or_discussion?(object_data) do
+    if data_for_comment_or_discussion?(object_data) do
       Logger.debug("Chosing to create a regular comment")
       Actions.Create.create(:comment, object_data, false)
     else
@@ -1248,7 +1244,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   end
 
   defp handle_group_being_gone(actor, actor_url, object_id) do
-    case is_group_object_gone(object_id) do
+    case group_object_gone_check(object_id) do
       # The group object is no longer there, we can remove the element
       {:ok, entity} ->
         if Utils.origin_check_from_id?(actor_url, object_id) ||

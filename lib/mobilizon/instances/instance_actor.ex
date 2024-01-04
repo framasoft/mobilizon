@@ -34,6 +34,10 @@ defmodule Mobilizon.Instances.InstanceActor do
     instance_actor
     |> cast(attrs, @attrs)
     |> validate_required(@required_attrs)
+    |> validate_length(:domain, max: 254)
+    |> validate_length(:instance_name, max: 254)
+    |> validate_length(:software, max: 254)
+    |> validate_length(:software_version, max: 254)
     |> unique_constraint(:domain)
   end
 end

@@ -1635,5 +1635,6 @@
   "Announcements for {eventTitle}": "Annonces pour {eventTitle}",
   "Visit {instance_domain}": "Visiter {instance_domain}",
   "Software details: {software_details}": "Détails du logiciel : {software_details}",
-  "Only instances with an application actor can be followed": "Seules les instances avec un acteur application peuvent être suivies"
+  "Only instances with an application actor can be followed": "Seules les instances avec un acteur application peuvent être suivies",
+  "Domain or instance name": "Domaine ou nom de l'instance"
 }

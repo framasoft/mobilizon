@@ -6,7 +6,7 @@
       timezone: @timezone,
       locale: @locale
     ) %>
-  <% is_same_day?(@start_date, @end_date) -> %>
+  <% same_day?(@start_date, @end_date) -> %>
     <strong>
       <%= gettext("On %{date} from %{start_time} to %{end_time}",
         date: datetime_to_date_string(@start_date, @locale),

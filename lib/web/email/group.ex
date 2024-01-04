@@ -87,8 +87,6 @@ defmodule Mobilizon.Web.Email.Group do
     end
   end
 
-  # TODO : def send_confirmation_to_inviter()
-
   @member_roles [:administrator, :moderator, :member]
   @spec send_group_suspension_notification(Member.t()) :: :ok
   def send_group_suspension_notification(%Member{actor: %Actor{user_id: nil}}), do: :ok

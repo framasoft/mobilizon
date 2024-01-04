@@ -34,7 +34,7 @@ defmodule Mobilizon.Federation.ActivityPub.Actions.Leave do
         local,
         additional
       ) do
-    if Participant.is_not_only_organizer(event_id, actor_id) do
+    if Participant.not_only_organizer?(event_id, actor_id) do
       {:error, :is_only_organizer}
     else
       case Mobilizon.Events.get_participant(
@@ -83,7 +83,7 @@ defmodule Mobilizon.Federation.ActivityPub.Actions.Leave do
     case Actors.get_member(actor_id, group_id) do
       {:ok, %Member{id: member_id} = member} ->
         if Map.get(additional, :force_member_removal, false) || group_domain != actor_domain ||
-             !Actors.is_only_administrator?(member_id, group_id) do
+             !Actors.only_administrator?(member_id, group_id) do
           with {:ok, %Member{} = member} <- Actors.delete_member(member) do
             Mobilizon.Service.Activity.Member.insert_activity(member, subject: "member_quit")
 

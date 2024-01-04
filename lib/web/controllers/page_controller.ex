@@ -173,26 +173,26 @@ defmodule Mobilizon.Web.PageController do
     end
   end
 
-  @spec is_visible?(map) :: boolean()
-  defp is_visible?(%{visibility: v}), do: v in [:public, :unlisted]
-  defp is_visible?(%Tombstone{}), do: true
-  defp is_visible?(_), do: true
+  @spec visible?(map) :: boolean()
+  defp visible?(%{visibility: v}), do: v in [:public, :unlisted]
+  defp visible?(%Tombstone{}), do: true
+  defp visible?(_), do: true
 
   @spec ok_status?(cache_status) :: boolean()
   defp ok_status?(status), do: status in [:ok, :commit]
 
   @typep cache_status :: :ok | :commit | :ignore
 
-  @spec ok_status_and_is_visible?(Plug.Conn.t(), cache_status, map()) :: boolean()
-  defp ok_status_and_is_visible?(_conn, status, o),
-    do: ok_status?(status) and is_visible?(o)
+  @spec ok_status_and_visible?(Plug.Conn.t(), cache_status, map()) :: boolean()
+  defp ok_status_and_visible?(_conn, status, o),
+    do: ok_status?(status) and visible?(o)
 
   defp checks?(conn, status, o) do
     cond do
-      ok_status_and_is_visible?(conn, status, o) ->
-        if is_local?(o) == :remote && get_format(conn) == "activity-json", do: :remote, else: true
+      ok_status_and_visible?(conn, status, o) ->
+        if local?(o) == :remote && get_format(conn) == "activity-json", do: :remote, else: true
 
-      is_person?(o) && get_format(conn) == "activity-json" ->
+      person?(o) && get_format(conn) == "activity-json" ->
         true
 
       true ->
@@ -200,9 +200,9 @@ defmodule Mobilizon.Web.PageController do
     end
   end
 
-  @spec is_local?(map()) :: boolean | :remote
-  defp is_local?(%{local: local}), do: if(local, do: true, else: :remote)
-  defp is_local?(_), do: false
+  @spec local?(map()) :: boolean | :remote
+  defp local?(%{local: local}), do: if(local, do: true, else: :remote)
+  defp local?(_), do: false
 
   @spec maybe_add_noindex_header(Plug.Conn.t(), map()) :: Plug.Conn.t()
   defp maybe_add_noindex_header(conn, %{visibility: visibility})
@@ -212,9 +212,9 @@ defmodule Mobilizon.Web.PageController do
 
   defp maybe_add_noindex_header(conn, _), do: conn
 
-  @spec is_person?(Actor.t()) :: boolean()
-  defp is_person?(%Actor{type: :Person}), do: true
-  defp is_person?(_), do: false
+  @spec person?(Actor.t()) :: boolean()
+  defp person?(%Actor{type: :Person}), do: true
+  defp person?(_), do: false
 
   defp maybe_add_content_type_header(conn) do
     case get_format(conn) do

@@ -26,7 +26,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
           context: %{current_user: %User{role: user_role}, current_actor: %Actor{id: actor_id}}
         } = _resolution
       ) do
-    if Actors.is_member?(actor_id, group_id) or is_moderator(user_role) do
+    if Actors.member?(actor_id, group_id) or is_moderator(user_role) do
       roles =
         case roles do
           "" ->

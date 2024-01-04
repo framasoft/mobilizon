@@ -11,9 +11,7 @@ defmodule Mobilizon.Service.RichMedia.Parser do
     max_body: 2_000_000,
     timeout: 10_000,
     recv_timeout: 20_000,
-    follow_redirect: true,
-    # TODO: Remove me once Hackney/HTTPoison fixes their issue with TLS1.3 and OTP 23
-    ssl: [{:versions, [:"tlsv1.2"]}]
+    follow_redirect: true
   ]
 
   alias Mobilizon.Config
@@ -75,7 +73,7 @@ defmodule Mobilizon.Service.RichMedia.Parser do
                 opts: @options
               )},
            {:is_html, _response_headers, true} <-
-             {:is_html, response_headers, is_html?(response_headers)} do
+             {:is_html, response_headers, html?(response_headers)} do
         body
         |> convert_utf8(response_headers)
         |> maybe_parse()
@@ -108,21 +106,21 @@ defmodule Mobilizon.Service.RichMedia.Parser do
   defp get_data_for_media(response_headers, url) do
     data = %{title: get_filename_from_headers(response_headers) || get_filename_from_url(url)}
 
-    if is_image?(response_headers) do
+    if image?(response_headers) do
       Map.put(data, :image_remote_url, url)
     else
       data
     end
   end
 
-  @spec is_html?(Enum.t()) :: boolean
-  defp is_html?(headers) do
-    is_content_type?(headers, ["text/html", "application/xhtml"])
+  @spec html?(Enum.t()) :: boolean
+  defp html?(headers) do
+    content_type_matches?(headers, ["text/html", "application/xhtml"])
   end
 
-  @spec is_image?(Enum.t()) :: boolean
-  defp is_image?(headers) do
-    is_content_type?(headers, ["image/"])
+  @spec image?(Enum.t()) :: boolean
+  defp image?(headers) do
+    content_type_matches?(headers, ["image/"])
   end
 
   @spec get_filename_from_headers(Enum.t()) :: String.t() | nil

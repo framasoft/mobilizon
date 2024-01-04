@@ -36,7 +36,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
       when not is_nil(attributed_to_id) do
     with %Actor{id: group_id} <- Actors.get_actor(attributed_to_id),
          {:member, true} <-
-           {:member, Actors.is_member?(actor_id, group_id) or is_moderator(user_role)},
+           {:member, Actors.member?(actor_id, group_id) or is_moderator(user_role)},
          %Actor{} = actor <- Actors.get_actor(organizer_actor_id) do
       {:ok, actor}
     else
@@ -176,7 +176,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
         _args,
         %{context: %{current_user: %User{id: user_id} = _user}} = _resolution
       ) do
-    if Events.is_user_moderator_for_event?(user_id, event_id) do
+    if Events.user_moderator_for_event?(user_id, event_id) do
       {:ok,
        Map.put(
          stats,
@@ -256,7 +256,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
          {:can_create_event, true} <- can_create_event(args),
          {:event_external, true} <- edit_event_external_checker(args),
          {:organizer_group_member, true} <-
-           {:organizer_group_member, is_organizer_group_member?(args)},
+           {:organizer_group_member, organizer_group_member?(args)},
          args_with_organizer <-
            args |> Map.put(:organizer_actor, organizer_actor) |> extract_timezone(user.id),
          {:askismet, :ham} <-
@@ -447,17 +447,17 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
     end
   end
 
-  @spec is_organizer_group_member?(map()) :: boolean()
-  defp is_organizer_group_member?(%{
+  @spec organizer_group_member?(map()) :: boolean()
+  defp organizer_group_member?(%{
          attributed_to_id: attributed_to_id,
          organizer_actor_id: organizer_actor_id
        })
        when not is_nil(attributed_to_id) do
-    Actors.is_member?(organizer_actor_id, attributed_to_id) &&
+    Actors.member?(organizer_actor_id, attributed_to_id) &&
       Permission.can_create_group_object?(organizer_actor_id, attributed_to_id, %Event{})
   end
 
-  defp is_organizer_group_member?(_), do: true
+  defp organizer_group_member?(_), do: true
 
   @spec verify_profile_change(map(), Event.t(), User.t(), Actor.t()) :: {:ok, map()}
   defp verify_profile_change(

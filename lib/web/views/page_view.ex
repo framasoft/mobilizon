@@ -87,8 +87,8 @@ defmodule Mobilizon.Web.PageView do
     assigns |> Map.get(:locale, "en") |> get_language_direction()
   end
 
-  @spec is_root(map()) :: boolean()
-  def is_root(assigns) do
+  @spec root?(map()) :: boolean()
+  def root?(assigns) do
     assigns |> Map.get(:conn, %{request_path: "/"}) |> Map.get(:request_path, "/") == "/"
   end
 end

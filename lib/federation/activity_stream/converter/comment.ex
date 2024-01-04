@@ -62,7 +62,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Comment do
           tags: fetch_tags(tag_object),
           mentions: fetch_mentions(tag_object),
           local: is_nil(actor_domain),
-          visibility: if(Visibility.is_public?(object), do: :public, else: :private),
+          visibility: if(Visibility.public?(object), do: :public, else: :private),
           published_at: object["published"],
           is_announcement: Map.get(object, "isAnnouncement", false)
         }

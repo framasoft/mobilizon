@@ -32,7 +32,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Post do
           }
         } = _resolution
       ) do
-    if Actors.is_member?(actor_id, group_id) or is_moderator(user_role) do
+    if Actors.member?(actor_id, group_id) or is_moderator(user_role) do
       %Page{} = page = Posts.get_posts_for_group(group, page, limit)
       {:ok, page}
     else
@@ -111,7 +111,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Post do
           }
         } = _resolution
       ) do
-    with {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
+    with {:member, true} <- {:member, Actors.member?(actor_id, group_id)},
          %Actor{} = group <- Actors.get_actor(group_id),
          args <-
            Map.update(args, :picture, nil, fn picture ->
@@ -160,7 +160,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Post do
              process_picture(picture, group)
            end),
          args <- extract_pictures_from_post_body(args, actor_id),
-         {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
+         {:member, true} <- {:member, Actors.member?(actor_id, group_id)},
          {:ok, _, %Post{} = post} <-
            Actions.Update.update(post, args, true, %{"actor" => actor_url}) do
       {:ok, post}
@@ -194,7 +194,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Post do
     with {:uuid, {:ok, _uuid}} <- {:uuid, Ecto.UUID.cast(post_id)},
          {:post, %Post{attributed_to: %Actor{id: group_id}} = post} <-
            {:post, Posts.get_post_with_preloads(post_id)},
-         {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
+         {:member, true} <- {:member, Actors.member?(actor_id, group_id)},
          {:ok, _, %Post{} = post} <-
            Actions.Delete.delete(post, actor) do
       {:ok, post}

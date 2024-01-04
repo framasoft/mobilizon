@@ -214,7 +214,7 @@ defmodule Mobilizon.Medias do
     query
     |> Repo.all(timeout: :infinity)
     |> Enum.filter(fn %Media{file: %File{url: url}} ->
-      !url_is_also_a_profile_file?(url) && is_all_media_orphan?(url, expiration_date)
+      !url_is_also_a_profile_file?(url) && all_media_orphan?(url, expiration_date)
     end)
     |> Enum.chunk_by(fn %Media{file: %File{url: url}} ->
       url
@@ -223,14 +223,14 @@ defmodule Mobilizon.Medias do
     end)
   end
 
-  defp is_all_media_orphan?(url, expiration_date) do
+  defp all_media_orphan?(url, expiration_date) do
     url
     |> get_all_media_by_url()
-    |> Enum.all?(&is_media_orphan?(&1, expiration_date))
+    |> Enum.all?(&media_orphan?(&1, expiration_date))
   end
 
-  @spec is_media_orphan?(Media.t(), DateTime.t()) :: boolean()
-  defp is_media_orphan?(%Media{id: media_id}, expiration_date) do
+  @spec media_orphan?(Media.t(), DateTime.t()) :: boolean()
+  defp media_orphan?(%Media{id: media_id}, expiration_date) do
     media_query =
       from(m in Media,
         as: :media,

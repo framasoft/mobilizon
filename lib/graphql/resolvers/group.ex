@@ -36,7 +36,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
       ) do
     case ActivityPubActor.find_or_make_group_from_nickname(name) do
       {:ok, %Actor{id: group_id, suspended: false} = group} ->
-        if Actors.is_member?(actor_id, group_id) do
+        if Actors.member?(actor_id, group_id) do
           {:ok, group}
         else
           find_group(parent, args, nil)
@@ -72,7 +72,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
         }
       }) do
     with %Actor{suspended: false, id: group_id} = group <- Actors.get_actor_with_preload(id),
-         true <- Actors.is_member?(actor_id, group_id) do
+         true <- Actors.member?(actor_id, group_id) do
       {:ok, group}
     else
       _ ->
@@ -215,7 +215,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
           }
         }
       ) do
-    if Actors.is_administrator?(updater_actor.id, group_id) do
+    if Actors.administrator?(updater_actor.id, group_id) do
       args = Map.put(args, :updater_actor, updater_actor)
 
       case save_attached_pictures(args) do
@@ -265,7 +265,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
       ) do
     with {:ok, %Actor{} = group} <- Actors.get_group_by_actor_id(group_id),
          {:ok, %Member{} = member} <- Actors.get_member(actor_id, group.id),
-         {:is_admin, true} <- {:is_admin, Member.is_administrator(member)},
+         {:is_admin, true} <- {:is_admin, Member.administrator?(member)},
          {:ok, _activity, group} <- Actions.Delete.delete(group, actor, true) do
       {:ok, %{id: group.id}}
     else
@@ -448,7 +448,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
           }
         }
       ) do
-    if Actors.is_member?(actor_id, group_id) do
+    if Actors.member?(actor_id, group_id) do
       {:ok,
        Events.list_organized_events_for_group(
          group,

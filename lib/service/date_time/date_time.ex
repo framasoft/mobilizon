@@ -55,14 +55,14 @@ defmodule Mobilizon.Service.DateTime do
     )
   end
 
-  @spec is_first_day_of_week(Date.t(), String.t()) :: boolean()
-  defp is_first_day_of_week(%Date{} = date, locale) do
+  @spec first_day_of_week?(Date.t(), String.t()) :: boolean()
+  defp first_day_of_week?(%Date{} = date, locale) do
     Date.day_of_week(date) == Cldr.Calendar.first_day_for_locale(locale)
   end
 
   @spec calculate_first_day_of_week(Date.t(), String.t()) :: Date.t()
   def calculate_first_day_of_week(%Date{} = date, locale \\ "en") do
-    if is_first_day_of_week(date, locale),
+    if first_day_of_week?(date, locale),
       do: date,
       else: calculate_first_day_of_week(Date.add(date, -1), locale)
   end
@@ -204,11 +204,11 @@ defmodule Mobilizon.Service.DateTime do
     compare_to_day = Keyword.get(options, :compare_to_day, Date.utc_today())
     locale = Keyword.get(options, :locale, "en")
 
-    is_first_day_of_week(compare_to_day, locale) && is_between_hours?(options)
+    first_day_of_week?(compare_to_day, locale) && is_between_hours?(options)
   end
 
-  @spec is_delay_ok_since_last_notification_sent?(DateTime.t(), pos_integer()) :: boolean()
-  def is_delay_ok_since_last_notification_sent?(
+  @spec delay_ok_since_last_notification_sent?(DateTime.t(), pos_integer()) :: boolean()
+  def delay_ok_since_last_notification_sent?(
         %DateTime{} = last_notification_sent,
         delay \\ 3_600
       ) do
@@ -216,8 +216,8 @@ defmodule Mobilizon.Service.DateTime do
       :lt
   end
 
-  @spec is_same_day?(DateTime.t(), DateTime.t()) :: boolean()
-  def is_same_day?(%DateTime{} = one, %DateTime{} = two) do
+  @spec same_day?(DateTime.t(), DateTime.t()) :: boolean()
+  def same_day?(%DateTime{} = one, %DateTime{} = two) do
     DateTime.to_date(one) == DateTime.to_date(two)
   end
 

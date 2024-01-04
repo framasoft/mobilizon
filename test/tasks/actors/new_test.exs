@@ -179,7 +179,7 @@ defmodule Mix.Tasks.Mobilizon.Actors.NewTest do
       assert %Actor{name: @group_name, preferred_username: @group_username, id: group_id} =
                Actors.get_group_by_title(@group_username)
 
-      assert Actors.is_administrator?(admin_id, group_id)
+      assert Actors.administrator?(admin_id, group_id)
     end
   end
 end

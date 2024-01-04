@@ -265,7 +265,7 @@ defmodule Mobilizon.Service.Export.Feed do
   end
 
   defp clear_actor_feed(%Actor{preferred_username: preferred_username} = actor) do
-    if Actor.is_public_visibility?(actor) do
+    if Actor.public_visibility?(actor) do
       Cachex.del(:feed, "actor_#{preferred_username}")
     end
   end
