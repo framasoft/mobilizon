@@ -4,6 +4,7 @@ defmodule Mobilizon.Instances do
   """
   alias Ecto.Adapters.SQL
   alias Mobilizon.Actors.{Actor, Follower}
+  alias Mobilizon.Federation.ActivityPub.Relay
   alias Mobilizon.Instances.{Instance, InstanceActor}
   alias Mobilizon.Storage.{Page, Repo}
   import Ecto.Query
@@ -22,11 +23,15 @@ defmodule Mobilizon.Instances do
 
     order_by_options = Keyword.new([{direction, order_by}])
 
+    %Actor{id: relay_id} = Relay.get_actor()
+
     query =
       Instance
       |> join(:left, [i], ia in InstanceActor, on: i.domain == ia.domain)
       |> join(:left, [_i, ia], a in Actor, on: ia.actor_id == a.id)
+      # following
       |> join(:left, [_i, _ia, a], f1 in Follower, on: f1.target_actor_id == a.id)
+      # followed
       |> join(:left, [_i, _ia, a], f2 in Follower, on: f2.actor_id == a.id)
       |> select([i, ia, a, f1, f2], %{
         instance: i,
@@ -45,14 +50,27 @@ defmodule Mobilizon.Instances do
       if is_nil(filter_domain) or filter_domain == "" do
         query
       else
-        where(query, [i], like(i.domain, ^"%#{filter_domain}%"))
+        where(
+          query,
+          [i, ia],
+          like(i.domain, ^"%#{filter_domain}%") or like(ia.instance_name, ^"%#{filter_domain}%")
+        )
       end
 
     query =
       case follow_status do
-        :following -> where(query, [i, s], s.following == true)
-        :followed -> where(query, [i, s], s.follower == true)
-        :all -> query
+        :following ->
+          where(query, [_i, _ia, _a, f1], f1.actor_id == ^relay_id and f1.approved == true)
+
+        :followed ->
+          where(
+            query,
+            [_i, _ia, _a, _f1, f2],
+            f2.target_actor_id == ^relay_id and f2.approved == true
+          )
+
+        :all ->
+          query
       end
 
     %Page{elements: elements} = paged_instances = Page.build_page(query, page, limit, :domain)
