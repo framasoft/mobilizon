@@ -5,8 +5,8 @@ defmodule Mobilizon.GraphQL.Error do
 
   require Logger
   alias __MODULE__
-  alias Mobilizon.Web.Gettext, as: GettextBackend
   import Mobilizon.Web.Gettext, only: [dgettext: 2]
+  import Mobilizon.Storage.Ecto, only: [convert_ecto_errors: 1]
 
   @type t :: %{code: atom(), message: String.t(), status_code: pos_integer(), field: atom()}
 
@@ -64,7 +64,7 @@ defmodule Mobilizon.GraphQL.Error do
 
   defp handle(%Ecto.Changeset{} = changeset) do
     changeset
-    |> Ecto.Changeset.traverse_errors(&translate_error/1)
+    |> convert_ecto_errors()
     |> Enum.map(fn {k, v} ->
       %Error{
         code: :validation,
@@ -125,28 +125,5 @@ defmodule Mobilizon.GraphQL.Error do
   defp metadata(code) do
     Logger.warning("Unhandled error code: #{inspect(code)}")
     {422, to_string(code)}
-  end
-
-  # Translates an error message using gettext.
-  defp translate_error({msg, opts}) do
-    # Because error messages were defined within Ecto, we must
-    # call the Gettext module passing our Gettext backend. We
-    # also use the "errors" domain as translations are placed
-    # in the errors.po file.
-    # Ecto will pass the :count keyword if the error message is
-    # meant to be pluralized.
-    # On your own code and templates, depending on whether you
-    # need the message to be pluralized or not, this could be
-    # written simply as:
-    #
-    #     dngettext "errors", "1 file", "%{count} files", count
-    #     dgettext "errors", "is invalid"
-    #
-
-    if count = opts[:count] do
-      Gettext.dngettext(GettextBackend, "errors", msg, msg, count, opts)
-    else
-      Gettext.dgettext(GettextBackend, "errors", msg, opts)
-    end
   end
 end
