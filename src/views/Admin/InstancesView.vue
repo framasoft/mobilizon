@@ -233,7 +233,7 @@ import {
   useRouteQuery,
 } from "vue-use-route-query";
 import { useMutation, useQuery } from "@vue/apollo-composable";
-import { computed, inject, ref } from "vue";
+import { computed, inject, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useHead } from "@unhead/vue";
 import CloudQuestion from "../../../node_modules/vue-material-design-icons/CloudQuestion.vue";
@@ -262,6 +262,10 @@ const { result: instancesResult } = useQuery<{
   }),
   { debounce: 500 }
 );
+
+watch([filterDomain, followStatus], () => {
+  instancePage.value = 1;
+});
 
 const instances = computed(() => instancesResult.value?.instances);
 
