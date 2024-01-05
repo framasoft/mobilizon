@@ -85,6 +85,13 @@ defmodule Mobilizon.Discussions do
     |> select([c, r], %{c | total_replies: count(r.id)})
   end
 
+  # Replies are only used on event comments, so we always use public visibily here
+  def query(Comment, %{replies: true}) do
+    Comment
+    |> where([c], c.visibility in ^@public_visibility)
+    |> order_by([c], asc: :is_announcement, asc: :published_at)
+  end
+
   def query(Comment, _) do
     order_by(Comment, [c], asc: :is_announcement, asc: :published_at)
   end

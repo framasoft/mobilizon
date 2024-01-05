@@ -4,7 +4,7 @@ defmodule Mobilizon.GraphQL.Schema.Discussions.CommentType do
   """
   use Absinthe.Schema.Notation
 
-  import Absinthe.Resolution.Helpers, only: [dataloader: 1]
+  import Absinthe.Resolution.Helpers, only: [dataloader: 1, dataloader: 2]
 
   alias Mobilizon.{Actors, Discussions, Events}
   alias Mobilizon.GraphQL.Resolvers.Comment
@@ -23,7 +23,7 @@ defmodule Mobilizon.GraphQL.Schema.Discussions.CommentType do
 
     field(:replies, list_of(:comment)) do
       description("A list of replies to the comment")
-      resolve(dataloader(Discussions))
+      resolve(dataloader(Discussions, args: %{replies: true}))
     end
 
     field(:total_replies, :integer,
