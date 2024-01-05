@@ -6,10 +6,13 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
   internal one, and back.
   """
 
+  alias Cldr.DateTime.Formatter
+
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Events.Categories
   alias Mobilizon.Events.Event, as: EventModel
+  alias Mobilizon.Events.EventOptions
   alias Mobilizon.Medias.Media
 
   alias Mobilizon.Federation.ActivityStream.{Converter, Convertible}
@@ -30,6 +33,12 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
       process_pictures: 2,
       get_address: 1,
       fetch_actor: 1
+    ]
+
+  import Mobilizon.Service.Metadata.Utils,
+    only: [
+      datetime_to_string: 3,
+      render_address!: 1
     ]
 
   require Logger
@@ -146,7 +155,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
       "anonymousParticipationEnabled" => event.options.anonymous_participation,
       "attachment" => Enum.map(event.metadata, &EventMetadataConverter.metadata_to_as/1),
       "draft" => event.draft,
-      # Remove me in MBZ 5.x
+      # TODO: Remove me in MBZ 5.x
       "ical:status" => event.status |> to_string |> String.upcase(),
       "status" => event.status |> to_string |> String.upcase(),
       "id" => event.url,
@@ -154,7 +163,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
       "inLanguage" => event.language,
       "timezone" => event.options.timezone,
       "contacts" => Enum.map(event.contacts, & &1.url),
-      "isOnline" => event.options.is_online
+      "isOnline" => event.options.is_online,
+      "summary" => event_summary(event)
     }
     |> maybe_add_physical_address(event)
     |> maybe_add_event_picture(event)
@@ -341,4 +351,47 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
          _participant_count
        ),
        do: nil
+
+  def event_summary(%EventModel{
+        begins_on: begins_on,
+        physical_address: address,
+        options: %EventOptions{timezone: timezone},
+        language: language
+      }) do
+    begins_on = build_begins_on(begins_on, timezone)
+
+    begins_on
+    |> datetime_to_string(language || "en", :long)
+    |> (&[&1]).()
+    |> add_timezone(begins_on)
+    |> maybe_build_address(address)
+    |> Enum.join(" - ")
+  end
+
+  @spec build_begins_on(DateTime.t(), String.t() | nil) :: DateTime.t()
+  defp build_begins_on(begins_on, nil), do: begins_on
+
+  defp build_begins_on(begins_on, timezone) do
+    case DateTime.shift_zone(begins_on, timezone) do
+      {:ok, begins_on} -> begins_on
+      {:error, _err} -> begins_on
+    end
+  end
+
+  defp add_timezone(elements, %DateTime{} = begins_on) do
+    elements ++ [Formatter.zone_gmt(begins_on)]
+  end
+
+  @spec maybe_build_address(list(String.t()), Address.t() | nil) :: list(String.t())
+  defp maybe_build_address(elements, %Address{} = address) do
+    elements ++ [render_address!(address)]
+  rescue
+    # If the address is not renderable
+    e in ArgumentError ->
+      require Logger
+      Logger.error(Exception.format(:error, e, __STACKTRACE__))
+      elements
+  end
+
+  defp maybe_build_address(elements, _address), do: elements
 end
