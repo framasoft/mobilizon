@@ -14,7 +14,11 @@
       ]"
     />
     <div
-      v-if="conversation.event && !isCurrentActorAuthor"
+      v-if="
+        conversation.event &&
+        !isCurrentActorAuthor &&
+        isOriginCommentAuthorEventOrganizer
+      "
       class="bg-mbz-yellow p-6 mb-3 rounded flex gap-2 items-center"
     >
       <Calendar :size="36" />
@@ -132,7 +136,11 @@
         >
       </form>
       <div
-        v-else-if="conversation.event"
+        v-else-if="
+          conversation.event &&
+          !isCurrentActorAuthor &&
+          isOriginCommentAuthorEventOrganizer
+        "
         class="bg-mbz-yellow p-6 rounded flex gap-2 items-center mt-3"
       >
         <Calendar :size="36" />
@@ -290,6 +298,16 @@ const isCurrentActorAuthor = computed(
     currentActor.value &&
     conversation.value &&
     currentActor.value.id !== conversation.value?.actor?.id
+);
+
+const isOriginCommentAuthorEventOrganizer = computed(
+  () =>
+    conversation.value?.originComment?.actor &&
+    conversation.value?.event &&
+    [
+      conversation.value?.event?.organizerActor?.id,
+      conversation.value?.event?.attributedTo?.id,
+    ].includes(conversation.value?.originComment?.actor.id)
 );
 
 useHead({

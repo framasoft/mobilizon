@@ -8,6 +8,7 @@ export interface IConversation {
   id?: string;
   actor?: IActor;
   lastComment?: IComment;
+  originComment?: IComment;
   comments: Paginate<IComment>;
   participants: IActor[];
   updatedAt: string;

@@ -47,6 +47,12 @@ defmodule Mobilizon.GraphQL.Schema.Discussions.CommentType do
 
     field(:threadLanguages, non_null(list_of(:string)), description: "The thread languages")
     field(:actor, :person, resolve: dataloader(Actors), description: "The comment's author")
+
+    field(:attributed_to, :actor,
+      resolve: dataloader(Actors),
+      description: "The comment's attributed to actor"
+    )
+
     field(:inserted_at, :datetime, description: "When was the comment inserted in database")
     field(:updated_at, :datetime, description: "When was the comment updated")
     field(:deleted_at, :datetime, description: "When was the comment deleted")

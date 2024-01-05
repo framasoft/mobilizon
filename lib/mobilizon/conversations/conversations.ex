@@ -137,7 +137,7 @@ defmodule Mobilizon.Conversations do
     subquery
     |> subquery()
     |> order_by([cp], desc: cp.unread, desc: cp.updated_at)
-    |> preload([:actor, conversation: [:last_comment, :participants]])
+    |> preload([:actor, conversation: [:last_comment, :origin_comment, :participants, :event]])
     |> Page.build_page(page, limit)
   end
 
@@ -151,7 +151,7 @@ defmodule Mobilizon.Conversations do
     ConversationParticipant
     |> join(:inner, [cp], a in Actor, on: cp.actor_id == a.id)
     |> where([_cp, a], a.user_id == ^user_id)
-    |> preload([:actor, conversation: [:last_comment, :participants]])
+    |> preload([:actor, conversation: [:last_comment, :origin_comment, :participants, :event]])
     |> Page.build_page(page, limit)
   end
 
