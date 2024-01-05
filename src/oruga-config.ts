@@ -30,6 +30,7 @@ export const orugaConfig = {
     autocompleteClasses: {
       rootClass: "taginput-autocomplete",
       inputClasses: {
+        rootClass: "taginput-input-wrapper",
         inputClass: "taginput-input",
       },
     },

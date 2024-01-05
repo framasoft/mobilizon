@@ -101,8 +101,3 @@ const tagsStrings = computed({
   },
 });
 </script>
-<style lang="scss" scoped>
-:deep(.o-input__wrapper) {
-  display: initial;
-}
-</style>

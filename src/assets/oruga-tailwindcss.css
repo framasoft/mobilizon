@@ -153,6 +153,9 @@ body {
 .taginput-item:first-child {
   @apply ml-2;
 }
+.taginput-input-wrapper {
+  @apply block;
+}
 
 /* Autocomplete */
 .autocomplete {
