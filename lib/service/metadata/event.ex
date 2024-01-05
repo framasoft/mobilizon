@@ -136,14 +136,12 @@ defimpl Mobilizon.Service.Metadata, for: Mobilizon.Events.Event do
   defp build_language(language, locale), do: language || locale
 
   @spec build_begins_on(DateTime.t(), String.t() | nil) :: DateTime.t()
+  defp build_begins_on(begins_on, nil), do: begins_on
+
   defp build_begins_on(begins_on, timezone) do
-    if timezone do
-      case DateTime.shift_zone(begins_on, timezone) do
-        {:ok, begins_on} -> begins_on
-        {:error, _err} -> begins_on
-      end
-    else
-      begins_on
+    case DateTime.shift_zone(begins_on, timezone) do
+      {:ok, begins_on} -> begins_on
+      {:error, _err} -> begins_on
     end
   end
 
