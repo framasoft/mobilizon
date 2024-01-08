@@ -1,11 +1,13 @@
 defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
   use Mobilizon.Web.ConnCase
   use Mobilizon.Tests.Helpers
+  use Oban.Testing, repo: Mobilizon.Storage.Repo
 
-  alias Mobilizon.Config
-  alias Mobilizon.Events
+  alias Mobilizon.Actors.Actor
+  alias Mobilizon.{Config, Conversations, Events}
   alias Mobilizon.Events.{Event, EventParticipantStats, Participant}
   alias Mobilizon.GraphQL.AbsintheHelpers
+  alias Mobilizon.Service.Workers.LegacyNotifierBuilder
   alias Mobilizon.Storage.Page
 
   import Mobilizon.Factory
@@ -1379,6 +1381,358 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
 
       assert %Participant{} = Events.get_participant(participant_id)
       assert_email_sent(to: @email)
+    end
+  end
+
+  describe "Send private messages to participants" do
+    @send_event_private_message_mutation """
+    mutation SendEventPrivateMessageMutation(
+      $text: String!
+      $actorId: ID!
+      $eventId: ID!
+      $roles: [ParticipantRoleEnum]
+      $language: String
+    ) {
+    sendEventPrivateMessage(
+      text: $text
+      actorId: $actorId
+      eventId: $eventId
+      roles: $roles
+      language: $language
+    ) {
+      id
+      conversationParticipantId
+      actor {
+        id
+      }
+      lastComment {
+        id
+        text
+      }
+      originComment {
+        id
+        text
+      }
+      participants {
+        id
+      }
+      event {
+        id
+        uuid
+        title
+        organizerActor {
+          id
+        }
+        attributedTo {
+          id
+        }
+      }
+      unread
+      insertedAt
+      updatedAt
+      }
+    }
+    """
+
+    setup %{conn: conn} do
+      user = insert(:user)
+      actor = insert(:actor, user: user, preferred_username: "test")
+
+      {:ok, conn: conn, actor: actor, user: user}
+    end
+
+    test "Without being logged-in", %{conn: conn} do
+      %Actor{id: actor_id} = insert(:actor)
+      %Event{id: event_id} = insert(:event)
+
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @send_event_private_message_mutation,
+          variables: %{actorId: actor_id, eventId: event_id, text: "Hello dear participants"}
+        )
+
+      assert hd(res["errors"])["message"] == "You need to be logged in"
+    end
+
+    test "With actor not allowed", %{conn: conn, actor: actor, user: user} do
+      %Event{id: event_id} = insert(:event)
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @send_event_private_message_mutation,
+          variables: %{actorId: actor.id, eventId: event_id, text: "Hello dear participants"}
+        )
+
+      assert hd(res["errors"])["message"] == "You don't have permission to do this"
+    end
+
+    test "With actor as event organizer", %{conn: conn, actor: actor, user: user} do
+      %Event{id: event_id, title: event_title, uuid: event_uuid} =
+        event = insert(:event, organizer_actor: actor)
+
+      %Participant{actor_id: participant_actor_id} = insert(:participant, event: event)
+      %Participant{actor_id: participant_actor_id_2} = insert(:participant, event: event)
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @send_event_private_message_mutation,
+          variables: %{actorId: actor.id, eventId: event_id, text: "Hello dear participants"}
+        )
+
+      assert res["errors"] == nil
+
+      assert res["data"]["sendEventPrivateMessage"]["lastComment"]["id"] ==
+               res["data"]["sendEventPrivateMessage"]["originComment"]["id"]
+
+      assert res["data"]["sendEventPrivateMessage"]["lastComment"]["text"] ==
+               "Hello dear participants"
+
+      participants_ids =
+        Enum.map(res["data"]["sendEventPrivateMessage"]["participants"], fn participant ->
+          String.to_integer(participant["id"])
+        end)
+
+      assert length(participants_ids) == 3
+
+      assert MapSet.new(participants_ids) ==
+               MapSet.new([actor.id, participant_actor_id, participant_actor_id_2])
+
+      assert res["data"]["sendEventPrivateMessage"]["actor"]["id"] == to_string(actor.id)
+      conversation_id = res["data"]["sendEventPrivateMessage"]["id"]
+
+      all_conversation_participants_ids = Conversations.find_all_conversations_for_event(event_id)
+
+      notified_conversation_participant_ids =
+        all_conversation_participants_ids
+        |> Enum.filter(&(&1.actor_id != actor.id))
+        |> Enum.map(&[&1.id, &1.actor_id])
+
+      Enum.each(notified_conversation_participant_ids, fn [pa_id, participant_actor_id] ->
+        assert_enqueued(
+          worker: LegacyNotifierBuilder,
+          args: %{
+            "author_id" => actor.id,
+            "object_id" => to_string(conversation_id),
+            "object_type" => "conversation",
+            "op" => "legacy_notify",
+            "subject" => "conversation_created",
+            "subject_params" => %{
+              "conversation_id" => String.to_integer(conversation_id),
+              "conversation_participant_id" => pa_id,
+              "conversation_text" => "Hello dear participants",
+              "conversation_event_id" => event_id,
+              "conversation_event_title" => event_title,
+              "conversation_event_uuid" => event_uuid
+            },
+            "type" => "conversation",
+            "participant" => %{
+              "actor_id" => participant_actor_id,
+              "id" => pa_id
+            }
+          }
+        )
+      end)
+
+      ignored_conversation_participant_id =
+        all_conversation_participants_ids
+        |> Enum.filter(&(&1.actor_id == actor.id))
+        |> Enum.map(& &1.id)
+
+      refute_enqueued(
+        worker: LegacyNotifierBuilder,
+        args: %{
+          "author_id" => actor.id,
+          "object_id" => to_string(conversation_id),
+          "object_type" => "conversation",
+          "op" => "legacy_notify",
+          "subject" => "conversation_created",
+          "subject_params" => %{
+            "conversation_id" => String.to_integer(conversation_id),
+            "conversation_participant_id" => ignored_conversation_participant_id,
+            "conversation_text" => "Hello dear participants",
+            "conversation_event_id" => event_id,
+            "conversation_event_title" => event_title,
+            "conversation_event_uuid" => event_uuid
+          },
+          "type" => "conversation",
+          "participant" => %{
+            "actor_id" => actor.id,
+            "id" => ignored_conversation_participant_id
+          }
+        }
+      )
+    end
+
+    test "With actor as event organizer with customized roles", %{
+      conn: conn,
+      actor: actor,
+      user: user
+    } do
+      %Event{id: event_id, title: event_title, uuid: event_uuid} =
+        event = insert(:event, organizer_actor: actor)
+
+      %Participant{actor_id: _participant_actor_id} = insert(:participant, event: event)
+
+      %Participant{actor_id: participant_actor_id_2} =
+        insert(:participant, event: event, role: :not_approved)
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @send_event_private_message_mutation,
+          variables: %{
+            actorId: actor.id,
+            eventId: event_id,
+            text: "Hello dear participants",
+            roles: ["NOT_APPROVED"]
+          }
+        )
+
+      assert res["errors"] == nil
+
+      assert res["data"]["sendEventPrivateMessage"]["lastComment"]["id"] ==
+               res["data"]["sendEventPrivateMessage"]["originComment"]["id"]
+
+      assert res["data"]["sendEventPrivateMessage"]["lastComment"]["text"] ==
+               "Hello dear participants"
+
+      participants_ids =
+        Enum.map(res["data"]["sendEventPrivateMessage"]["participants"], fn participant ->
+          String.to_integer(participant["id"])
+        end)
+
+      assert length(participants_ids) == 2
+
+      assert MapSet.new(participants_ids) ==
+               MapSet.new([actor.id, participant_actor_id_2])
+
+      conversation_id = res["data"]["sendEventPrivateMessage"]["id"]
+
+      all_conversation_participants_ids = Conversations.find_all_conversations_for_event(event_id)
+
+      notified_conversation_participant_ids =
+        all_conversation_participants_ids
+        |> Enum.filter(&(&1.actor_id == participant_actor_id_2))
+        |> Enum.map(&[&1.id, &1.actor_id])
+
+      Enum.each(notified_conversation_participant_ids, fn [pa_id, participant_actor_id] ->
+        assert_enqueued(
+          worker: LegacyNotifierBuilder,
+          args: %{
+            "author_id" => actor.id,
+            "object_id" => to_string(conversation_id),
+            "object_type" => "conversation",
+            "op" => "legacy_notify",
+            "subject" => "conversation_created",
+            "subject_params" => %{
+              "conversation_id" => String.to_integer(conversation_id),
+              "conversation_participant_id" => pa_id,
+              "conversation_text" => "Hello dear participants",
+              "conversation_event_id" => event_id,
+              "conversation_event_title" => event_title,
+              "conversation_event_uuid" => event_uuid
+            },
+            "type" => "conversation",
+            "participant" => %{
+              "actor_id" => participant_actor_id,
+              "id" => pa_id
+            }
+          }
+        )
+      end)
+
+      ignored_conversation_participant_id =
+        all_conversation_participants_ids
+        |> Enum.filter(&(&1.actor_id != participant_actor_id_2))
+        |> Enum.map(&[&1.id, &1.actor_id])
+
+      Enum.each(ignored_conversation_participant_id, fn [pa_id, participant_actor_id] ->
+        refute_enqueued(
+          worker: LegacyNotifierBuilder,
+          args: %{
+            "author_id" => participant_actor_id,
+            "object_id" => to_string(conversation_id),
+            "object_type" => "conversation",
+            "op" => "legacy_notify",
+            "subject" => "conversation_created",
+            "subject_params" => %{
+              "conversation_id" => String.to_integer(conversation_id),
+              "conversation_participant_id" => pa_id,
+              "conversation_text" => "Hello dear participants",
+              "conversation_event_id" => event_id,
+              "conversation_event_title" => event_title,
+              "conversation_event_uuid" => event_uuid
+            },
+            "type" => "conversation",
+            "participant" => %{
+              "actor_id" => participant_actor_id,
+              "id" => pa_id
+            }
+          }
+        )
+      end)
+    end
+
+    test "With actor as member of group event organizer", %{conn: conn, actor: actor, user: user} do
+      %Actor{id: group_id} = group = insert(:group)
+      insert(:member, parent: group, actor: actor, role: :moderator)
+      %Event{id: event_id} = event = insert(:event, organizer_actor: actor, attributed_to: group)
+      %Participant{actor_id: participant_actor_id} = insert(:participant, event: event)
+      %Participant{actor_id: participant_actor_id_2} = insert(:participant, event: event)
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @send_event_private_message_mutation,
+          variables: %{actorId: group_id, eventId: event_id, text: "Hello dear participants"}
+        )
+
+      assert res["errors"] == nil
+
+      participants_ids =
+        Enum.map(res["data"]["sendEventPrivateMessage"]["participants"], fn participant ->
+          String.to_integer(participant["id"])
+        end)
+
+      assert MapSet.new(participants_ids) ==
+               MapSet.new([group_id, participant_actor_id, participant_actor_id_2])
+
+      assert res["data"]["sendEventPrivateMessage"]["actor"]["id"] == to_string(group_id)
+    end
+
+    test "With event not found", %{conn: conn, actor: actor, user: user} do
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @send_event_private_message_mutation,
+          variables: %{actorId: actor.id, eventId: "5019438457", text: "Hello dear participants"}
+        )
+
+      assert hd(res["errors"])["message"] ==
+               "Event not found"
+    end
+
+    test "With no participants matching the audience", %{conn: conn, actor: actor, user: user} do
+      %Event{id: event_id} = insert(:event, organizer_actor: actor)
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @send_event_private_message_mutation,
+          variables: %{actorId: actor.id, eventId: event_id, text: "Hello dear participants"}
+        )
+
+      assert hd(res["errors"])["message"] ==
+               "There are no participants matching the audience you've selected."
     end
   end
 end

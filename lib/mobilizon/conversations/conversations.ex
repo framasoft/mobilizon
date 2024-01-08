@@ -117,6 +117,14 @@ defmodule Mobilizon.Conversations do
     |> Page.build_page(page, limit)
   end
 
+  def find_all_conversations_for_event(event_id) do
+    ConversationParticipant
+    |> join(:inner, [cp], c in Conversation, on: cp.conversation_id == c.id)
+    |> join(:left, [_cp, c], e in Event, on: c.event_id == e.id)
+    |> where([_cp, c], c.event_id == ^event_id)
+    |> Repo.all()
+  end
+
   @spec list_conversation_participants_for_actor(
           integer | String.t(),
           integer | nil,
