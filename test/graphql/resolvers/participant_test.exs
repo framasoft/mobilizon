@@ -4,7 +4,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
   use Oban.Testing, repo: Mobilizon.Storage.Repo
 
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.{Config, Conversations, Events}
+  alias Mobilizon.{Actors, Config, Conversations, Events}
   alias Mobilizon.Events.{Event, EventParticipantStats, Participant}
   alias Mobilizon.GraphQL.AbsintheHelpers
   alias Mobilizon.Service.Workers.LegacyNotifierBuilder
@@ -1734,5 +1734,42 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
       assert hd(res["errors"])["message"] ==
                "There are no participants matching the audience you've selected."
     end
+  end
+
+  test "With several anonymous participants", %{conn: conn, actor: actor, user: user} do
+    %Event{id: event_id} =
+      event = insert(:event, organizer_actor: actor)
+
+    {:ok, anonymous_actor} = Actors.get_or_create_internal_actor("anonymous")
+    refute is_nil(anonymous_actor)
+
+    insert(:participant, event: event, actor: anonymous_actor, metadata: %{email: "anon@mou.se"})
+    insert(:participant, event: event, actor: anonymous_actor, metadata: %{email: "other@mou.se"})
+
+    res =
+      conn
+      |> auth_conn(user)
+      |> AbsintheHelpers.graphql_query(
+        query: @send_event_private_message_mutation,
+        variables: %{actorId: actor.id, eventId: event_id, text: "Hello dear participants"}
+      )
+
+    assert res["errors"] == nil
+
+    assert res["data"]["sendEventPrivateMessage"]["lastComment"]["id"] ==
+             res["data"]["sendEventPrivateMessage"]["originComment"]["id"]
+
+    assert res["data"]["sendEventPrivateMessage"]["lastComment"]["text"] ==
+             "Hello dear participants"
+
+    participants_ids =
+      Enum.map(res["data"]["sendEventPrivateMessage"]["participants"], fn participant ->
+        String.to_integer(participant["id"])
+      end)
+
+    # Anonymous actor is only added once
+    assert length(participants_ids) == 2
+
+    assert Enum.sort(participants_ids) == Enum.sort([actor.id, anonymous_actor.id])
   end
 end
