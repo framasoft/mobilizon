@@ -792,7 +792,7 @@ defmodule Mobilizon.Events do
     end
   end
 
-  def get_participant(event_id, actor_id, %{}) do
+  def get_participant(event_id, actor_id, _params) do
     case Participant
          |> Repo.get_by(event_id: event_id, actor_id: actor_id)
          |> Repo.preload(@participant_preloads) do

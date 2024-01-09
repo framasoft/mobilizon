@@ -4,7 +4,7 @@ defmodule Mobilizon.Service.Workers.LegacyNotifierBuilder do
   """
 
   alias Mobilizon.Activities.Activity
-  alias Mobilizon.{Actors, Events, Users}
+  alias Mobilizon.{Actors, Config, Events, Users}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events.{Event, Participant}
   alias Mobilizon.Service.Notifier
@@ -37,9 +37,10 @@ defmodule Mobilizon.Service.Workers.LegacyNotifierBuilder do
   end
 
   defp special_handling("conversation_created", args, activity) do
-    notify_participants(
+    notify_participant(
       get_in(args, ["subject_params", "conversation_event_id"]),
       activity,
+      get_in(args, ["participant", "actor_id"]),
       args["author_id"]
     )
   end
@@ -143,6 +144,24 @@ defmodule Mobilizon.Service.Workers.LegacyNotifierBuilder do
     notify_anonymous_participants(event_id, activity)
   end
 
+  defp notify_participant(nil, _activity, _conversation_participant_actor_id, _author_id),
+    do: :ok
+
+  defp notify_participant(event_id, activity, conversation_participant_actor_id, author_id) do
+    # Anonymous participation
+    if conversation_participant_actor_id == Config.anonymous_actor_id() do
+      notify_anonymous_participants(event_id, activity)
+    else
+      [conversation_participant_actor_id]
+      |> users_from_actor_ids(author_id)
+      |> Enum.each(fn user ->
+        Notifier.Email.send_anonymous_activity(user.email, activity,
+          locale: Map.get(user, :locale, "en")
+        )
+      end)
+    end
+  end
+
   defp notify_anonymous_participants(nil, _activity), do: :ok
 
   defp notify_anonymous_participants(event_id, activity) do
@@ -154,7 +173,7 @@ defmodule Mobilizon.Service.Workers.LegacyNotifierBuilder do
     |> Enum.map(fn %Participant{metadata: metadata} -> metadata end)
     |> Enum.map(fn %{email: email} = metadata ->
       Notifier.Email.send_anonymous_activity(email, activity,
-        locale: Map.get(metadata, :locale, "en")
+        locale: Map.get(metadata, :locale, "en") || "en"
       )
     end)
   end
