@@ -149,6 +149,9 @@ body {
 .taginput-autocomplete {
   @apply flex-1 !drop-shadow-none;
 }
+.taginput-container {
+  @apply border-none;
+}
 
 .taginput-item:first-child {
   @apply ml-2;
@@ -162,12 +165,12 @@ body {
   @apply max-h-[200px] drop-shadow-md text-black z-10;
 }
 
-.autocomplete-item {
-  @apply py-1.5 px-4 text-start;
+.autocomplete .autocomplete-item {
+  @apply text-start p-0;
 }
 
-.autocomplete-item-group-title {
-  @apply opacity-50 py-0 px-2;
+.autocomplete .autocomplete-item-group-title {
+  @apply opacity-50 py-1.5 px-2 dark:text-white dark:opacity-75;
 }
 
 /* Dropdown */

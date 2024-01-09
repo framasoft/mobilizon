@@ -27,6 +27,7 @@ export const orugaConfig = {
   taginput: {
     itemClass: "taginput-item",
     rootClass: "taginput",
+    containerClass: "taginput-container",
     autocompleteClasses: {
       rootClass: "taginput-autocomplete",
       inputClasses: {
