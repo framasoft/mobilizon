@@ -219,9 +219,10 @@
 
       <editor-content
         class="editor__content"
-        :class="{ editorErrorStatus }"
+        :class="{ editorErrorStatus, editorIsFocused: focused }"
         :editor="editor"
         v-if="editor"
+        ref="editorContentRef"
       />
       <p v-if="editorErrorMessage" class="text-sm text-mbz-danger">
         {{ editorErrorMessage }}
@@ -277,6 +278,7 @@ import FormatQuoteClose from "vue-material-design-icons/FormatQuoteClose.vue";
 import Undo from "vue-material-design-icons/Undo.vue";
 import Redo from "vue-material-design-icons/Redo.vue";
 import Placeholder from "@tiptap/extension-placeholder";
+import { useFocusWithin } from "@vueuse/core";
 
 const props = withDefaults(
   defineProps<{
@@ -343,7 +345,7 @@ const editor = useEditor({
       "aria-label": ariaLabel.value ?? "",
       role: "textbox",
       class:
-        "prose dark:prose-invert prose-sm lg:prose-lg xl:prose-xl bg-white dark:bg-zinc-700 focus:outline-none !max-w-full",
+        "prose dark:prose-invert prose-sm lg:prose-lg xl:prose-xl bg-white dark:bg-zinc-700 !max-w-full",
     },
     transformPastedHTML: transformPastedHTML,
   },
@@ -391,6 +393,9 @@ const editor = useEditor({
     editorErrorMessage.value = "";
   },
 });
+
+const editorContentRef = ref(null);
+const { focused } = useFocusWithin(editorContentRef);
 
 watch(value, (val: string) => {
   if (!editor.value) return;
@@ -552,13 +557,8 @@ const checkEditorEmpty = () => {
   &__content {
     div.ProseMirror {
       min-height: 2.5rem;
-      box-shadow: inset 0 1px 2px rgba(10, 10, 10, 0.1);
       border-radius: 4px;
       padding: 12px 6px;
-
-      &:focus {
-        outline: none;
-      }
     }
 
     h1 {
@@ -684,8 +684,12 @@ const checkEditorEmpty = () => {
   @apply inline-block border border-zinc-600 dark:border-zinc-300 rounded py-0.5 px-1;
 }
 
-.editor__content {
-  @apply border focus:border-[#2563eb] rounded border-[#6b7280];
+.editor__content > div {
+  @apply border rounded border-[#6b7280];
+}
+
+.editorIsFocused > div {
+  @apply ring-2 ring-[#2563eb] outline-2 outline outline-offset-2 outline-transparent;
 }
 
 .editorErrorStatus {
