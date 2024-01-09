@@ -4,6 +4,7 @@ defmodule Mobilizon.Service.Workers.LegacyNotifierBuilderTest do
   """
 
   alias Mobilizon.Activities.Activity
+  alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Discussions.{Comment, Discussion}
   alias Mobilizon.Events.Event
@@ -15,6 +16,7 @@ defmodule Mobilizon.Service.Workers.LegacyNotifierBuilderTest do
   use Mobilizon.Tests.Helpers
   import Mox
   import Mobilizon.Factory
+  import Swoosh.TestAssertions
 
   setup_all do
     Mox.defmock(NotifierMock, for: Mobilizon.Service.Notifier)
@@ -42,10 +44,18 @@ defmodule Mobilizon.Service.Workers.LegacyNotifierBuilderTest do
     "op" => "legacy_notify"
   }
 
-  @announcement %{
+  @public_announcement %{
     "type" => "comment",
     "subject" => "participation_event_comment",
     "object_type" => "comment",
+    "inserted_at" => DateTime.utc_now(),
+    "op" => "legacy_notify"
+  }
+
+  @private_announcement %{
+    "type" => "conversation",
+    "subject" => "conversation_created",
+    "object_type" => "conversation",
     "inserted_at" => DateTime.utc_now(),
     "op" => "legacy_notify"
   }
@@ -138,7 +148,7 @@ defmodule Mobilizon.Service.Workers.LegacyNotifierBuilderTest do
       %Comment{id: comment_id} = insert(:comment, event: event, actor: actor)
 
       args =
-        Map.merge(@announcement, %{
+        Map.merge(@public_announcement, %{
           "subject_params" => %{
             "event_uuid" => uuid,
             "event_title" => title,
@@ -177,7 +187,7 @@ defmodule Mobilizon.Service.Workers.LegacyNotifierBuilderTest do
       insert(:participant, event: event, actor: actor2)
 
       args =
-        Map.merge(@announcement, %{
+        Map.merge(@public_announcement, %{
           "subject_params" => %{
             "event_uuid" => uuid,
             "event_title" => title,
@@ -332,6 +342,92 @@ defmodule Mobilizon.Service.Workers.LegacyNotifierBuilderTest do
       end)
 
       assert :ok == LegacyNotifierBuilder.perform(%Oban.Job{args: args})
+    end
+  end
+
+  describe "Generates a private event announcement notification" do
+    test "sends emails to target users" do
+      user1 = insert(:user, email: "user1@do.main")
+      actor1 = insert(:actor, user: user1)
+      user2 = insert(:user, email: "user2@do.main")
+      actor2 = insert(:actor, user: user2)
+      event = insert(:event)
+      comment = insert(:comment, actor: actor2, visibility: :private)
+
+      conversation =
+        insert(:conversation, event: event, last_comment: comment, origin_comment: comment)
+
+      conversation_participant =
+        insert(:conversation_participant, conversation: conversation, actor: actor1)
+
+      args =
+        Map.merge(@private_announcement, %{
+          "subject_params" => %{
+            "conversation_id" => conversation.id,
+            "conversation_participant_id" => conversation_participant.id,
+            "conversation_text" => conversation.last_comment.text,
+            "conversation_event_id" => event.id,
+            "conversation_event_title" => event.title,
+            "conversation_event_uuid" => event.uuid
+          },
+          "author_id" => conversation.last_comment.actor.id,
+          "object_id" => conversation.last_comment.id,
+          "participant" => %{
+            "actor_id" => actor1.id,
+            "id" => conversation_participant.id
+          }
+        })
+
+      LegacyNotifierBuilder.perform(%Oban.Job{args: args})
+
+      assert_email_sent(to: "user1@do.main")
+      refute_email_sent(to: "user2@do.main")
+      refute_email_sent(to: "user1@do.main")
+    end
+
+    test "sends emails to anonymous participants" do
+      {:ok, anonymous_actor} = Actors.get_or_create_internal_actor("anonymous")
+      refute is_nil(anonymous_actor)
+      user2 = insert(:user, email: "user2@do.main")
+      actor2 = insert(:actor, user: user2)
+      event = insert(:event)
+      comment = insert(:comment, actor: actor2, visibility: :private)
+
+      insert(:participant,
+        event: event,
+        actor: anonymous_actor,
+        metadata: %{email: "anon@mou.se"}
+      )
+
+      conversation =
+        insert(:conversation, event: event, last_comment: comment, origin_comment: comment)
+
+      conversation_participant =
+        insert(:conversation_participant, conversation: conversation, actor: anonymous_actor)
+
+      args =
+        Map.merge(@private_announcement, %{
+          "subject_params" => %{
+            "conversation_id" => conversation.id,
+            "conversation_participant_id" => conversation_participant.id,
+            "conversation_text" => conversation.last_comment.text,
+            "conversation_event_id" => event.id,
+            "conversation_event_title" => event.title,
+            "conversation_event_uuid" => event.uuid
+          },
+          "author_id" => conversation.last_comment.actor.id,
+          "object_id" => conversation.last_comment.id,
+          "participant" => %{
+            "actor_id" => anonymous_actor.id,
+            "id" => conversation_participant.id
+          }
+        })
+
+      LegacyNotifierBuilder.perform(%Oban.Job{args: args})
+
+      assert_email_sent(to: "anon@mou.se")
+      refute_email_sent(to: "user2@do.main")
+      refute_email_sent(to: "anon@mou.se")
     end
   end
 end
