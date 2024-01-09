@@ -73,7 +73,7 @@
     "blurhash": "^2.0.0",
     "date-fns": "^2.16.0",
     "date-fns-tz": "^2.0.0",
-    "floating-vue": "^2.0.0-beta.24",
+    "floating-vue": "^5.0.0",
     "graphql": "^16.8.1",
     "graphql-tag": "^2.10.3",
     "hammerjs": "^2.0.8",
