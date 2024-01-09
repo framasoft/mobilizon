@@ -2,7 +2,7 @@ defmodule Mobilizon.Service.Activity.Conversation do
   @moduledoc """
   Insert a conversation activity
   """
-  alias Mobilizon.Conversations
+  alias Mobilizon.{Actors, Conversations}
   alias Mobilizon.Conversations.{Conversation, ConversationParticipant}
   alias Mobilizon.Discussions.Comment
   alias Mobilizon.Events.Event
@@ -38,7 +38,7 @@ defmodule Mobilizon.Service.Activity.Conversation do
          %Conversation{
            id: conversation_id
          } = conversation,
-         %Comment{actor_id: actor_id, text: last_comment_text},
+         %Comment{actor_id: actor_id, text: last_comment_text} = comment,
          _options
        )
        when subject in [
@@ -55,7 +55,8 @@ defmodule Mobilizon.Service.Activity.Conversation do
                       actor_id: conversation_participant_actor_id
                     } =
                       conversation_participant ->
-      if actor_id != conversation_participant_actor_id do
+      if actor_id != conversation_participant_actor_id and
+           can_send_event_announcement?(conversation, comment) do
         LegacyNotifierBuilder.enqueue(
           :legacy_notify,
           %{
@@ -98,4 +99,31 @@ defmodule Mobilizon.Service.Activity.Conversation do
        }
 
   defp event_subject_params(_), do: %{}
+
+  @spec can_send_event_announcement?(Conversation.t(), Comment.t()) :: boolean()
+  defp can_send_event_announcement?(
+         %Conversation{
+           event: %Event{
+             attributed_to_id: attributed_to_id
+           }
+         },
+         %Comment{actor_id: actor_id}
+       )
+       when not is_nil(attributed_to_id) do
+    attributed_to_id == actor_id or Actors.member?(actor_id, attributed_to_id)
+  end
+
+  defp can_send_event_announcement?(
+         %Conversation{
+           event: %Event{
+             organizer_actor_id: organizer_actor_id
+           }
+         },
+         %Comment{actor_id: actor_id}
+       )
+       when not is_nil(organizer_actor_id) do
+    organizer_actor_id == actor_id
+  end
+
+  defp can_send_event_announcement?(_, _), do: false
 end
