@@ -32,6 +32,7 @@
       v-if="currentActor"
       :currentActor="currentActor"
       :placeholder="t('Write a new message')"
+      :required="true"
     />
     <o-notification
       class="my-2"
