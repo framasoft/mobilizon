@@ -44,7 +44,8 @@ defmodule Mobilizon.GraphQL.Resolvers.ConversationTest do
   describe "Find conversations for event" do
     test "for a given event", %{conn: conn, user: user, actor: actor} do
       event = insert(:event, organizer_actor: actor)
-      conversation = insert(:conversation, event: event)
+      origin_comment = insert(:comment, actor: actor)
+      conversation = insert(:conversation, event: event, origin_comment: origin_comment)
       another_comment = insert(:comment, origin_comment: conversation.origin_comment)
 
       Discussions.update_comment(conversation.origin_comment, %{conversation_id: conversation.id})
