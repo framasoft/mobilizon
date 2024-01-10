@@ -16,7 +16,7 @@ defmodule Mobilizon.Service.Workers.LegacyNotifierBuilderTest do
   use Mobilizon.Tests.Helpers
   import Mox
   import Mobilizon.Factory
-  import Swoosh.TestAssertions
+  import Mobilizon.Tests.SwooshAssertions
 
   setup_all do
     Mox.defmock(NotifierMock, for: Mobilizon.Service.Notifier)
@@ -380,9 +380,9 @@ defmodule Mobilizon.Service.Workers.LegacyNotifierBuilderTest do
 
       LegacyNotifierBuilder.perform(%Oban.Job{args: args})
 
-      assert_email_sent(to: "user1@do.main")
-      refute_email_sent(to: "user2@do.main")
-      refute_email_sent(to: "user1@do.main")
+      assert_email_sent(%Swoosh.Email{to: [{"", "user1@do.main"}]})
+      refute_email_sent(%Swoosh.Email{to: [{"", "user2@do.main"}]})
+      refute_email_sent(%Swoosh.Email{to: [{"", "user1@do.main"}]})
     end
 
     test "sends emails to anonymous participants" do
@@ -425,9 +425,9 @@ defmodule Mobilizon.Service.Workers.LegacyNotifierBuilderTest do
 
       LegacyNotifierBuilder.perform(%Oban.Job{args: args})
 
-      assert_email_sent(to: "anon@mou.se")
-      refute_email_sent(to: "user2@do.main")
-      refute_email_sent(to: "anon@mou.se")
+      assert_email_sending(%Swoosh.Email{to: [{"", "anon@mou.se"}]}, 10_000)
+      refute_email_sent(%Swoosh.Email{to: [{"", "user2@do.main"}]})
+      refute_email_sent(%Swoosh.Email{to: [{"", "anon@mou.se"}]})
     end
   end
 end
