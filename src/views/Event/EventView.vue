@@ -327,7 +327,6 @@ import { useI18n } from "vue-i18n";
 import { Notifier } from "@/plugins/notifier";
 import { AbsintheGraphQLErrors } from "@/types/errors.model";
 import { useHead } from "@unhead/vue";
-import { IEvent } from "@/types/event.model";
 
 const IntegrationTwitch = defineAsyncComponent(
   () => import("@/components/Event/Integrations/TwitchIntegration.vue")
