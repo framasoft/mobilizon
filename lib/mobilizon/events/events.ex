@@ -1774,6 +1774,7 @@ defmodule Mobilizon.Events do
     |> distinct([e], e.id)
     |> join(:left, [e], et in "events_tags", on: e.id == et.event_id)
     |> join(:left, [e], a in Address, on: e.physical_address_id == a.id)
+    |> filter_future_events(true)
     |> filter_draft()
     |> filter_local_or_from_followed_instances_events()
     |> filter_public_visibility()
