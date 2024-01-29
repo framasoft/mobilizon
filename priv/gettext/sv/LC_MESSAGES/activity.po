@@ -8,15 +8,15 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-12-19 04:14+0000\n"
-"Last-Translator: Kristoffer Grundström <swedishsailfishosuser@tutanota.com>\n"
+"PO-Revision-Date: 2024-01-19 09:47+0000\n"
+"Last-Translator: drkfrd <drkfrd@users.noreply.weblate.framasoft.org>\n"
 "Language-Team: Swedish <https://weblate.framasoft.org/projects/mobilizon/"
 "activity/sv/>\n"
 "Language: sv\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.14.1\n"
+"X-Generator: Weblate 5.3.1\n"
 
 #: lib/web/templates/email/activity/_member_activity_item.html.heex:14
 #: lib/web/templates/email/activity/_member_activity_item.text.eex:12
@@ -478,12 +478,12 @@ msgstr "%{profile} lade till medlemmen %{member}."
 #: lib/web/templates/email/activity/_event_activity_item.text.eex:31
 #, elixir-autogen, elixir-format
 msgid "%{profile} joined your event %{event}."
-msgstr ""
+msgstr "%{profile} gick med i ditt evenemang %{event}."
 
 #: lib/web/views/email_view.ex:61
 #, elixir-autogen, elixir-format
 msgid "An anonymous profile"
-msgstr ""
+msgstr "En anonym profil"
 
 #: lib/web/templates/email/email_anonymous_activity.html.heex:107
 #: lib/web/templates/email/email_anonymous_activity.text.eex:14
@@ -510,7 +510,7 @@ msgstr "%{profile} nämnde dig i en kommentar under händelsen %{event}."
 #: lib/service/activity/renderer/conversation.ex:36
 #, elixir-autogen, elixir-format
 msgid "%{profile} replied to your message"
-msgstr ""
+msgstr "%{profil} svarade på ditt meddelande"
 
 #: lib/web/templates/email/activity/_conversation_activity_item.html.heex:10
 #, elixir-autogen, elixir-format, fuzzy
@@ -520,31 +520,35 @@ msgstr "%{profile} svarade på diskussionen %{discussion}."
 #: lib/web/templates/email/activity/_conversation_activity_item.text.eex:6
 #, elixir-autogen, elixir-format
 msgid "%{profile} replied you in a conversation."
-msgstr ""
+msgstr "%{profile} svarade dig i en konversation."
 
 #: lib/service/activity/renderer/conversation.ex:49
 #, elixir-autogen, elixir-format
 msgid "%{profile} sent a private message about event %{event}"
-msgstr ""
+msgstr "%{profile} skickade ett privat meddelande om händelsen %{event}"
 
 #: lib/service/activity/renderer/conversation.ex:23
 #, elixir-autogen, elixir-format
 msgid "%{profile} sent you a message"
-msgstr ""
+msgstr "%{profil} skickade ett meddelande till dig"
 
 #: lib/web/email/activity.ex:52
 #, elixir-autogen, elixir-format
 msgid "Informations about your event %{event}"
-msgstr ""
+msgstr "Information om ditt evenemang %{event}"
 
 #: lib/web/templates/email/email_anonymous_activity.html.heex:118
 #: lib/web/templates/email/email_anonymous_activity.text.eex:20
 #, elixir-autogen, elixir-format
 msgid "It might give details on how to join the event, so make sure to read it appropriately."
 msgstr ""
+"Den kan innehålla information om hur du går med i evenemanget, så se till "
+"att läsa den ordentligt."
 
 #: lib/web/templates/email/email_anonymous_activity.html.heex:156
 #: lib/web/templates/email/email_anonymous_activity.text.eex:28
 #, elixir-autogen, elixir-format
 msgid "This information is sent privately to you as a person who registered for this event. Share the informations above with other people with caution."
 msgstr ""
+"Denna information skickas privat till dig som registrerat dig för detta "
+"evenemang. Dela informationen ovan med andra personer med försiktighet."
