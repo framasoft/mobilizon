@@ -26,6 +26,7 @@
       @input="getFilteredTags"
       :id="id"
       dir="auto"
+      expanded
     >
     </o-taginput>
   </o-field>
