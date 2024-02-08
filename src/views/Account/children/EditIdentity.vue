@@ -740,6 +740,7 @@ const breadcrumbsLinks = computed(
 );
 
 const updateUsername = (value: string) => {
+  if (props.isUpdate) return;
   identity.value.preferredUsername = convertToUsername(value);
 };
 
