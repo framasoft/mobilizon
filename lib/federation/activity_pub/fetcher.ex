@@ -105,6 +105,9 @@ defmodule Mobilizon.Federation.ActivityPub.Fetcher do
       {:error, %Ecto.Changeset{} = err} ->
         {:error, err}
 
+      {:error, {:error, %Ecto.Changeset{} = err}} ->
+        {:error, err}
+
       :error ->
         {:error, :transmogrifier_error}
     end
