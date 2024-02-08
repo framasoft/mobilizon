@@ -16,7 +16,8 @@
     "test": "vitest",
     "coverage": "vitest run --coverage",
     "prepare": "husky",
-    "pre-commit": "lint-staged"
+    "pre-commit": "lint-staged",
+    "postinstall": "patch-package"
   },
   "lint-staged": {
     "**/*.{js,ts,vue}": [
@@ -86,6 +87,7 @@
     "lodash": "^4.17.11",
     "ngeohash": "^0.6.3",
     "p-debounce": "^4.0.0",
+    "patch-package": "^8.0.0",
     "phoenix": "^1.6",
     "postcss": "^8",
     "register-service-worker": "^1.7.2",

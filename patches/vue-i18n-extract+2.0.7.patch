@@ -1,0 +1,66 @@
+diff --git a/node_modules/vue-i18n-extract/dist/vue-i18n-extract.modern.mjs b/node_modules/vue-i18n-extract/dist/vue-i18n-extract.modern.mjs
+index 670733e..872d1af 100644
+--- a/node_modules/vue-i18n-extract/dist/vue-i18n-extract.modern.mjs
++++ b/node_modules/vue-i18n-extract/dist/vue-i18n-extract.modern.mjs
+@@ -38,7 +38,7 @@ var defaultConfig = {
+ };
+ 
+ function initCommand() {
+-  fs.writeFileSync(path.resolve(process.cwd(), './vue-i18n-extract.config.js'), `module.exports = ${JSON.stringify(defaultConfig, null, 2)}`);
++  fs.writeFileSync(path.resolve(process.cwd(), './vue-i18n-extract.config.cjs'), `module.exports = ${JSON.stringify(defaultConfig, null, 2)}`);
+ }
+ function resolveConfig() {
+   const argvOptions = cac().parse(process.argv, {
+@@ -47,7 +47,7 @@ function resolveConfig() {
+   let options;
+ 
+   try {
+-    const pathToConfigFile = path.resolve(process.cwd(), './vue-i18n-extract.config.js'); // eslint-disable-next-line @typescript-eslint/no-var-requires
++    const pathToConfigFile = path.resolve(process.cwd(), './vue-i18n-extract.config.cjs'); // eslint-disable-next-line @typescript-eslint/no-var-requires
+ 
+     const configOptions = require(pathToConfigFile);
+ 
+diff --git a/node_modules/vue-i18n-extract/dist/vue-i18n-extract.umd.js b/node_modules/vue-i18n-extract/dist/vue-i18n-extract.umd.js
+index ca19c7a..11cb846 100644
+--- a/node_modules/vue-i18n-extract/dist/vue-i18n-extract.umd.js
++++ b/node_modules/vue-i18n-extract/dist/vue-i18n-extract.umd.js
+@@ -45,7 +45,7 @@
+   };
+ 
+   function initCommand() {
+-    fs__default["default"].writeFileSync(path__default["default"].resolve(process.cwd(), './vue-i18n-extract.config.js'), `module.exports = ${JSON.stringify(defaultConfig, null, 2)}`);
++    fs__default["default"].writeFileSync(path__default["default"].resolve(process.cwd(), './vue-i18n-extract.config.cjs'), `module.exports = ${JSON.stringify(defaultConfig, null, 2)}`);
+   }
+   function resolveConfig() {
+     const argvOptions = cac__default["default"]().parse(process.argv, {
+@@ -54,7 +54,7 @@
+     let options;
+ 
+     try {
+-      const pathToConfigFile = path__default["default"].resolve(process.cwd(), './vue-i18n-extract.config.js'); // eslint-disable-next-line @typescript-eslint/no-var-requires
++      const pathToConfigFile = path__default["default"].resolve(process.cwd(), './vue-i18n-extract.config.cjs'); // eslint-disable-next-line @typescript-eslint/no-var-requires
+ 
+       const configOptions = require(pathToConfigFile);
+ 
+diff --git a/node_modules/vue-i18n-extract/src/config-file/index.ts b/node_modules/vue-i18n-extract/src/config-file/index.ts
+index 3db836f..744bd74 100644
+--- a/node_modules/vue-i18n-extract/src/config-file/index.ts
++++ b/node_modules/vue-i18n-extract/src/config-file/index.ts
+@@ -5,7 +5,7 @@ import defaultConfig from './vue-i18n-extract.config';
+ 
+ export function initCommand(): void {
+   fs.writeFileSync(
+-    path.resolve(process.cwd(), './vue-i18n-extract.config.js'),
++    path.resolve(process.cwd(), './vue-i18n-extract.config.cjs'),
+     `module.exports = ${JSON.stringify(defaultConfig, null, 2)}`,
+   );
+ }
+@@ -16,7 +16,7 @@ export function resolveConfig (): Record<string, string>  {
+   let options;
+ 
+   try {
+-    const pathToConfigFile = path.resolve(process.cwd(), './vue-i18n-extract.config.js');
++    const pathToConfigFile = path.resolve(process.cwd(), './vue-i18n-extract.config.cjs');
+     // eslint-disable-next-line @typescript-eslint/no-var-requires
+     const configOptions = require(pathToConfigFile);
+ 
