@@ -1637,5 +1637,6 @@
   "Software details: {software_details}": "Détails du logiciel : {software_details}",
   "Only instances with an application actor can be followed": "Seules les instances avec un acteur application peuvent être suivies",
   "Domain or instance name": "Domaine ou nom de l'instance",
-  "You need to enter a text": "Vous devez entrer un texte"
+  "You need to enter a text": "Vous devez entrer un texte",
+  "Error while adding tag: {error}": "Erreur lors de l'ajout d'un tag : {error}"
 }

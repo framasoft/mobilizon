@@ -1643,5 +1643,6 @@
   "Software details: {software_details}": "Software details: {software_details}",
   "Only instances with an application actor can be followed": "Only instances with an application actor can be followed",
   "Domain or instance name": "Domain or instance name",
-  "You need to enter a text": "You need to enter a text"
+  "You need to enter a text": "You need to enter a text",
+  "Error while adding tag: {error}": "Error while adding tag: {error}"
 }
