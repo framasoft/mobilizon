@@ -15,7 +15,7 @@
     "story:preview": "histoire preview",
     "test": "vitest",
     "coverage": "vitest run --coverage",
-    "prepare": "husky install",
+    "prepare": "husky",
     "pre-commit": "lint-staged"
   },
   "lint-staged": {
