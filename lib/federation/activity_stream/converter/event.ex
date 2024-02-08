@@ -32,7 +32,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
       maybe_fetch_actor_and_attributed_to_id: 1,
       process_pictures: 2,
       get_address: 1,
-      fetch_actor: 1
+      fetch_actor: 1,
+      visibility_public?: 1
     ]
 
   import Mobilizon.Service.Metadata.Utils,
@@ -226,7 +227,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
 
   defp get_metdata(_), do: []
 
-  defp get_visibility(object), do: if(@ap_public in object["to"], do: :public, else: :unlisted)
+  defp get_visibility(object),
+    do: if(visibility_public?(object["to"]), do: :public, else: :unlisted)
 
   @spec date_to_string(DateTime.t() | nil) :: String.t()
   defp date_to_string(nil), do: nil
