@@ -134,7 +134,7 @@ config :vite_phx,
   environment: config_env(),
   # this manifest is different from the Phoenix "cache_manifest.json"!
   # optional
-  vite_manifest: "priv/static/manifest.json",
+  vite_manifest: "priv/static/.vite/manifest.json",
   # optional
   dev_server_address: "http://localhost:5173"
 
