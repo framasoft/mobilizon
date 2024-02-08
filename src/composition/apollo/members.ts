@@ -17,7 +17,6 @@ export function useGroupMembers(
   groupName: Ref<string>,
   options: useGroupMembersOptions = {}
 ) {
-  console.debug("useGroupMembers", options);
   const { result, error, loading, onResult, onError, refetch, fetchMore } =
     useQuery<
       {

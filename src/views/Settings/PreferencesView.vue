@@ -94,7 +94,6 @@
       <o-field grouped>
         <o-field :label="t('City or region')" expanded label-for="setting-city">
           <full-address-auto-complete
-            v-if="loggedUser?.settings"
             :resultType="AddressSearchType.ADMINISTRATIVE"
             v-model="address"
             :default-text="address?.description"
