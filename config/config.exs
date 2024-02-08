@@ -36,7 +36,7 @@ config :mobilizon, :instance,
   unconfirmed_user_grace_period_hours: 48,
   activity_expire_days: 365,
   activity_keep_number: 100,
-  enable_instance_feeds: false,
+  enable_instance_feeds: true,
   email_from: "noreply@localhost",
   email_reply_to: "noreply@localhost"
 
