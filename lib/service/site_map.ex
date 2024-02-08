@@ -56,7 +56,6 @@ defmodule Mobilizon.Service.SiteMap do
         end)
         |> Sitemapper.generate(config)
         |> Sitemapper.persist(config)
-        |> Sitemapper.ping(config)
         |> Stream.run()
       end,
       timeout: :infinity
