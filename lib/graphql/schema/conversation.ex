@@ -20,6 +20,7 @@ defmodule Mobilizon.GraphQL.Schema.ConversationType do
     )
 
     field(:last_comment, :comment, description: "The last comment of the conversation")
+    field(:origin_comment, :comment, description: "The first comment of the conversation")
 
     field :comments, :paginated_comment_list do
       arg(:page, :integer, default_value: 1)

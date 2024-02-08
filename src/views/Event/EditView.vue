@@ -924,9 +924,28 @@ const handleError = (err: any) => {
   console.error(err);
 
   if (err.graphQLErrors !== undefined) {
-    err.graphQLErrors.forEach(({ message }: { message: string }) => {
-      notifier?.error(message);
-    });
+    err.graphQLErrors.forEach(
+      ({
+        message,
+        field,
+      }: {
+        message: string | { slug?: string[] }[];
+        field: string;
+      }) => {
+        if (
+          field === "tags" &&
+          Array.isArray(message) &&
+          message.some((msg) => msg.slug)
+        ) {
+          const finalMsg = message.find((msg) => msg.slug?.[0]);
+          notifier?.error(
+            t("Error while adding tag: {error}", { error: finalMsg?.slug?.[0] })
+          );
+        } else if (typeof message === "string") {
+          notifier?.error(message);
+        }
+      }
+    );
   }
 };
 

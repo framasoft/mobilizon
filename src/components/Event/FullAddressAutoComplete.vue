@@ -39,7 +39,9 @@
               <o-icon :icon="addressToPoiInfos(option).poiIcon.icon" />
               <b>{{ addressToPoiInfos(option).name }}</b>
             </p>
-            <small>{{ addressToPoiInfos(option).alternativeName }}</small>
+            <p class="text-small">
+              {{ addressToPoiInfos(option).alternativeName }}
+            </p>
           </template>
           <template #empty>
             <template v-if="isFetching">{{ t("Searching…") }}</template>

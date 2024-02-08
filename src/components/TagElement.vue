@@ -1,6 +1,6 @@
 <template>
   <span
-    class="rounded-md truncate text-sm text-violet-title px-2 py-1"
+    class="rounded-md truncate text-sm text-black px-2 py-1"
     :class="[
       typeClasses,
       capitalize,

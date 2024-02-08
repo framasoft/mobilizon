@@ -146,9 +146,24 @@ body {
 .taginput-item {
   @apply bg-primary mr-2;
 }
+.taginput-autocomplete {
+  @apply flex-1 !drop-shadow-none;
+}
+.taginput-expanded {
+  @apply w-full;
+}
+.taginput .autocomplete .dropdown-menu {
+  @apply w-full;
+}
+.taginput-container {
+  @apply border-none;
+}
 
 .taginput-item:first-child {
   @apply ml-2;
+}
+.taginput-input-wrapper {
+  @apply block;
 }
 
 /* Autocomplete */
@@ -156,12 +171,12 @@ body {
   @apply max-h-[200px] drop-shadow-md text-black z-10;
 }
 
-.autocomplete-item {
-  @apply py-1.5 px-4 text-start;
+.autocomplete .autocomplete-item {
+  @apply text-start p-2;
 }
 
-.autocomplete-item-group-title {
-  @apply opacity-50 py-0 px-2;
+.autocomplete .autocomplete-item-group-title {
+  @apply opacity-50 py-1.5 px-2 dark:text-white dark:opacity-75;
 }
 
 /* Dropdown */
@@ -173,7 +188,7 @@ body {
   @apply bg-white dark:bg-zinc-700 shadow-lg rounded text-start py-2;
 }
 .dropdown-item {
-  @apply relative inline-flex gap-1 no-underline p-2 cursor-pointer w-full;
+  @apply relative inline-flex gap-1 no-underline p-2 cursor-pointer w-full hover:bg-[#f5f5f5] hover:text-black;
 }
 
 .dropdown-item-active {
@@ -343,8 +358,8 @@ button.menubar__button {
 .o-drop__menu--active {
   @apply z-50;
 }
-.o-dpck__box {
-  @apply px-4 py-1;
+.datepicker-box {
+  @apply block px-4 py-1 hover:bg-transparent;
 }
 .o-dpck__header {
   @apply pb-2 mb-2;
@@ -352,7 +367,7 @@ button.menubar__button {
 }
 .o-dpck__header__next,
 .o-dpck__header__previous {
-  @apply justify-center text-center no-underline cursor-pointer items-center shadow-none inline-flex relative select-none leading-6 border rounded h-10 p-2 m-1 dark:text-white;
+  @apply justify-center text-center no-underline cursor-pointer items-center shadow-none inline-flex relative select-none leading-6 border rounded h-10 p-2 m-1 dark:text-white hover:px-2;
   min-width: 2.25em;
 }
 .o-dpck__header__list {

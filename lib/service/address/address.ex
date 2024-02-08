@@ -85,7 +85,7 @@ defmodule Mobilizon.Service.Address do
         defined?(street) ->
           if defined?(locality), do: "#{street} (#{locality})", else: street
 
-        defined?(locality) ->
+        defined?(locality) and locality != region ->
           "#{locality}, #{region}, #{country}"
 
         defined?(region) ->

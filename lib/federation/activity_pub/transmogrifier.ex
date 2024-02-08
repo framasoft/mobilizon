@@ -71,8 +71,10 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
     case Discussions.get_comment_from_url_with_preload(object["id"]) do
       {:error, :comment_not_found} ->
         case Converter.Comment.as_to_model_data(object) do
-          %{visibility: visibility, attributed_to_id: attributed_to_id} = object_data
-          when visibility === :private and is_nil(attributed_to_id) ->
+          %{visibility: visibility, attributed_to_id: attributed_to_id, actor_id: actor_id} =
+              object_data
+          when visibility === :private and
+                 (is_nil(attributed_to_id) or actor_id == attributed_to_id) ->
             Actions.Create.create(:conversation, object_data, false)
 
           object_data when is_map(object_data) ->

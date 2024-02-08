@@ -30,7 +30,9 @@
         class="flex-1 min-w-[200px]"
       >
         <template v-slot="props">
-          <div class="dark:bg-violet-3 p-1 flex items-center gap-1">
+          <div
+            class="dark:bg-violet-3 p-1 flex items-center gap-1 flex-1 dark:text-white"
+          >
             <div class="">
               <img
                 v-if="
@@ -41,6 +43,7 @@
                 width="24"
                 height="24"
                 alt=""
+                class="dark:fill-white"
               />
               <o-icon v-else-if="props.option.icon" :icon="props.option.icon" />
               <o-icon v-else icon="help-circle" />

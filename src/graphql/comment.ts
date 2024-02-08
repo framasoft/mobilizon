@@ -13,6 +13,9 @@ export const COMMENT_FIELDS_FRAGMENT = gql`
     actor {
       ...ActorFragment
     }
+    attributedTo {
+      ...ActorFragment
+    }
     totalReplies
     insertedAt
     updatedAt

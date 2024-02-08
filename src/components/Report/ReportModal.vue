@@ -6,7 +6,7 @@
 
     <section>
       <div
-        class="flex gap-1 flex-row mb-3 bg-mbz-yellow p-3 rounded items-center"
+        class="flex gap-1 flex-row mb-3 bg-mbz-yellow dark:text-black p-3 rounded items-center"
       >
         <o-icon
           icon="alert"

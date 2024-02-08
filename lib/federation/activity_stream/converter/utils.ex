@@ -335,4 +335,13 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Utils do
         nil
     end
   end
+
+  @ap_public "https://www.w3.org/ns/activitystreams#Public"
+
+  @spec visibility_public?(String.t() | list(String.t())) :: boolean()
+  def visibility_public?(to) when is_binary(to), do: visibility_public?([to])
+
+  def visibility_public?(to) when is_list(to) do
+    !MapSet.disjoint?(MapSet.new(to), MapSet.new([@ap_public, "as:Public", "Public"]))
+  end
 end

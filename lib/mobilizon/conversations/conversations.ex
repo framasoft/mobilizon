@@ -104,6 +104,10 @@ defmodule Mobilizon.Conversations do
     |> join(:inner, [_cp, _c, _e, _a, _lc, _oc, p], ap in Actor, on: p.actor_id == ap.id)
     |> where([_cp, c], c.event_id == ^event_id)
     |> where([cp], cp.actor_id == ^actor_id)
+    |> where(
+      [_cp, _c, _e, _a, _lc, oc],
+      oc.actor_id == ^actor_id or oc.attributed_to_id == ^actor_id
+    )
     |> order_by([cp], desc: cp.unread, desc: cp.updated_at)
     |> preload([_cp, c, e, a, lc, oc, p, ap],
       actor: a,
@@ -111,6 +115,14 @@ defmodule Mobilizon.Conversations do
         {c, event: e, last_comment: lc, origin_comment: oc, participants: {p, actor: ap}}
     )
     |> Page.build_page(page, limit)
+  end
+
+  def find_all_conversations_for_event(event_id) do
+    ConversationParticipant
+    |> join(:inner, [cp], c in Conversation, on: cp.conversation_id == c.id)
+    |> join(:left, [_cp, c], e in Event, on: c.event_id == e.id)
+    |> where([_cp, c], c.event_id == ^event_id)
+    |> Repo.all()
   end
 
   @spec list_conversation_participants_for_actor(
@@ -133,7 +145,7 @@ defmodule Mobilizon.Conversations do
     subquery
     |> subquery()
     |> order_by([cp], desc: cp.unread, desc: cp.updated_at)
-    |> preload([:actor, conversation: [:last_comment, :participants]])
+    |> preload([:actor, conversation: [:last_comment, :origin_comment, :participants, :event]])
     |> Page.build_page(page, limit)
   end
 
@@ -147,7 +159,7 @@ defmodule Mobilizon.Conversations do
     ConversationParticipant
     |> join(:inner, [cp], a in Actor, on: cp.actor_id == a.id)
     |> where([_cp, a], a.user_id == ^user_id)
-    |> preload([:actor, conversation: [:last_comment, :participants]])
+    |> preload([:actor, conversation: [:last_comment, :origin_comment, :participants, :event]])
     |> Page.build_page(page, limit)
   end
 

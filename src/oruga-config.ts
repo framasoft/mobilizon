@@ -27,6 +27,16 @@ export const orugaConfig = {
   taginput: {
     itemClass: "taginput-item",
     rootClass: "taginput",
+    containerClass: "taginput-container",
+    expandedClass: "taginput-expanded",
+    autocompleteClasses: {
+      rootClass: "taginput-autocomplete",
+      itemClass: "taginput-autocomplete-item",
+      inputClasses: {
+        rootClass: "taginput-input-wrapper",
+        inputClass: "taginput-input",
+      },
+    },
   },
   autocomplete: {
     rootClass: "autocomplete",
@@ -57,6 +67,7 @@ export const orugaConfig = {
   datepicker: {
     iconNext: "ChevronRight",
     iconPrev: "ChevronLeft",
+    boxClass: "datepicker-box",
   },
   modal: {
     rootClass: "modal",

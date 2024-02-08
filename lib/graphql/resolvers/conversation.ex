@@ -156,6 +156,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Conversation do
 
           {:ok, conversation_to_view(conversation, conversation_participant_actor)}
 
+        {:error, %Ecto.Changeset{} = changeset} ->
+          {:error, changeset}
+
         {:error, :empty_participants} ->
           {:error,
            dgettext(

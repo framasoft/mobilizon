@@ -32,6 +32,7 @@
       v-if="currentActor"
       :currentActor="currentActor"
       :placeholder="t('Write a new message')"
+      :required="true"
     />
     <o-notification
       class="my-2"
@@ -133,6 +134,7 @@ const sendForm = (e: Event) => {
   e.preventDefault();
   console.debug("Sending new private message");
   if (!currentActor.value?.id || !event.value.id) return;
+  errors.value = [];
   eventPrivateMessageMutate({
     text: text.value,
     actorId:
@@ -150,7 +152,10 @@ onEventPrivateMessageMutated(() => {
 
 onEventPrivateMessageError((err) => {
   err.graphQLErrors.forEach((error) => {
-    errors.value.push(error.message);
+    const message = Array.isArray(error.message)
+      ? error.message
+      : [error.message];
+    errors.value.push(...message);
   });
 });
 

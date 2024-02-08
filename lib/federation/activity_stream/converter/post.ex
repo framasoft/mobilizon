@@ -15,7 +15,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Post do
 
   import Mobilizon.Federation.ActivityStream.Converter.Utils,
     only: [
-      process_pictures: 2
+      process_pictures: 2,
+      visibility_public?: 1
     ]
 
   import Mobilizon.Service.Guards, only: [is_valid_string: 1]
@@ -134,14 +135,12 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Post do
     )
   end
 
-  @ap_public "https://www.w3.org/ns/activitystreams#Public"
-
   defp get_visibility(%{"to" => to}, %Actor{
          followers_url: followers_url,
          members_url: members_url
        }) do
     cond do
-      @ap_public in to -> :public
+      visibility_public?(to) -> :public
       followers_url in to -> :unlisted
       members_url in to -> :private
     end

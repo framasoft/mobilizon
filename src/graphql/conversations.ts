@@ -12,6 +12,9 @@ export const CONVERSATION_QUERY_FRAGMENT = gql`
     lastComment {
       ...CommentFields
     }
+    originComment {
+      ...CommentFields
+    }
     participants {
       ...ActorFragment
     }
@@ -19,6 +22,12 @@ export const CONVERSATION_QUERY_FRAGMENT = gql`
       id
       uuid
       title
+      organizerActor {
+        id
+      }
+      attributedTo {
+        id
+      }
       picture {
         id
         url

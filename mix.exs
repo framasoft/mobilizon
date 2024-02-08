@@ -121,10 +121,12 @@ defmodule Mobilizon.Mixfile do
       |> to_string()
       |> String.split()
       |> Enum.map(fn strategy_entry ->
-        with [_strategy, dependency] <- String.split(strategy_entry, ":") do
-          dependency
-        else
-          [strategy] -> "ueberauth_#{strategy}"
+        case String.split(strategy_entry, ":") do
+          [_strategy, dependency] ->
+            dependency
+
+          [strategy] ->
+            "ueberauth_#{strategy}"
         end
       end)
 
@@ -185,7 +187,7 @@ defmodule Mobilizon.Mixfile do
       {:floki, "~> 0.31"},
       {:ip_reserved, "~> 0.1.0"},
       {:fast_sanitize, "~> 0.1"},
-      {:ueberauth, "0.10.5", override: true},
+      {:ueberauth, "0.10.7", override: true},
       {:ueberauth_twitter, "~> 0.4"},
       {:ueberauth_discord, "~> 0.7"},
       {:ueberauth_github, "~> 0.8.1"},
@@ -283,7 +285,7 @@ defmodule Mobilizon.Mixfile do
     File.rm_rf!("test/uploads")
   end
 
-  defp docs() do
+  defp docs do
     [
       source_ref: "v#{@version}",
       groups_for_modules: groups_for_modules(),
@@ -323,7 +325,7 @@ defmodule Mobilizon.Mixfile do
     ]
   end
 
-  defp groups_for_modules() do
+  defp groups_for_modules do
     [
       Models: [
         ~r/Mobilizon.Actors~r/,

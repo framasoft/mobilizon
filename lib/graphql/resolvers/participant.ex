@@ -381,10 +381,15 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
         visibility: :private
       })
 
-    with {:member, true} <-
+    with {:ok,
+          %Event{organizer_actor_id: organizer_actor_id, attributed_to_id: attributed_to_id} =
+            _event} <- Mobilizon.Events.get_event(event_id),
+         {:member, true} <-
            {:member,
-            to_string(current_actor_id) == to_string(actor_id) or
-              Actors.member?(current_actor_id, actor_id)},
+            (to_string(current_actor_id) == to_string(organizer_actor_id) and
+               to_string(current_actor_id) == to_string(actor_id)) or
+              (!is_nil(attributed_to_id) and Actors.member?(current_actor_id, attributed_to_id) and
+                 to_string(attributed_to_id) == to_string(actor_id))},
          {:ok, _activity, %Conversation{} = conversation} <- Comments.create_conversation(args) do
       {:ok, conversation_to_view(conversation, Actors.get_actor(actor_id))}
     else

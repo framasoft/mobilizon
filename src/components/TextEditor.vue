@@ -217,7 +217,16 @@
         </button>
       </bubble-menu>
 
-      <editor-content class="editor__content" :editor="editor" v-if="editor" />
+      <editor-content
+        class="editor__content"
+        :class="{ editorErrorStatus, editorIsFocused: focused }"
+        :editor="editor"
+        v-if="editor"
+        ref="editorContentRef"
+      />
+      <p v-if="editorErrorMessage" class="text-sm text-mbz-danger">
+        {{ editorErrorMessage }}
+      </p>
     </div>
   </div>
 </template>
@@ -249,7 +258,7 @@ import Underline from "@tiptap/extension-underline";
 import Link from "@tiptap/extension-link";
 import { AutoDir } from "./Editor/Autodir";
 // import sanitizeHtml from "sanitize-html";
-import { computed, inject, onBeforeUnmount, watch } from "vue";
+import { computed, inject, onBeforeUnmount, ref, watch } from "vue";
 import { Dialog } from "@/plugins/dialog";
 import { useI18n } from "vue-i18n";
 import { useMutation } from "@vue/apollo-composable";
@@ -269,6 +278,7 @@ import FormatQuoteClose from "vue-material-design-icons/FormatQuoteClose.vue";
 import Undo from "vue-material-design-icons/Undo.vue";
 import Redo from "vue-material-design-icons/Redo.vue";
 import Placeholder from "@tiptap/extension-placeholder";
+import { useFocusWithin } from "@vueuse/core";
 
 const props = withDefaults(
   defineProps<{
@@ -279,11 +289,13 @@ const props = withDefaults(
     currentActor: IPerson;
     placeholder?: string;
     headingLevel?: Level[];
+    required?: boolean;
   }>(),
   {
     mode: "description",
     maxSize: 100_000_000,
     headingLevel: () => [3, 4, 5],
+    required: false,
   }
 );
 
@@ -333,7 +345,7 @@ const editor = useEditor({
       "aria-label": ariaLabel.value ?? "",
       role: "textbox",
       class:
-        "prose dark:prose-invert prose-sm lg:prose-lg xl:prose-xl bg-zinc-50 dark:bg-zinc-700 focus:outline-none !max-w-full",
+        "prose dark:prose-invert prose-sm lg:prose-lg xl:prose-xl bg-white dark:bg-zinc-700 !max-w-full",
     },
     transformPastedHTML: transformPastedHTML,
   },
@@ -373,7 +385,17 @@ const editor = useEditor({
   onUpdate: () => {
     emit("update:modelValue", editor.value?.getHTML());
   },
+  onBlur: () => {
+    checkEditorEmpty();
+  },
+  onFocus: () => {
+    editorErrorStatus.value = false;
+    editorErrorMessage.value = "";
+  },
 });
+
+const editorContentRef = ref(null);
+const { focused } = useFocusWithin(editorContentRef);
 
 watch(value, (val: string) => {
   if (!editor.value) return;
@@ -470,6 +492,18 @@ defineExpose({ replyToComment, focus });
 onBeforeUnmount(() => {
   editor.value?.destroy();
 });
+
+const editorErrorStatus = ref(false);
+const editorErrorMessage = ref("");
+
+const isEmpty = computed(
+  () => props.required === true && editor.value?.isEmpty === true
+);
+
+const checkEditorEmpty = () => {
+  editorErrorStatus.value = isEmpty.value;
+  editorErrorMessage.value = isEmpty.value ? t("You need to enter a text") : "";
+};
 </script>
 <style lang="scss">
 @use "@/styles/_mixins" as *;
@@ -523,14 +557,8 @@ onBeforeUnmount(() => {
   &__content {
     div.ProseMirror {
       min-height: 2.5rem;
-      box-shadow: inset 0 1px 2px rgba(10, 10, 10, 0.1);
       border-radius: 4px;
-      border: 1px solid #dbdbdb;
       padding: 12px 6px;
-
-      &:focus {
-        outline: none;
-      }
     }
 
     h1 {
@@ -654,5 +682,20 @@ onBeforeUnmount(() => {
 
 .mention[data-id] {
   @apply inline-block border border-zinc-600 dark:border-zinc-300 rounded py-0.5 px-1;
+}
+
+.editor__content > div {
+  @apply border rounded border-[#6b7280];
+}
+
+.editorIsFocused > div {
+  @apply ring-2 ring-[#2563eb] outline-2 outline outline-offset-2 outline-transparent;
+}
+
+.editorErrorStatus {
+  @apply border-red-500;
+}
+.editor__content p.is-editor-empty:first-child::before {
+  @apply text-slate-300;
 }
 </style>

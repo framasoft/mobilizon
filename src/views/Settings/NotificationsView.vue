@@ -349,11 +349,10 @@ const { result: loggedUserResult } = useQuery<{ loggedUser: IUser }>(
   USER_NOTIFICATIONS
 );
 const loggedUser = computed(() => loggedUserResult.value?.loggedUser);
-const feedTokens = computed(
-  () =>
-    loggedUser.value?.feedTokens.filter(
-      (token: IFeedToken) => token.actor === null
-    )
+const feedTokens = computed(() =>
+  loggedUser.value?.feedTokens.filter(
+    (token: IFeedToken) => token.actor === null
+  )
 );
 
 const { result: webPushEnabledResult } = useQuery<{

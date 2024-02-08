@@ -155,6 +155,7 @@ export function iconForAddress(address: IAddress): IPOIIcon {
 }
 
 export function addressFullName(address: IAddress): string {
+  if (!address) return "";
   const { name, alternativeName } = addressToPoiInfos(address);
   if (name && alternativeName) {
     return `${name}, ${alternativeName}`;
