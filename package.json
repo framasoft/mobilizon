@@ -28,6 +28,7 @@
       "mix credo"
     ]
   },
+  "type": "module",
   "dependencies": {
     "@apollo/client": "^3.3.16",
     "@framasoft/socket": "^1.0.0",
