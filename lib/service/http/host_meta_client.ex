@@ -6,12 +6,13 @@ defmodule Mobilizon.Service.HTTP.HostMetaClient do
 
   use Tesla
   alias Mobilizon.Config
+  import Mobilizon.Service.HTTP.Utils, only: [get_tls_config: 0]
 
   @default_opts [
     recv_timeout: 20_000
   ]
 
-  adapter(Tesla.Adapter.Hackney, @default_opts)
+  adapter(Tesla.Adapter.Hackney, Keyword.merge([ssl_options: get_tls_config()], @default_opts))
 
   plug(Tesla.Middleware.FollowRedirects)
 

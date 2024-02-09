@@ -3,7 +3,9 @@ defmodule Mobilizon.Service.HTTP.ActivityPub do
   Tesla HTTP Client that is preconfigured to get and post ActivityPub content
   """
 
+  require Logger
   alias Mobilizon.Config
+  import Mobilizon.Service.HTTP.Utils, only: [get_tls_config: 0]
 
   @default_opts [
     recv_timeout: 20_000
@@ -13,7 +15,11 @@ defmodule Mobilizon.Service.HTTP.ActivityPub do
   def client(options \\ []) do
     headers = Keyword.get(options, :headers, [])
     adapter = Application.get_env(:tesla, __MODULE__, [])[:adapter] || Tesla.Adapter.Hackney
-    opts = Keyword.merge(@default_opts, Keyword.get(options, :opts, []))
+
+    opts =
+      @default_opts
+      |> Keyword.merge(ssl_options: get_tls_config())
+      |> Keyword.merge(Keyword.get(options, :opts, []))
 
     middleware = [
       {Tesla.Middleware.Headers,

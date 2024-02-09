@@ -85,7 +85,9 @@ defmodule Mobilizon do
       ErrorReporting.attach()
     end
 
-    Supervisor.start_link(children, strategy: :one_for_one, name: Mobilizon.Supervisor)
+    with :ok <- load_certificates() do
+      Supervisor.start_link(children, strategy: :one_for_one, name: Mobilizon.Supervisor)
+    end
   end
 
   @spec config_change(keyword, keyword, [atom]) :: :ok
@@ -160,4 +162,16 @@ defmodule Mobilizon do
   end
 
   defp setup_ecto_dev_logger(_), do: nil
+
+  defp load_certificates do
+    custom_cert_path = System.get_env("MOBILIZON_CA_CERT_PATH")
+
+    if is_binary(custom_cert_path) do
+      with :ok <- :tls_certificate_check.override_trusted_authorities({:file, custom_cert_path}) do
+        :public_key.cacerts_load(custom_cert_path)
+      end
+    else
+      :ok
+    end
+  end
 end

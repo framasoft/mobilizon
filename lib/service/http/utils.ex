@@ -3,6 +3,17 @@ defmodule Mobilizon.Service.HTTP.Utils do
   Utils for HTTP operations
   """
 
+  def get_tls_config do
+    cacertfile =
+      if is_nil(System.get_env("MOBILIZON_CA_CERT_PATH")) do
+        CAStore.file_path()
+      else
+        System.get_env("MOBILIZON_CA_CERT_PATH")
+      end
+
+    [cacertfile: cacertfile]
+  end
+
   @spec get_header(Enum.t(), String.t()) :: String.t() | nil
   def get_header(headers, key) do
     key = String.downcase(key)

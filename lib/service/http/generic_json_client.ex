@@ -4,6 +4,7 @@ defmodule Mobilizon.Service.HTTP.GenericJSONClient do
   """
 
   alias Mobilizon.Config
+  import Mobilizon.Service.HTTP.Utils, only: [get_tls_config: 0]
 
   @default_opts [
     recv_timeout: 20_000
@@ -13,7 +14,11 @@ defmodule Mobilizon.Service.HTTP.GenericJSONClient do
   def client(options \\ []) do
     headers = Keyword.get(options, :headers, [])
     adapter = Application.get_env(:tesla, __MODULE__, [])[:adapter] || Tesla.Adapter.Hackney
-    opts = Keyword.merge(@default_opts, Keyword.get(options, :opts, []))
+
+    opts =
+      @default_opts
+      |> Keyword.merge(ssl_options: get_tls_config())
+      |> Keyword.merge(Keyword.get(options, :opts, []))
 
     middleware = [
       {Tesla.Middleware.Headers,
