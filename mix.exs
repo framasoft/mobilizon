@@ -146,7 +146,6 @@ defmodule Mobilizon.Mixfile do
       {:phoenix_live_view, "~> 0.20.0"},
       {:phoenix_view, "~> 2.0"},
       {:gettext, "~> 0.24"},
-      {:cowboy, "~> 2.6"},
       {:guardian, "~> 2.0"},
       {:guardian_db, "~> 3.0.0"},
       {:guardian_phoenix, "~> 2.0"},
@@ -171,7 +170,6 @@ defmodule Mobilizon.Mixfile do
       {:absinthe_phoenix, "~> 2.0.1"},
       {:absinthe_plug, "~> 1.5.0"},
       {:dataloader, "~> 2.0"},
-      {:plug_cowboy, "~> 2.0"},
       {:atomex, "~> 0.4"},
       {:cachex, "~> 3.1"},
       {:geohax, "~> 1.0.0"},
@@ -223,6 +221,7 @@ defmodule Mobilizon.Mixfile do
       {:rajska, github: "tcitworld/rajska", branch: "mobilizon"},
       {:hammer, "~> 6.1"},
       {:tls_certificate_check, "~> 1.20"},
+      {:bandit, "~> 1.0"},
       # Dev and test dependencies
       {:phoenix_live_reload, "~> 1.2", only: [:dev, :e2e]},
       {:ex_machina, "~> 2.3", only: [:dev, :test]},
