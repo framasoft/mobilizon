@@ -55,7 +55,8 @@ defmodule Mobilizon.GraphQL.API.SearchTest do
             minimum_visibility: :public,
             current_actor_id: nil,
             exclude_my_groups: false,
-            exclude_stale_actors: true
+            exclude_stale_actors: true,
+            local_only: false
           ],
           1,
           10
@@ -72,7 +73,7 @@ defmodule Mobilizon.GraphQL.API.SearchTest do
       assert {:ok, %{total: 1, elements: [%Event{title: "super toto event"}]}} =
                Search.search_events(%{term: "toto"}, 1, 10)
 
-      assert_called(Events.build_events_for_search(%{term: "toto"}, 1, 10))
+      assert_called(Events.build_events_for_search(%{term: "toto", local_only: false}, 1, 10))
     end
   end
 end

@@ -293,6 +293,7 @@ export enum InstanceFollowStatus {
 }
 
 export enum SearchTargets {
+  SELF = "SELF",
   INTERNAL = "INTERNAL",
   GLOBAL = "GLOBAL",
 }

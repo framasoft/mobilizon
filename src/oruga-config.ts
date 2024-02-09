@@ -4,25 +4,36 @@ export const orugaConfig = {
   statusIcon: true,
   button: {
     rootClass: "btn",
-    variantClass: "btn-",
+    variantClass: (variant: string) => {
+      return `btn-${variant}`;
+    },
     roundedClass: "btn-rounded",
-    outlinedClass: "btn-outlined-",
+    outlinedClass: (variant: string) => {
+      return `btn-outlined-${variant}`;
+    },
     disabledClass: "btn-disabled",
-    sizeClass: "btn-size-",
+    sizeClass: (size: string) => {
+      return `"btn-size-${size}`;
+    },
   },
   field: {
     rootClass: "field",
     labelClass: "field-label",
     messageClass: "text-sm italic",
-    variantClass: "field-",
-    variantMessageClass: "field-message-",
+    variantMessageClass: (variant: string) => {
+      return `field-message-${variant}`;
+    },
   },
   input: {
     inputClass: "input",
     roundedClass: "rounded",
-    variantClass: "input-",
+    variantClass: (variant: string) => {
+      return `input-${variant}`;
+    },
     iconRightClass: "input-icon-right",
-    sizeClass: "input-size-",
+    sizeClass: (size: string) => {
+      return `input-size-${size}`;
+    },
   },
   taginput: {
     itemClass: "taginput-item",
@@ -44,7 +55,9 @@ export const orugaConfig = {
     itemGroupTitleClass: "autocomplete-item-group-title",
   },
   icon: {
-    variantClass: "icon-",
+    variantClass: (variant: string) => {
+      return `icon-${variant}`;
+    },
   },
   checkbox: {
     rootClass: "checkbox",
@@ -88,7 +101,9 @@ export const orugaConfig = {
   },
   notification: {
     rootClass: "notification",
-    variantClass: "notification-",
+    variantClass: (variant: string) => {
+      return `notification-${variant}`;
+    },
   },
   table: {
     tableClass: "table",
@@ -111,16 +126,24 @@ export const orugaConfig = {
   tabs: {
     rootClass: "tabs",
     navTabsClass: "tabs-nav",
-    navTypeClass: "tabs-nav-",
-    navSizeClass: "tabs-nav-",
+    navTypeClass: (type: string) => {
+      return `tabs-nav-${type}`;
+    },
+    navSizeClass: (size: string) => {
+      return `tabs-nav-${size}`;
+    },
     itemWrapperClass: "tabs-nav-item-wrapper",
-    itemHeaderTypeClass: "tabs-nav-item-",
-    itemHeaderActiveClass: "tabs-nav-item-active-",
+    itemHeaderTypeClass: (type: string) => {
+      return `tabs-nav-item-${type}`;
+    },
+    itemHeaderActiveClass: "tabs-nav-item-active",
   },
   tooltip: {
     rootClass: "tooltip",
     contentClass: "tooltip-content",
     arrowClass: "tooltip-arrow",
-    variantClass: "tooltip-content-",
+    variantClass: (variant: string) => {
+      return `tooltip-content-${variant}`;
+    },
   },
 };

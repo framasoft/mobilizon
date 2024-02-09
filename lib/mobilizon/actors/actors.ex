@@ -525,6 +525,7 @@ defmodule Mobilizon.Actors do
       Keyword.get(options, :radius),
       Keyword.get(options, :bbox)
     )
+    |> filter_by_local_only(Keyword.get(options, :local_only, false))
     |> actors_for_location(Keyword.get(options, :location), Keyword.get(options, :radius))
     |> events_for_bounding_box(Keyword.get(options, :bbox))
     |> filter_by_type(Keyword.get(options, :actor_type, :Group))
@@ -1417,6 +1418,13 @@ defmodule Mobilizon.Actors do
   end
 
   defp maybe_join_address(query, _location, _radius, _bbox), do: query
+
+  @spec filter_by_local_only(Ecto.Queryable.t(), boolean()) :: Ecto.Query.t()
+  defp filter_by_local_only(query, true) do
+    where(query, [q], is_nil(q.domain))
+  end
+
+  defp filter_by_local_only(query, false), do: query
 
   @spec actors_for_location(Ecto.Queryable.t(), String.t(), integer()) :: Ecto.Query.t()
   defp actors_for_location(query, location, radius)

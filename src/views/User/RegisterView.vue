@@ -101,8 +101,6 @@
               id="email"
               type="email"
               v-model="credentials.email"
-              @blur="showGravatar = true"
-              @focus="showGravatar = false"
               expanded
             />
           </o-field>
@@ -229,8 +227,6 @@ const router = useRouter();
 const { result: configResult } = useQuery<{ config: IConfig }>(CONFIG);
 
 const config = computed(() => configResult.value?.config);
-
-const showGravatar = ref(false);
 
 const credentials = reactive<credentialsType>({
   email: typeof route.query.email === "string" ? route.query.email : "",

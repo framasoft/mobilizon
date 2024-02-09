@@ -3,6 +3,9 @@ defmodule Mobilizon.GraphQL.Resolvers.SearchTest do
 
   import Mobilizon.Factory
 
+  alias Mobilizon.Actors.Actor
+  alias Mobilizon.Events.Event
+  alias Mobilizon.Federation.ActivityPub.Relay
   alias Mobilizon.Service.Workers
 
   alias Mobilizon.GraphQL.AbsintheHelpers
@@ -15,8 +18,8 @@ defmodule Mobilizon.GraphQL.Resolvers.SearchTest do
 
   describe "search events/3" do
     @search_events_query """
-    query SearchEvents($location: String, $radius: Float, $tags: String, $term: String, $beginsOn: DateTime, $endsOn: DateTime) {
-      searchEvents(location: $location, radius: $radius, tags: $tags, term: $term, beginsOn: $beginsOn, endsOn: $endsOn) {
+    query SearchEvents($location: String, $radius: Float, $tags: String, $term: String, $beginsOn: DateTime, $endsOn: DateTime, $searchTarget: SearchTarget) {
+      searchEvents(location: $location, radius: $radius, tags: $tags, term: $term, beginsOn: $beginsOn, endsOn: $endsOn, searchTarget: $searchTarget) {
         total,
         elements {
           id
@@ -217,6 +220,46 @@ defmodule Mobilizon.GraphQL.Resolvers.SearchTest do
 
       assert res["errors"] == nil
       assert res["data"]["searchEvents"]["total"] == 0
+    end
+
+    test "finds events for the correct target", %{conn: conn} do
+      event1 = insert(:event, title: "A local event")
+
+      %Actor{id: remote_instance_actor_id} = remote_instance_actor = insert(:instance_actor)
+      %Actor{id: remote_actor_id} = insert(:actor, domain: "somedomain.tld", user: nil)
+
+      %Event{url: remote_event_url} =
+        event2 = insert(:event, local: false, title: "My Remote event")
+
+      Mobilizon.Share.create(remote_event_url, remote_instance_actor_id, remote_actor_id)
+
+      %Actor{} = own_instance_actor = Relay.get_actor()
+
+      insert(:follower, target_actor: remote_instance_actor, actor: own_instance_actor)
+      Workers.BuildSearch.insert_search_event(event1)
+      Workers.BuildSearch.insert_search_event(event2)
+
+      res =
+        AbsintheHelpers.graphql_query(conn,
+          query: @search_events_query,
+          variables: %{term: "event"}
+        )
+
+      assert res["errors"] == nil
+      assert res["data"]["searchEvents"]["total"] == 2
+      elements = res["data"]["searchEvents"]["elements"]
+
+      assert MapSet.new(Enum.map(elements, & &1["id"])) ==
+               MapSet.new([to_string(event1.id), to_string(event2.id)])
+
+      res =
+        AbsintheHelpers.graphql_query(conn,
+          query: @search_events_query,
+          variables: %{term: "event", searchTarget: "SELF"}
+        )
+
+      assert res["errors"] == nil
+      assert res["data"]["searchEvents"]["total"] == 1
     end
   end
 

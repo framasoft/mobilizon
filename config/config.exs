@@ -51,6 +51,7 @@ config :mobilizon, :restrictions, only_groups_can_create_events: false
 
 # Configures the endpoint
 config :mobilizon, Mobilizon.Web.Endpoint,
+  adapter: Bandit.PhoenixAdapter,
   url: [
     host: "mobilizon.local",
     scheme: "https"

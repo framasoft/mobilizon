@@ -56,7 +56,8 @@ defmodule Mobilizon.GraphQL.API.Search do
                 minimum_visibility: Map.get(args, :minimum_visibility, :public),
                 current_actor_id: Map.get(args, :current_actor_id),
                 exclude_my_groups: Map.get(args, :exclude_my_groups, false),
-                exclude_stale_actors: true
+                exclude_stale_actors: true,
+                local_only: Map.get(args, :search_target, :internal) == :self
               ],
               page,
               limit
@@ -94,7 +95,13 @@ defmodule Mobilizon.GraphQL.API.Search do
 
         {:ok, service.search_events(Keyword.new(args, fn {k, v} -> {k, v} end))}
       else
-        {:ok, Events.build_events_for_search(Map.put(args, :term, term), page, limit)}
+        results =
+          args
+          |> Map.put(:term, term)
+          |> Map.put(:local_only, Map.get(args, :search_target, :internal) == :self)
+          |> Events.build_events_for_search(page, limit)
+
+        {:ok, results}
       end
     end
   end
