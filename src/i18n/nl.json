@@ -178,6 +178,7 @@
   "Closed": "Gesloten",
   "Comment body": "Reactietekst",
   "Comment deleted": "Reactie verwijderd",
+  "Comment from {'@'}{username} reported": "OPmerking van {'@'}{username} gerapporteerd",
   "Comment text can't be empty": "Commentaar veld mag niet leeg zijn",
   "Comments": "Opmerkingen",
   "Comments are closed for everybody else.": "Reacties zijn voor ieder ander gesloten.",
