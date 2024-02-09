@@ -25,7 +25,7 @@ config :vite_phx,
   release_app: :mobilizon,
   # Hard code :prod as an environment as :e2e will not be recongnized
   environment: :prod,
-  vite_manifest: "priv/static/manifest.json",
+  vite_manifest: "priv/static/.vite/manifest.json",
   phx_manifest: "priv/static/cache_manifest.json",
   dev_server_address: "http://localhost:5173"
 
