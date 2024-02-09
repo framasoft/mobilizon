@@ -24,13 +24,14 @@
           required
           v-model="identity.name"
           id="identityName"
-          @input="(event: any) => updateUsername(event.target.value)"
+          expanded
+          @update:modelValue="(value: string) => updateUsername(value)"
         />
       </o-field>
 
       <o-field
         :label="t('Username')"
-        :variant="errors.preferred_username ? 'danger' : null"
+        :variant="errors.preferred_username ? 'danger' : 'primary'"
         :message="errors.preferred_username"
         labelFor="identityPreferredUsername"
       >
@@ -47,6 +48,7 @@
             expanded
             id="identityPreferredUsername"
             v-model="identity.preferredUsername"
+            :variant="errors.preferred_username ? 'danger' : ''"
             :validation-message="
               identity.preferredUsername
                 ? t(
@@ -75,6 +77,7 @@
           rows="2"
           id="identitySummary"
           v-model="identity.summary"
+          expanded
         />
       </o-field>
 
