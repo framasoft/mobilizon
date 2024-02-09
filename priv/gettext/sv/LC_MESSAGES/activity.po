@@ -8,7 +8,7 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2024-01-19 09:47+0000\n"
+"PO-Revision-Date: 2024-02-08 19:29+0000\n"
 "Last-Translator: drkfrd <drkfrd@users.noreply.weblate.framasoft.org>\n"
 "Language-Team: Swedish <https://weblate.framasoft.org/projects/mobilizon/"
 "activity/sv/>\n"
@@ -510,7 +510,7 @@ msgstr "%{profile} nämnde dig i en kommentar under händelsen %{event}."
 #: lib/service/activity/renderer/conversation.ex:36
 #, elixir-autogen, elixir-format
 msgid "%{profile} replied to your message"
-msgstr "%{profil} svarade på ditt meddelande"
+msgstr "%{profile} svarade på ditt meddelande"
 
 #: lib/web/templates/email/activity/_conversation_activity_item.html.heex:10
 #, elixir-autogen, elixir-format, fuzzy
@@ -530,7 +530,7 @@ msgstr "%{profile} skickade ett privat meddelande om händelsen %{event}"
 #: lib/service/activity/renderer/conversation.ex:23
 #, elixir-autogen, elixir-format
 msgid "%{profile} sent you a message"
-msgstr "%{profil} skickade ett meddelande till dig"
+msgstr "%{profile} skickade ett meddelande till dig"
 
 #: lib/web/email/activity.ex:52
 #, elixir-autogen, elixir-format
