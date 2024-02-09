@@ -70,6 +70,22 @@
 
             <div>
               <input
+                id="selfTarget"
+                v-model="searchTarget"
+                type="radio"
+                name="selfTarget"
+                :value="SearchTargets.SELF"
+                class="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600"
+              />
+              <label
+                for="selfTarget"
+                class="ml-3 font-medium text-gray-900 dark:text-gray-300"
+                >{{ t("From this instance only") }}</label
+              >
+            </div>
+
+            <div>
+              <input
                 id="internalTarget"
                 v-model="searchTarget"
                 type="radio"

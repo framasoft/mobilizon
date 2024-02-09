@@ -160,6 +160,8 @@ defmodule Mobilizon.GraphQL.Schema.SearchType do
   end
 
   enum :search_target do
+    value(:self, description: "Search only on content from this instance")
+
     value(:internal,
       description: "Search on content from this instance and from the followed instances"
     )

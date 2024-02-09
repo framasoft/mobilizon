@@ -581,6 +581,7 @@ defmodule Mobilizon.Events do
     |> events_for_bounding_box(args)
     |> filter_online(args)
     |> filter_draft()
+    |> filter_local(if Map.get(args, :local_only, nil) == true, do: true, else: nil)
     |> filter_local_or_from_followed_instances_events()
     |> filter_public_visibility()
     |> event_order(Map.get(args, :sort_by, :match_desc), search_string)
