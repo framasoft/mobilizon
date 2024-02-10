@@ -8,7 +8,7 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2023-01-05 18:22+0000\n"
+"PO-Revision-Date: 2024-02-10 13:29+0000\n"
 "Last-Translator: Balázs Meskó <mesko.balazs@fsf.hu>\n"
 "Language-Team: Hungarian <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/hu/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.15\n"
+"X-Generator: Weblate 5.3.1\n"
 
 #: lib/web/templates/email/password_reset.html.heex:66
 #, elixir-autogen, elixir-format
@@ -1071,84 +1071,105 @@ msgstr "Mi lesz ma?"
 #, elixir-autogen, elixir-format
 msgid "Would you wish to update or cancel your attendance, simply access the event page through the link above and click on the Attending button."
 msgstr ""
+"Ha frissítené vagy lemondaná a részvételét, akkor csak érje el az esemény "
+"oldalát az alábbi hivatkozással, és kattintson a Részvétel gombra."
 
 #: lib/web/templates/email/pending_participation_notification.html.heex:106
 #: lib/web/templates/email/pending_participation_notification.text.eex:10
 #, elixir-autogen, elixir-format
 msgid "You are receiving this email because you chose to get notifications for pending attendance requests to your events. You can disable or change your notification settings in your user account settings under « Notifications »."
 msgstr ""
+"Azért kapja ezt a levelet, mert azt választotta, hogy értesítéseket kér az "
+"eseményét érintő függő részvételi kérésekről. Ezt letilthatja, vagy "
+"megváltoztathatja az értesítési beállításait a fiókbeállításaiban az "
+"„Értesítések” alatt."
 
 #: lib/web/templates/email/event_participation_rejected.text.eex:5
 #, elixir-autogen, elixir-format
 msgid "You issued a request to attend %{title}."
-msgstr ""
+msgstr "Kérte, hogy részt vehessen a következőn: %{title}."
 
 #: lib/web/templates/email/event_participation_approved.text.eex:5
 #: lib/web/templates/email/event_participation_confirmed.text.eex:3
 #, elixir-autogen, elixir-format
 msgid "You recently requested to attend %{title}."
-msgstr ""
+msgstr "Nemrég kérte, hogy részt vehessen a következőn: %{title}."
 
 #: lib/web/templates/email/event_participation_approved.html.heex:18
 #: lib/web/templates/email/event_participation_confirmed.html.heex:18
 #: lib/web/templates/email/event_participation_confirmed.text.eex:1
 #, elixir-autogen, elixir-format
 msgid "You're going!"
-msgstr ""
+msgstr "Részt vesz."
 
 #: lib/web/templates/email/email_changed_new.html.heex:85
 #: lib/web/templates/email/email_changed_new.text.eex:5
 #, elixir-autogen, elixir-format
 msgid "If you didn't trigger the change yourself, please ignore this message."
 msgstr ""
+"Ha nem Ön kérte a változtatást, akkor hagyja figyelmen kívül ezt az üzenetet."
 
 #: lib/web/templates/email/group_member_removal.html.heex:64
 #: lib/web/templates/email/group_member_removal.text.eex:5
 #, elixir-autogen, elixir-format
 msgid "If you feel this is an error, you may contact the group's administrators so that they can add you back."
 msgstr ""
+"Ha úgy gondolja, hogy ez hiba, akkor lépjen kapcsolatba a csoport "
+"adminisztrátoraival, hogy újból hozzáadhassák."
 
 #: lib/web/email/member.ex:114
 #, elixir-autogen, elixir-format
 msgid "You have been removed from group %{group}"
-msgstr ""
+msgstr "Eltávolították a következő csoportból: %{group}"
 
 #: lib/web/templates/email/group_member_removal.text.eex:3
 #, elixir-autogen, elixir-format
 msgid "You have been removed from group %{group}. You will not be able to access this group's private content anymore."
 msgstr ""
+"Eltávolították a következő csoportból: %{group}. Többé nem fog hozzáférni a "
+"csoport privát tartalmaihoz."
 
 #: lib/web/templates/email/group_invite.html.heex:47
 #, elixir-autogen, elixir-format
 msgid "<b>%{inviter}</b> just invited you to join their group %{link_start}<b>%{group}</b>%{link_end}"
 msgstr ""
+"<b>%{inviter}</b> meghívta, hogy csatlakozzon a csoportjához: "
+"%{link_start}<b>%{group}</b>%{link_end}"
 
 #: lib/web/templates/email/group_member_removal.html.heex:47
 #, elixir-autogen, elixir-format
 msgid "You have been removed from group %{link_start}<b>%{group}</b>%{link_end}. You will not be able to access this group's private content anymore."
 msgstr ""
+"Eltávolították a következő csoportból: "
+"%{link_start}<b>%{group}</b>%{link_end}. Többé nem fog hozzáférni a csoport "
+"privát tartalmaihoz."
 
 #: lib/web/templates/email/group_suspension.html.heex:81
 #: lib/web/templates/email/group_suspension.text.eex:7
 #, elixir-autogen, elixir-format
 msgid "As this group was located on another instance, it will continue to work for other instances than this one."
 msgstr ""
+"Mivel ez a csoport egy másik példányon található, ezért más példányokon "
+"továbbra is működni fog."
 
 #: lib/web/templates/email/group_suspension.html.heex:18
 #: lib/web/templates/email/group_suspension.text.eex:1
 #, elixir-autogen, elixir-format
 msgid "The group %{group} has been suspended on %{instance}!"
 msgstr ""
+"A(z) %{group} csoport fel lett függesztve ezen a példányon: %{instance}."
 
 #: lib/web/templates/email/group_suspension.text.eex:3
 #, elixir-autogen, elixir-format
 msgid "Your instance's moderation team has decided to suspend %{group_name} (%{group_address}). You are no longer a member of this group."
 msgstr ""
+"A példánya moderátori csapata úgy döntött, hogy felfüggeszti a(z) "
+"%{group_name} csoportot (%{group_address}). Többé már nem a csoport tagja."
 
 #: lib/web/email/group.ex:108
 #, elixir-autogen, elixir-format
 msgid "The group %{group} has been suspended on %{instance}"
-msgstr ""
+msgstr "A(z) %{group} csoport fel lett függesztve a(z) %{instance} példányon"
 
 #: lib/web/templates/api/terms.html.heex:64
 #, elixir-autogen, elixir-format
@@ -2129,50 +2150,55 @@ msgstr "Viszontlátásra!"
 
 #: lib/web/templates/email/group_suspension.html.heex:67
 #: lib/web/templates/email/group_suspension.text.eex:5
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "As this group was located on this instance, all of its data has been irretrievably deleted."
 msgstr ""
+"Mivel a csoport ezen a példányon volt, így az összes adata véglegesen "
+"törölve lett."
 
 #: lib/web/templates/email/report.text.eex:11
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Events"
-msgstr "Esemény"
+msgstr "Események"
 
 #: lib/web/templates/email/report.html.heex:115
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Flagged events"
-msgstr "Megjelölt hozzászólások"
+msgstr "Megjelölt események"
 
 #: lib/service/export/participants/common.ex:65
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Participant registration date"
-msgstr "Résztvevő állapota"
+msgstr "Résztvevő regisztrációjának dátuma"
 
 #: lib/web/templates/email/anonymous_participation_confirmation.html.heex:113
 #: lib/web/templates/email/event_participation_confirmed.html.heex:122
 #, elixir-autogen, elixir-format
 msgid "Cancel my attendance"
-msgstr ""
+msgstr "Részvétel lemondása"
 
 #: lib/web/templates/email/anonymous_participation_confirmation.html.heex:90
 #: lib/web/templates/email/event_participation_confirmed.html.heex:99
 #, elixir-autogen, elixir-format
 msgid "If you wish to cancel your participation, simply click on the link below."
 msgstr ""
+"Ha le akarja mondani a részvételét, akkor egyszerűen kattintson az alábbi "
+"hivatkozásra."
 
 #: lib/web/email/admin.ex:142
 #, elixir-autogen, elixir-format
 msgid "Email configuration test for %{instance}"
-msgstr ""
+msgstr "E-mail-beállítási teszt a következőhöz: %{instance}"
 
 #: lib/web/templates/email/email_configuration_test.html.heex:47
 #: lib/web/templates/email/email_configuration_test.text.eex:3
 #, elixir-autogen, elixir-format
 msgid "If you received this email, the email configuration seems to be correct."
 msgstr ""
+"Ha megkapta ezt a levelet, akkor e-mail-beállítások megfelelőnek tűnnek."
 
 #: lib/web/templates/email/email_configuration_test.html.heex:18
 #: lib/web/templates/email/email_configuration_test.text.eex:1
 #, elixir-autogen, elixir-format
 msgid "Well done!"
-msgstr ""
+msgstr "Szép munka."
