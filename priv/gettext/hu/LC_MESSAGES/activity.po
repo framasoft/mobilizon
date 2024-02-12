@@ -8,7 +8,7 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-11-14 03:44+0000\n"
+"PO-Revision-Date: 2024-02-10 13:29+0000\n"
 "Last-Translator: Balázs Meskó <mesko.balazs@fsf.hu>\n"
 "Language-Team: Hungarian <https://weblate.framasoft.org/projects/mobilizon/"
 "activity/hu/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.14.1\n"
+"X-Generator: Weblate 5.3.1\n"
 
 #: lib/web/templates/email/activity/_member_activity_item.html.heex:14
 #: lib/web/templates/email/activity/_member_activity_item.text.eex:12
@@ -305,14 +305,14 @@ msgstr "Heti tevékenységösszegzés a(z) %{instance} példányhoz"
 #: lib/web/templates/email/activity/_comment_activity_item.text.eex:19
 #, elixir-autogen, elixir-format
 msgid "%{profile} has posted a new comment under your event %{event}."
-msgstr "%{profile} új hozzászólást küldött az Ön %{event} eseménye alá."
+msgstr "%{profile} új hozzászólást küldött az „%{event}” eseménye alá."
 
 #: lib/service/activity/renderer/comment.ex:52
 #: lib/web/templates/email/activity/_comment_activity_item.html.heex:22
 #: lib/web/templates/email/activity/_comment_activity_item.text.eex:13
 #, elixir-autogen, elixir-format
 msgid "%{profile} has posted a new reply under your event %{event}."
-msgstr "%{profile} új választ küldött az Ön %{event} eseménye alá."
+msgstr "%{profile} új választ küldött az „%{event}” eseménye alá."
 
 #: lib/web/email/activity.ex:74
 #, elixir-autogen, elixir-format
@@ -472,7 +472,7 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "%{profile} mentionned you in the discussion %{discussion} in group %{group}."
 msgstr ""
-"%{profile} megemlítette Önt a(z) %{discussion} megbeszélésben a(z) %{group} "
+"%{profile} megemlítette a(z) %{discussion} megbeszélésben a(z) %{group} "
 "csoportban."
 
 #: lib/service/activity/renderer/discussion.ex:70
@@ -500,77 +500,78 @@ msgstr "%{profile} elfogadta %{member} tagot."
 #: lib/web/templates/email/activity/_event_activity_item.text.eex:31
 #, elixir-autogen, elixir-format
 msgid "%{profile} joined your event %{event}."
-msgstr ""
+msgstr "%{profile} csatlakozott az eseményéhez: %{event}."
 
 #: lib/web/views/email_view.ex:61
 #, elixir-autogen, elixir-format
 msgid "An anonymous profile"
-msgstr ""
+msgstr "Egy névtelen profil"
 
 #: lib/web/templates/email/email_anonymous_activity.html.heex:107
 #: lib/web/templates/email/email_anonymous_activity.text.eex:14
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "%{profile} has posted a private announcement about event %{event}."
-msgstr "%{profile} közleményt küldött a(z) %{event} esemény alá."
+msgstr "%{profile} privát közleményt tett közzé a(z) %{event} eseményről."
 
 #: lib/web/templates/email/email_anonymous_activity.html.heex:50
 #: lib/web/templates/email/email_anonymous_activity.text.eex:6
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "%{profile} has posted a public announcement under event %{event}."
-msgstr "%{profile} közleményt küldött a(z) %{event} esemény alá."
+msgstr "%{profile} nyilvános közleményt tett közzé a(z) %{event} eseményről."
 
 #: lib/web/templates/email/activity/_conversation_activity_item.html.heex:3
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "%{profile} mentionned you in a %{conversation}."
-msgstr ""
-"%{profile} megemlítette Önt a(z) %{event} esemény alatti egyik "
-"hozzászólásban."
+msgstr "%{profile} megemlítette egy beszélgetésben: %{conversation}."
 
 #: lib/web/templates/email/activity/_conversation_activity_item.text.eex:1
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "%{profile} mentionned you in a conversation."
-msgstr ""
-"%{profile} megemlítette Önt a(z) %{event} esemény alatti egyik "
-"hozzászólásban."
+msgstr "%{profile} megemlítette egy beszélgetésben."
 
 #: lib/service/activity/renderer/conversation.ex:36
 #, elixir-autogen, elixir-format
 msgid "%{profile} replied to your message"
-msgstr ""
+msgstr "%{profile} válaszolt az üzenetére"
 
 #: lib/web/templates/email/activity/_conversation_activity_item.html.heex:10
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "%{profile} replied you in a %{conversation}."
-msgstr "%{profile} válaszolt a(z) %{discussion} megbeszélésre."
+msgstr "%{profile} válaszolt egy beszélgetésben: %{conversation}."
 
 #: lib/web/templates/email/activity/_conversation_activity_item.text.eex:6
 #, elixir-autogen, elixir-format
 msgid "%{profile} replied you in a conversation."
-msgstr ""
+msgstr "%{profile} válaszolt egy beszélgetésben."
 
 #: lib/service/activity/renderer/conversation.ex:49
 #, elixir-autogen, elixir-format
 msgid "%{profile} sent a private message about event %{event}"
 msgstr ""
+"%{profile} privát üzenetet küldött a(z) „%{event}” eseménnyel kapcsolatban"
 
 #: lib/service/activity/renderer/conversation.ex:23
 #, elixir-autogen, elixir-format
 msgid "%{profile} sent you a message"
-msgstr ""
+msgstr "%{profile} üzenetet küldött"
 
 #: lib/web/email/activity.ex:52
 #, elixir-autogen, elixir-format
 msgid "Informations about your event %{event}"
-msgstr ""
+msgstr "Információk a(z) „%{event}” eseményéről"
 
 #: lib/web/templates/email/email_anonymous_activity.html.heex:118
 #: lib/web/templates/email/email_anonymous_activity.text.eex:20
 #, elixir-autogen, elixir-format
 msgid "It might give details on how to join the event, so make sure to read it appropriately."
 msgstr ""
+"Részleteket adhat meg az eseményhez való csatlakozásról, így olvassa el "
+"figyelmesen."
 
 #: lib/web/templates/email/email_anonymous_activity.html.heex:156
 #: lib/web/templates/email/email_anonymous_activity.text.eex:28
 #, elixir-autogen, elixir-format
 msgid "This information is sent privately to you as a person who registered for this event. Share the informations above with other people with caution."
 msgstr ""
+"Ezt az információk privát módon lettek elküldve Önnek, mint az esemény "
+"regisztrálójának. A fenti információkat körültekintően ossza meg másokkal."
