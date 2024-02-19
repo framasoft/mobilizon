@@ -7,4 +7,4 @@
 <%= if @follower.type == :Application do %><%= gettext "Note: %{name} following you doesn't necessarily imply that you follow this instance, but you can ask to follow them too.", name: Mobilizon.Actors.Actor.display_name_and_username(@follower) %><% end %>
 
 <%= if @follower.type == :Application do %><%= gettext "To accept this invitation, head over to the instance's admin settings." %><% else %><%= gettext "To accept this invitation, head over to the profile's admin page." %><% end %>
-<%= if @follower.type == :Application do %><%= "#{Mobilizon.Web.Endpoint.url()}/settings/admin/relays/followers" %><% else %><%= "#{Mobilizon.Web.Endpoint.url()}/settings/admin/profiles/#{@follower.id}" %><% end %>
+<%= if @follower.type == :Application do %><%= "#{Mobilizon.Web.Endpoint.url()}/settings/admin/instances/#{@follower.domain}" %><% else %><%= "#{Mobilizon.Web.Endpoint.url()}/settings/admin/profiles/#{@follower.id}" %><% end %>
