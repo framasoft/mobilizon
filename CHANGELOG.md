@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 4.1.0-beta.1 (2024-02-27)
+
+### Bug Fixes
+
+* **front:** fix adding tags to an event ([d75d464](https://framagit.org/framasoft/mobilizon/commits/d75d464135332f639bd275684109a89980718b75)), closes [#1419](https://framagit.org/framasoft/mobilizon/issues/1419)
+* **front:** fix space around input icons ([ba9299c](https://framagit.org/framasoft/mobilizon/commits/ba9299c6321cd62bb84efb6db5b6e122e4b1b264))
+
+
 ## 4.1.0-alpha.1 (2024-02-09)
 
 ### Features
