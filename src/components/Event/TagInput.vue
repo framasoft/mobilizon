@@ -14,7 +14,8 @@
       </p>
     </template>
     <o-taginput
-      v-model="tagsStrings"
+      :modelValue="tagsStrings"
+      @update:modelValue="updateTags"
       :data="filteredTags"
       :allow-autocomplete="true"
       :allow-new="true"
@@ -34,7 +35,7 @@
 <script lang="ts" setup>
 import differenceBy from "lodash/differenceBy";
 import { ITag } from "../../types/tag.model";
-import { computed, onBeforeMount, ref } from "vue";
+import { computed, onBeforeMount, ref, watch } from "vue";
 import HelpCircleOutline from "vue-material-design-icons/HelpCircleOutline.vue";
 import { useFetchTags } from "@/composition/apollo/tags";
 import { FILTER_TAGS } from "@/graphql/tags";
@@ -43,6 +44,10 @@ import { useI18n } from "vue-i18n";
 const props = defineProps<{
   modelValue: ITag[];
 }>();
+
+const propsValue = computed(() => props.modelValue);
+
+const tagsStrings = ref<string[]>([]);
 
 const emit = defineEmits(["update:modelValue"]);
 
@@ -77,7 +82,7 @@ const getFilteredTags = async (newText: string): Promise<void> => {
 };
 
 const filteredTags = computed((): ITag[] => {
-  return differenceBy(tags.value, props.modelValue, "id").filter(
+  return differenceBy(tags.value, propsValue.value, "id").filter(
     (option) =>
       option.title.toString().toLowerCase().indexOf(text.value.toLowerCase()) >=
         0 ||
@@ -86,19 +91,19 @@ const filteredTags = computed((): ITag[] => {
   );
 });
 
-const tagsStrings = computed({
-  get(): string[] {
-    return props.modelValue.map((tag: ITag) => tag.title);
-  },
-  set(newTagsStrings: string[]) {
-    console.debug("tagsStrings", newTagsStrings);
-    const tagEntities = newTagsStrings.map((tag: string | ITag) => {
-      if (typeof tag !== "string") {
-        return tag;
-      }
-      return { title: tag, slug: tag } as ITag;
-    });
-    emit("update:modelValue", tagEntities);
-  },
+watch(props.modelValue, (newValue, oldValue) => {
+  if (newValue != oldValue) {
+    tagsStrings.value = propsValue.value.map((tag: ITag) => tag.title);
+  }
 });
+
+const updateTags = (newTagsStrings: string[]) => {
+  const tagEntities = newTagsStrings.map((tag: string | ITag) => {
+    if (typeof tag !== "string") {
+      return tag;
+    }
+    return { title: tag, slug: tag } as ITag;
+  });
+  emit("update:modelValue", tagEntities);
+};
 </script>
