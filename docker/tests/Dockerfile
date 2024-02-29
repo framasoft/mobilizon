@@ -1,5 +1,4 @@
 FROM elixir:latest
-LABEL maintainer="Thomas Citharel <thomas.citharel@framasoft.org>"
 
 ENV REFRESHED_AT=2023-11-20
 RUN apt-get update -yq && apt-get install -yq ca-certificates build-essential inotify-tools postgresql-client git curl gnupg xvfb libgtk-3-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 cmake exiftool python3-pip python3-setuptools
