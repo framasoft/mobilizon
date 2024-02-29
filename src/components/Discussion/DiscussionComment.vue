@@ -168,7 +168,7 @@ const props = withDefaults(
   defineProps<{
     modelValue: IComment;
     currentActor: IPerson;
-    canReport: boolean;
+    canReport?: boolean;
   }>(),
   { canReport: false }
 );

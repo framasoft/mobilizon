@@ -205,6 +205,8 @@ config :codepagex, :encodings, [
   :"VENDORS/MICSFT/WINDOWS/CP1252"
 ]
 
+config :gettext, :default_locale, "en"
+
 config :mobilizon, Mobilizon.Web.Gettext, split_module_by: [:locale, :domain]
 
 config :ex_cldr,
