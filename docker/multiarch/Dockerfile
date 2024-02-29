@@ -1,4 +1,4 @@
-ARG IMAGE="elixir:1.15"
+ARG IMAGE="elixir:1.16"
 
 FROM ${IMAGE} as build
 SHELL ["/bin/bash", "-c"]
