@@ -189,13 +189,13 @@ msgstr ""
 msgid "The current password is invalid"
 msgstr ""
 
-#: lib/graphql/resolvers/admin.ex:334
+#: lib/graphql/resolvers/admin.ex:335
 #: lib/graphql/resolvers/user.ex:527
 #, elixir-autogen, elixir-format
 msgid "The new email doesn't seem to be valid"
 msgstr ""
 
-#: lib/graphql/resolvers/admin.ex:323
+#: lib/graphql/resolvers/admin.ex:324
 #: lib/graphql/resolvers/user.ex:514
 #, elixir-autogen, elixir-format
 msgid "The new email must be different"
@@ -629,7 +629,7 @@ msgstr ""
 msgid "You don't have permission to delete this token"
 msgstr ""
 
-#: lib/graphql/resolvers/admin.ex:56
+#: lib/graphql/resolvers/admin.ex:57
 #, elixir-autogen, elixir-format
 msgid "You need to be logged-in and a moderator to list action logs"
 msgstr ""
@@ -649,17 +649,17 @@ msgstr ""
 msgid "You need to be logged-in and a moderator to view a report"
 msgstr ""
 
-#: lib/graphql/resolvers/admin.ex:258
+#: lib/graphql/resolvers/admin.ex:259
 #, elixir-autogen, elixir-format
 msgid "You need to be logged-in and an administrator to access admin settings"
 msgstr ""
 
-#: lib/graphql/resolvers/admin.ex:242
+#: lib/graphql/resolvers/admin.ex:243
 #, elixir-autogen, elixir-format
 msgid "You need to be logged-in and an administrator to access dashboard statistics"
 msgstr ""
 
-#: lib/graphql/resolvers/admin.ex:283
+#: lib/graphql/resolvers/admin.ex:284
 #, elixir-autogen, elixir-format
 msgid "You need to be logged-in and an administrator to save admin settings"
 msgstr ""
@@ -946,7 +946,7 @@ msgstr ""
 msgid "Failed to update the group"
 msgstr ""
 
-#: lib/graphql/resolvers/admin.ex:357
+#: lib/graphql/resolvers/admin.ex:358
 #: lib/graphql/resolvers/user.ex:547
 #, elixir-autogen, elixir-format
 msgid "Failed to update user email"
@@ -1077,22 +1077,22 @@ msgstr ""
 msgid "Your email seems to be using an invalid format"
 msgstr ""
 
-#: lib/graphql/resolvers/admin.ex:399
+#: lib/graphql/resolvers/admin.ex:400
 #, elixir-autogen, elixir-format
 msgid "Can't confirm an already confirmed user"
 msgstr ""
 
-#: lib/graphql/resolvers/admin.ex:403
+#: lib/graphql/resolvers/admin.ex:404
 #, elixir-autogen, elixir-format
 msgid "Deconfirming users is not supported"
 msgstr ""
 
-#: lib/graphql/resolvers/admin.ex:375
+#: lib/graphql/resolvers/admin.ex:376
 #, elixir-autogen, elixir-format, fuzzy
 msgid "The new role must be different"
 msgstr ""
 
-#: lib/graphql/resolvers/admin.ex:314
+#: lib/graphql/resolvers/admin.ex:315
 #, elixir-autogen, elixir-format, fuzzy
 msgid "You need to be logged-in and an administrator to edit an user's details"
 msgstr ""
@@ -1102,7 +1102,7 @@ msgstr ""
 msgid "A profile or group with that name already exists"
 msgstr ""
 
-#: lib/graphql/resolvers/admin.ex:542
+#: lib/graphql/resolvers/admin.ex:560
 #, elixir-autogen, elixir-format
 msgid "Unable to find an instance to follow at this address"
 msgstr ""
@@ -1364,7 +1364,7 @@ msgstr ""
 msgid "The same push subscription has already been registered"
 msgstr ""
 
-#: lib/graphql/resolvers/admin.ex:536
+#: lib/graphql/resolvers/admin.ex:554
 #, elixir-autogen, elixir-format
 msgid "This instance is pending follow approval"
 msgstr ""
@@ -1374,7 +1374,7 @@ msgstr ""
 msgid "Timezone ID %{timezone} is invalid"
 msgstr ""
 
-#: lib/graphql/resolvers/admin.ex:539
+#: lib/graphql/resolvers/admin.ex:557
 #, elixir-autogen, elixir-format, fuzzy
 msgid "You are already following this instance"
 msgstr ""
@@ -1394,12 +1394,12 @@ msgstr ""
 msgid "The token you provided is invalid. Make sure that the URL is exactly the one provided inside the email you got."
 msgstr ""
 
-#: lib/graphql/resolvers/conversation.ex:161
+#: lib/graphql/resolvers/conversation.ex:164
 #, elixir-autogen, elixir-format
 msgid "Conversation needs to mention at least one participant that's not yourself"
 msgstr ""
 
-#: lib/graphql/resolvers/participant.ex:396
+#: lib/graphql/resolvers/participant.ex:401
 #, elixir-autogen, elixir-format
 msgid "There are no participants matching the audience you've selected."
 msgstr ""

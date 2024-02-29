@@ -365,7 +365,7 @@ msgid "Mobilizon on %{instance}: email changed"
 msgstr "Mobilizon auf %{instance}: E-Mail geändert"
 
 #: lib/web/email/notification.ex:52
-#, elixir-format
+#, elixir-format, elixir-autogen
 msgid "One event planned today"
 msgid_plural "%{nb_events} events planned today"
 msgstr[0] "Ein Event wurde heute geplannt"
@@ -373,7 +373,7 @@ msgstr[1] "%{nb_events} wurden heute geplannt"
 
 #: lib/web/templates/email/on_day_notification.html.heex:47
 #: lib/web/templates/email/on_day_notification.text.eex:3
-#, elixir-format
+#, elixir-format, elixir-autogen
 msgid "You have one event today:"
 msgid_plural "You have %{total} events today:"
 msgstr[0] "Sie haben ein neues Event:"
@@ -423,14 +423,14 @@ msgid "You have been invited by %{inviter} to join group %{group}"
 msgstr "Sie wurden von %{inviter} eingeladen, der Gruppe %{group} beizutreten"
 
 #: lib/web/email/notification.ex:81
-#, elixir-format
+#, elixir-format, elixir-autogen
 msgid "One event planned this week"
 msgid_plural "%{nb_events} events planned this week"
 msgstr[0] "Ein Event ist für diese Woche geplant"
 msgstr[1] "%{nb_events} Events sind für diese Woche geplant"
 
 #: lib/web/email/notification.ex:107
-#, elixir-format
+#, elixir-format, elixir-autogen
 msgid "One participation request for event %{title} to process"
 msgid_plural "%{number_participation_requests} participation requests for event %{title} to process"
 msgstr[0] "Eine Teilnahmeanfrage für die Veranstaltung %{title} zu bearbeiten"
@@ -440,7 +440,7 @@ msgstr[1] ""
 
 #: lib/web/templates/email/notification_each_week.html.heex:47
 #: lib/web/templates/email/notification_each_week.text.eex:3
-#, elixir-format
+#, elixir-format, elixir-autogen
 msgid "You have one event this week:"
 msgid_plural "You have %{total} events this week:"
 msgstr[0] "Sie haben diese Woche eine Veranstaltung:"
@@ -960,7 +960,7 @@ msgstr "Bitte verwenden Sie es nicht für reale Zwecke."
 #: lib/web/templates/email/notification_each_week.text.eex:11
 #: lib/web/templates/email/on_day_notification.html.heex:89
 #: lib/web/templates/email/on_day_notification.text.eex:11
-#, elixir-format
+#, elixir-format, elixir-autogen
 msgid "Would you wish to cancel your attendance, visit the event page through the link above and click the « Attending » button."
 msgid_plural "Would you wish to cancel your attendance to one or several events, visit the event pages through the links above and click the « Attending » button."
 msgstr[0] ""
@@ -1309,7 +1309,7 @@ msgstr ""
 "(%{group_address}) zu suspendieren. Sie sind nicht länger ein Mitglied "
 "dieser Gruppe."
 
-#: lib/web/email/group.ex:108
+#: lib/web/email/group.ex:106
 #, elixir-autogen, elixir-format
 msgid "The group %{group} has been suspended on %{instance}"
 msgstr "Die Gruppe %{group} wurde auf %{instance} ausgesetzt"
@@ -1438,21 +1438,6 @@ msgstr ""
 "Wir behalten uns das Recht vor, diese Bedingungen jederzeit zu ändern. Zum "
 "Beispiel kann es sein, dass wir diese Bedingungen ändern müssen, wenn wir "
 "eine neue Funktion einführen."
-
-#: lib/web/templates/api/terms.html.heex:55
-#, elixir-autogen, elixir-format
-msgctxt "terms"
-msgid "When we say “we”, “our”, or “us” in this document, we are referring to the owners, operators and administrators of this Mobilizon instance. The Mobilizon software is provided by the team of Mobilizon contributors, supported by <a href=\"https://framasoft.org\">Framasoft</a>, a French not-for-profit organization advocating for Free/Libre Software. Unless explicitly stated, this Mobilizon instance is an independent service using Mobilizon's source code. You may find more information about this instance on the <a href=\"/about/instance\">\"About this instance\"</a> page."
-msgstr ""
-"Wenn wir in diesem Dokument „wir“, „unser“ oder „uns“ sagen, beziehen wir "
-"uns auf die Eigentümer, Betreiber und Administratoren dieser Mobilizon-"
-"Instanz. Die Mobilizon-Software wird vom Team der Mobilizon-Mitwirkenden "
-"bereitgestellt, unterstützt von <a href=\"https://framasoft.org\">Framasoft</"
-"a>, einer französischen Non-Profit-Organisation, die sich für freie/libre "
-"Software einsetzt. Sofern nicht ausdrücklich angegeben, ist diese Mobilizon-"
-"Instanz ein unabhängiger Dienst, der den Quellcode von Mobilizon verwendet. "
-"Weitere Informationen über diese Instanz finden Sie auf der Seite <a href=\"/"
-"about/instance\">„Über diese Instanz“</a>."
 
 #: lib/web/templates/api/terms.html.heex:105
 #, elixir-autogen, elixir-format
@@ -1998,7 +1983,7 @@ msgstr ""
 
 #: lib/web/templates/email/pending_participation_notification.html.heex:47
 #: lib/web/templates/email/pending_participation_notification.text.eex:4
-#, elixir-format
+#, elixir-format, elixir-autogen
 msgid "You have one pending attendance request to process for the following event:"
 msgid_plural "You have %{number_participation_requests} attendance requests to process for the following event:"
 msgstr[0] "Sie haben eine ausstehende Anwesenheitsanforderung zu bearbeiten:"
@@ -2435,3 +2420,18 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Well done!"
 msgstr ""
+
+#: lib/web/templates/api/terms.html.heex:55
+#, elixir-autogen, elixir-format, fuzzy
+msgctxt "terms"
+msgid "When we say “we”, “our”, or “us” in this document, we are referring to the owners, operators and administrators of this Mobilizon instance. The Mobilizon software is provided by the team of Mobilizon contributors. Unless explicitly stated, this Mobilizon instance is an independent service using Mobilizon's source code. You may find more information about this instance on the <a href=\"/about/instance\">\"About this instance\"</a> page."
+msgstr ""
+"Wenn wir in diesem Dokument „wir“, „unser“ oder „uns“ sagen, beziehen wir "
+"uns auf die Eigentümer, Betreiber und Administratoren dieser Mobilizon-"
+"Instanz. Die Mobilizon-Software wird vom Team der Mobilizon-Mitwirkenden "
+"bereitgestellt, unterstützt von <a href=\"https://framasoft.org\">Framasoft</"
+"a>, einer französischen Non-Profit-Organisation, die sich für freie/libre "
+"Software einsetzt. Sofern nicht ausdrücklich angegeben, ist diese Mobilizon-"
+"Instanz ein unabhängiger Dienst, der den Quellcode von Mobilizon verwendet. "
+"Weitere Informationen über diese Instanz finden Sie auf der Seite <a href=\"/"
+"about/instance\">„Über diese Instanz“</a>."
