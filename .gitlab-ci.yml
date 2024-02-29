@@ -340,7 +340,6 @@ package-app:
             "debian-buster",
             "ubuntu-jammy",
             "ubuntu-focal",
-            "ubuntu-bionic",
             "fedora-38",
             "fedora-39",
           ]
