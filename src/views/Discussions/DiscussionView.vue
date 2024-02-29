@@ -98,7 +98,6 @@
         </form>
       </div>
       <discussion-comment
-        class="border rounded-md p-2 mt-4"
         v-for="comment in discussion.comments.elements"
         :key="comment.id"
         :model-value="comment"
