@@ -228,7 +228,7 @@ msgctxt "terms"
 msgid "We also may retain server logs which include the IP address of every request to our server."
 msgstr ""
 "Također možemo zadržati zapisnike servera koji uključuju IP adresu svakog "
-"poslanog zahtjeva na naš server."
+"poslanog upita na naš server."
 
 #: lib/web/templates/api/privacy.html.heex:102
 #, elixir-autogen, elixir-format
@@ -662,9 +662,8 @@ msgid "You can remove the content that you posted by deleting it. Once you delet
 msgstr ""
 "Sadržaj koji si objavio možeš ukloniti brisanjem. Nakon što izbrišeš svoj "
 "sadržaj, on se neće pojaviti na usluzi, ali kopije tvog izbrisanog sadržaja "
-"mogu ostati u našem sustavu ili sigurnosnim kopijama neko vrijeme. Dnevnici "
-"sa zapisima pristupa web serveru se također mogu neko vrijeme zadržati u "
-"sustavu."
+"mogu ostati u našem sustavu ili sigurnosnim kopijama neko vrijeme. Zapisnici "
+"pristupa web serveru se također mogu neko vrijeme zadržati u sustavu."
 
 #: lib/web/templates/api/terms.html.heex:306
 #, elixir-autogen, elixir-format
