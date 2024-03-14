@@ -204,27 +204,18 @@
   "Categories": "Categorías",
   "Category": "Categoría",
   "Category illustrations credits": "Créditos da ilustración da Categoría",
-<<<<<<< HEAD
   "Category list": "Lista da categoría",
-=======
->>>>>>> 2c2ec0ef4 (Translated using Weblate (Galician))
   "Change": "Cambiar",
   "Change email": "Cambiar correo",
   "Change my email": "Cambiar o meu correo",
   "Change my identity…": "Cambiar a miña identidade…",
   "Change my password": "Cambiar contrasinal",
   "Change role": "Cambiar rol",
-<<<<<<< HEAD
   "Change the filters.": "Cambiar os filtros.",
   "Change timezone": "Cambiar zona horaria",
   "Change user email": "Cambiar correo da usuaria",
   "Change user role": "Cambiar rol da usuaria",
   "Check your device to continue. You may now close this window.": "Comproba o dispositivo para continuar. Xa podes pechar esta ventá.",
-=======
-  "Change timezone": "Cambiar zona horaria",
-  "Change user email": "Cambiar correo da usuaria",
-  "Change user role": "Cambiar rol da usuaria",
->>>>>>> 2c2ec0ef4 (Translated using Weblate (Galician))
   "Check your inbox (and your junk mail folder).": "Comproba a caixa de correo (e o cartafol de spam).",
   "Choose the source of the instance's Privacy Policy": "Escolle a orixe da Política de Privacidade da instancia",
   "Choose the source of the instance's Terms": "Elixe a orixe dos Termos da instancia",
@@ -366,10 +357,7 @@
   "Do not receive any mail": "Non recibir emails",
   "Do you really want to suspend the account « {emailAccount} » ?": "Tes certeza de querer suspender a conta « {emailAccount} » ?",
   "Do you really want to suspend this account? All of the user's profiles will be deleted.": "Tes certeza de querer suspender a conta? Todos os perfís da usuaria serán eliminados.",
-<<<<<<< HEAD
   "Do you really want to suspend this profile? All of the profiles content will be deleted.": "Tes certeza de querer suspender este perfil? Todo o contido do perfil será eliminado.",
-=======
->>>>>>> 2c2ec0ef4 (Translated using Weblate (Galician))
   "Do you wish to {create_event} or {explore_events}?": "Queres {create_event} ou {explore_events}?",
   "Do you wish to {create_group} or {explore_groups}?": "Queres {create_group} ou {explore_groups}?",
   "Does the event needs to be confirmed later or is it cancelled?": "Precísase confirmar posteriormente o evento ou se foi cancelado?",
@@ -818,10 +806,6 @@
   "Online events": "Eventos en liña",
   "Online ticketing": "Entradas por internet",
   "Online upcoming events": "Próximos eventos en liña",
-<<<<<<< HEAD
-  "Only Mobilizon instances can be followed": " ",
-=======
->>>>>>> 2c2ec0ef4 (Translated using Weblate (Galician))
   "Only accessible through link": "Accesible só a través da ligazón",
   "Only accessible through link (private)": "Só accesible desde a ligazón {private}",
   "Only accessible to members of the group": "Accesible só para membros do grupo",
@@ -834,10 +818,7 @@
   "Open": "Abrir",
   "Open a topic on our forum": "Abrir un tema no noso foro",
   "Open an issue on our bug tracker (advanced users)": "Abrir un informe no noso seguimento de fallos (usuarias avanzadas)",
-<<<<<<< HEAD
   "Open conversations": "Abrir conversas",
-=======
->>>>>>> 2c2ec0ef4 (Translated using Weblate (Galician))
   "Open main menu": "Abrir menú principal",
   "Open user menu": "Abrir menú de usuaria",
   "Opened reports": "Denuncias abertas",
@@ -895,10 +876,7 @@
   "Please enter your password to confirm this action.": "Escribe o teu contrasinal para confirmar a acción.",
   "Please make sure the address is correct and that the page hasn't been moved.": "Comproba ben o enderezo e que a páxina non foi movida a outro lugar.",
   "Please read the {fullRules} published by {instance}'s administrators.": "Por favor le as {fullRules} publicadas pola administración de {instance}.",
-<<<<<<< HEAD
   "Popular groups close to you": "Grupos populares preto de ti",
-=======
->>>>>>> 2c2ec0ef4 (Translated using Weblate (Galician))
   "Popular groups nearby {position}": "Grupos populares preto de {position}",
   "Post": "Publicación",
   "Post URL": "URL da publicación",
@@ -973,11 +951,7 @@
   "Registrations are restricted by allowlisting.": "Os rexistros están restrinxidos por listas autorizadas.",
   "Reject": "Rexeitar",
   "Reject follow": "Rexeitar seguimento",
-<<<<<<< HEAD
   "Reject member": "Rexeitar membro",
-=======
-  "Reject member": "",
->>>>>>> 2c2ec0ef4 (Translated using Weblate (Galician))
   "Rejected": "Rexeitado",
   "Remember my participation in this browser": "Lembra a miña participación neste navegador",
   "Remove": "Eliminar",
@@ -990,12 +964,9 @@
   "Reply": "Responder",
   "Report": "Denunciar",
   "Report #{reportNumber}": "Denuncia #{reportNumber}",
-<<<<<<< HEAD
   "Report as spam": "Denunciar como spam",
   "Report as undetected spam": "Denunciar como spam non detectado",
   "Report reason": "Razón da denuncia",
-=======
->>>>>>> 2c2ec0ef4 (Translated using Weblate (Galician))
   "Report status": "Denunciar estado",
   "Report this comment": "Denunciar este comentario",
   "Report this event": "Denunciar este evento",
@@ -1039,10 +1010,7 @@
   "Search events, groups, etc.": "Buscar eventos, grupos, etc.",
   "Search target": "Buscar obxectivo",
   "Searching…": "Buscando…",
-<<<<<<< HEAD
   "Secondary Color": "Cor Secundaria",
-=======
->>>>>>> 2c2ec0ef4 (Translated using Weblate (Galician))
   "Select a category": "Escoller unha categoría",
   "Select a language": "Escolle idioma",
   "Select a radius": "Elixe o radio",
@@ -1086,15 +1054,10 @@
   "Software details: {software_details}": "Detalles do software: {software_details}",
   "Some terms, technical or otherwise, used in the text below may cover concepts that are difficult to grasp. We have provided a glossary here to help you understand them better:": "Algúns termos, técnicos ou doutro tipo, utilizados no texto poderían referirse a conceptos difíciles de entender. Aquí tes un glosario para axudarche a entendelos mellor:",
   "Sorry, we wen't able to save your feedback. Don't worry, we'll try to fix this issue anyway.": "Lamentámolo, pero non puidemos gardar a túa experiencia. Non te preocupes, intentaremos arranxar o problema igualmente.",
-<<<<<<< HEAD
   "Sort by": "Orde por",
   "Starts on…": "Comeza o…",
   "Status": "Estado",
   "Statuses": "Estados",
-=======
-  "Starts on…": "Comeza o…",
-  "Status": "Estado",
->>>>>>> 2c2ec0ef4 (Translated using Weblate (Galician))
   "Stop following instance": "Deixar de seguir a instancia",
   "Street": "Rúa",
   "Submit": "Enviar",
@@ -1105,11 +1068,8 @@
   "Suspend group": "Suspende grupo",
   "Suspend the account": "Suspender a conta",
   "Suspend the account?": "Suspender a conta?",
-<<<<<<< HEAD
   "Suspend the profile": "Suspender o perfil",
   "Suspend the profile?": "Suspender o perfil?",
-=======
->>>>>>> 2c2ec0ef4 (Translated using Weblate (Galician))
   "Suspended": "Suspendida",
   "Tag search": "Buscar etiqueta",
   "Task lists": "Listas de tarefas",
@@ -1156,11 +1116,8 @@
   "The event {event} was deleted by {profile}.": "{profile} eliminou o evento {event}.",
   "The event {event} was updated by {profile}.": "{profile} actualizou o evento {evento}.",
   "The events you created are not shown here.": "Os eventos que ti creaches non se mostran aquí.",
-<<<<<<< HEAD
   "The following participants are groups, which means group members are able to reply to this conversation:": "Os seguintes participantes son grupos, o que significa que os membros dos grupos poderán responder a esta conversa:",
   "The following user's profiles will be deleted, with all their data:": "Vanse eliminar os seguintes perfís da usuaria, con todos os seus datos:",
-=======
->>>>>>> 2c2ec0ef4 (Translated using Weblate (Galician))
   "The geolocation prompt was denied.": "Rexeitouse a solicitude para localización.",
   "The group can now be joined by anyone, but new members need to be approved by an administrator.": "Agora calquera pode unirse ao grupo, pero os novos membros teñen que ser aprobados pola administración.",
   "The group can now be joined by anyone.": "Agora calquera pode unirse ao grupo.",
@@ -1188,10 +1145,7 @@
   "The selected picture is too heavy. You need to select a file smaller than {size}.": "A imaxe seleccionada é demasiado grande. Debes escoller un ficheiro menor de {size}.",
   "The technical details of the error can help developers solve the problem more easily. Please add them to your feedback.": "Os detalles técnicos do erro axudan ás desenvolvedoras a solucionar o problema máis facilmente. Engádeos ao teu informe.",
   "The user has been disabled": "Desactivouse a usuaria",
-<<<<<<< HEAD
   "The videoconference will be created on {service}": "Vaise crear a videoconferencia en {service}",
-=======
->>>>>>> 2c2ec0ef4 (Translated using Weblate (Galician))
   "The {default_privacy_policy} will be used. They will be translated in the user's language.": "Vaise usar a {default_privacy_policy} e será traducida ó idioma da usuaria.",
   "The {default_terms} will be used. They will be translated in the user's language.": "Serán utilizados os {default_terms}. Serán traducidos ó idioma da usuaria.",
   "Theme": "Decorado",
@@ -1275,10 +1229,7 @@
   "This instance isn't opened to registrations, but you can register on other instances.": "Esta instancia non ten o rexistro aberto, mais podes crear unha conta noutra instancia.",
   "This instance, <b>{instanceName} ({domain})</b>, hosts your profile, so remember its name.": "Nesta instancia, <b>{instanceName} ({domain})</b>, está o teu perfil, así que lembra o seu nome.",
   "This instance, {instanceName}, hosts your profile, so remember its name.": "Esta instancia, {instanceName}, hospeda o teu perfil, así que lembra o seu nome.",
-<<<<<<< HEAD
   "This is a announcement from the organizers of event {event}. You can't reply to it, but you can send a private message to event organizers.": "Este é un anuncio da organización do evento {evento}. Non podes responder, pero podes enviar unha mensaxe privada á organización do evento.",
-=======
->>>>>>> 2c2ec0ef4 (Translated using Weblate (Galician))
   "This is a demonstration site to test Mobilizon.": "Esta é unha web de exemplo para probar Mobilizon.",
   "This is like your federated username (<code>{username}</code>) for groups. It will allow the group to be found on the federation, and is guaranteed to be unique.": "Esto é como o teu identificador federado (<code>{username}</code> pero para grupos. Permite que o grupo sexa atopado na federación, e garántese que sexa único.",
   "This is like your federated username ({username}) for groups. It will allow the group to be found on the federation, and is guaranteed to be unique.": "Isto é como o teu identificador ({username}) pero para grupos. Permitirá que o grupo poida ser atopado na federación, é garántese que sexa único.",
@@ -1287,11 +1238,7 @@
   "This post is accessible only through it's link. Be careful where you post this link.": "Este evento só é accesible coa súa ligazón. Ten tino de onde publicas esta ligazón.",
   "This profile is from another instance, the informations shown here may be incomplete.": "Este perfil pertence a outra instancia, a información que ves podería estar incompleta.",
   "This profile is located on this instance, so you need to {access_the_corresponding_account} to suspend it.": "Este perfil pertence a esta instancia, así tes que {access_the_corresponding_account} para suspendelo.",
-<<<<<<< HEAD
   "This profile was not found": "Non se atopou o perfil",
-=======
-  "This profile was not found": "",
->>>>>>> 2c2ec0ef4 (Translated using Weblate (Galician))
   "This setting will be used to display the website and send you emails in the correct language.": "Este axuste usarase para mostrar o sitio web e enviarche os correos no idioma correcto.",
   "This user doesn't have any profiles": "Esta usuaria non ten ningún perfil",
   "This user was not found": "Non atopamos a usuaria",
@@ -1389,10 +1336,7 @@
   "View full profile": "Ver perfil completo",
   "View less": "Ver menos",
   "View more": "Ver máis",
-<<<<<<< HEAD
   "View more events": "Ver máis eventos",
-=======
->>>>>>> 2c2ec0ef4 (Translated using Weblate (Galician))
   "View more events around {position}": "Ver máis eventos preto de {position}",
   "View more groups around {position}": "Ver máis grupos preto de {position}",
   "View more online events": "Ver máis eventos en liña",
