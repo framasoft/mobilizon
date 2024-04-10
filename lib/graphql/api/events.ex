@@ -57,15 +57,25 @@ defmodule Mobilizon.GraphQL.API.Events do
   defp process_picture(%{media_id: _picture_id} = args, _), do: args
 
   defp process_picture(%{media: media}, %Actor{id: actor_id}) do
-    with uploaded when is_map(uploaded) <-
-           media
-           |> Map.get(:file)
-           |> Utils.make_media_data(description: Map.get(media, :name)) do
+    # case url
+    if Map.has_key?(media, :url) do
       %{
-        file: Map.take(uploaded, [:url, :name, :content_type, :size]),
-        metadata: Map.take(uploaded, [:width, :height, :blurhash]),
+        file: %{"url" => media.url, "name" => media.name},
         actor_id: actor_id
       }
+
+      # case upload
+    else
+      with uploaded when is_map(uploaded) <-
+             media
+             |> Map.get(:file)
+             |> Utils.make_media_data(description: Map.get(media, :name)) do
+        %{
+          file: Map.take(uploaded, [:url, :name, :content_type, :size]),
+          metadata: Map.take(uploaded, [:width, :height, :blurhash]),
+          actor_id: actor_id
+        }
+      end
     end
   end
 

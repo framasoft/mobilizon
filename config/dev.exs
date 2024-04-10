@@ -5,9 +5,9 @@ config :mobilizon, Mobilizon.Web.Endpoint,
     port: String.to_integer(System.get_env("MOBILIZON_INSTANCE_HOST_PORT", "4000"))
   ],
   url: [
-    host: System.get_env("MOBILIZON_INSTANCE_HOST", "mobilizon.local"),
-    port: String.to_integer(System.get_env("MOBILIZON_INSTANCE_HOST_PORT", "80")),
-    scheme: "http"
+    host: System.get_env("MOBILIZON_INSTANCE_HOST", "localhost"),
+    port: String.to_integer(System.get_env("MOBILIZON_INSTANCE_HOST_PORT", "4000")),
+    scheme: System.get_env("MOBILIZON_INSTANCE_SCHEME", "http")
   ],
   secret_key_base: System.get_env("MOBILIZON_INSTANCE_SECRET_KEY_BASE", "changethis"),
   debug_errors: true,

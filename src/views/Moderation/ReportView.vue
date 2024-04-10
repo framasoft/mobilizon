@@ -414,7 +414,7 @@ import { GraphQLError } from "graphql";
 import { ApolloCache, FetchResult } from "@apollo/client/core";
 import { useLazyQuery, useMutation, useQuery } from "@vue/apollo-composable";
 import { useCurrentActorClient } from "@/composition/apollo/actor";
-import { useHead } from "@unhead/vue";
+import { useHead } from "@/utils/head";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { ref, computed, inject } from "vue";

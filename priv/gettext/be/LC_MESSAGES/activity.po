@@ -215,7 +215,7 @@ msgstr ""
 
 #: lib/web/templates/email/email_direct_activity.html.heex:230
 #: lib/web/templates/email/email_direct_activity.text.eex:23
-#, elixir-format
+#, elixir-format, elixir-autogen
 msgid "View one more activity"
 msgid_plural "View %{count} more activities"
 msgstr[0] ""
@@ -226,7 +226,7 @@ msgstr[2] ""
 #: lib/web/templates/email/email_direct_activity.html.heex:60
 #: lib/web/templates/email/email_direct_activity.text.eex:6
 #: lib/web/templates/email/email_direct_activity.text.eex:7
-#, elixir-format
+#, elixir-format, elixir-autogen
 msgid "There has been an activity!"
 msgid_plural "There has been some activity!"
 msgstr[0] ""

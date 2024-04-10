@@ -4,7 +4,11 @@
     :class="{ small }"
     :style="`--small: ${smallStyle}`"
   >
-    <div class="datetime-container-header" />
+    <div class="datetime-container-header">
+      <time :datetime="dateObj.toISOString()" class="weekday">{{
+        weekday
+      }}</time>
+    </div>
     <div class="datetime-container-content">
       <time :datetime="dateObj.toISOString()" class="day block font-semibold">{{
         day
@@ -38,6 +42,10 @@ const day = computed<string>(() =>
   dateObj.value.toLocaleString(undefined, { day: "numeric" })
 );
 
+const weekday = computed<string>(() =>
+  dateObj.value.toLocaleString(undefined, { weekday: "short" })
+);
+
 const smallStyle = computed<string>(() => (props.small ? "1.2" : "2"));
 </script>
 
@@ -50,6 +58,12 @@ div.datetime-container {
   .datetime-container-header {
     height: calc(10px * var(--small));
     background: #f3425f;
+  }
+  .datetime-container-header .weekday {
+    font-size: calc(9px * var(--small));
+    font-weight: bold;
+    vertical-align: top;
+    line-height: calc(9px * var(--small));
   }
   .datetime-container-content {
     height: calc(30px * var(--small));

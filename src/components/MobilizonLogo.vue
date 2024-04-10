@@ -1,6 +1,7 @@
 <template>
   <svg
-    class="bg-white dark:bg-zinc-900 dark:fill-white"
+    v-if="!instanceLogoUrl"
+    class="bg-white dark:bg-zinc-900 dark:fill-white max-h-12"
     :class="{ 'bg-gray-900': invert }"
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 248.16 46.78"
@@ -30,9 +31,14 @@
       />
     </g>
   </svg>
+  <img v-else alt="" class="max-h-12 w-auto" :src="instanceLogoUrl" />
 </template>
 
 <script lang="ts" setup>
+import { useInstanceLogoUrl } from "@/composition/apollo/config";
+
+const { instanceLogoUrl } = useInstanceLogoUrl();
+
 withDefaults(
   defineProps<{
     invert?: boolean;

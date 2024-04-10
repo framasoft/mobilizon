@@ -7,7 +7,7 @@
 Mobilizon is your federated organization and mobilization platform. Gather people with a convivial, ethical, and emancipating tool.
 
 <p align="center">
-  <strong>Developed with ♥ by <a href="https://framasoft.org">Framasoft</a></strong>
+  <strong>2017 - 2024 Developed with ♥ by <a href="https://framasoft.org">Framasoft</a></strong>
 </p>
 
 <p align="center">

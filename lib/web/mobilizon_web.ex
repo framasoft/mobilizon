@@ -18,8 +18,7 @@ defmodule Mobilizon.Web do
   """
 
   def static_paths,
-    do:
-      ~w(index.html manifest.json manifest.webmanifest service-worker.js css fonts img js favicon.ico robots.txt assets)
+    do: ~w(index.html service-worker.js css fonts img js robots.txt assets)
 
   def controller do
     quote do

@@ -333,14 +333,14 @@ msgid "Mobilizon on %{instance}: email changed"
 msgstr "Mobilizon pada %{instance}: surel diubah"
 
 #: lib/web/email/notification.ex:52
-#, elixir-format
+#, elixir-format, elixir-autogen
 msgid "One event planned today"
 msgid_plural "%{nb_events} events planned today"
 msgstr[0] "%{nb_events} acara direncanakan hari ini"
 
 #: lib/web/templates/email/on_day_notification.html.heex:47
 #: lib/web/templates/email/on_day_notification.text.eex:3
-#, elixir-format
+#, elixir-format, elixir-autogen
 msgid "You have one event today:"
 msgid_plural "You have %{total} events today:"
 msgstr[0] "Anda memiliki %{total} acara hari ini:"
@@ -390,20 +390,20 @@ msgstr ""
 "Anda telah diundang oleh %{inviter} untuk bergabung ke kelompok %{group}"
 
 #: lib/web/email/notification.ex:81
-#, elixir-format
+#, elixir-format, elixir-autogen
 msgid "One event planned this week"
 msgid_plural "%{nb_events} events planned this week"
 msgstr[0] "%{nb_events} acara direncanakan pekan ini"
 
 #: lib/web/email/notification.ex:107
-#, elixir-format
+#, elixir-format, elixir-autogen
 msgid "One participation request for event %{title} to process"
 msgid_plural "%{number_participation_requests} participation requests for event %{title} to process"
 msgstr[0] ""
 
 #: lib/web/templates/email/notification_each_week.html.heex:47
 #: lib/web/templates/email/notification_each_week.text.eex:3
-#, elixir-format
+#, elixir-format, elixir-autogen
 msgid "You have one event this week:"
 msgid_plural "You have %{total} events this week:"
 msgstr[0] "Anda memiliki %{total} acara pekan ini:"
@@ -785,7 +785,7 @@ msgstr ""
 #: lib/web/templates/email/notification_each_week.text.eex:11
 #: lib/web/templates/email/on_day_notification.html.heex:89
 #: lib/web/templates/email/on_day_notification.text.eex:11
-#, elixir-format
+#, elixir-format, elixir-autogen
 msgid "Would you wish to cancel your attendance, visit the event page through the link above and click the « Attending » button."
 msgid_plural "Would you wish to cancel your attendance to one or several events, visit the event pages through the links above and click the « Attending » button."
 msgstr[0] ""
@@ -1085,7 +1085,7 @@ msgstr ""
 msgid "Your instance's moderation team has decided to suspend %{group_name} (%{group_address}). You are no longer a member of this group."
 msgstr ""
 
-#: lib/web/email/group.ex:108
+#: lib/web/email/group.ex:106
 #, elixir-autogen, elixir-format
 msgid "The group %{group} has been suspended on %{instance}"
 msgstr ""
@@ -1167,12 +1167,6 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "We reserve the right to modify these Terms at any time. For instance, we may need to change these Terms if we come out with a new feature."
-msgstr ""
-
-#: lib/web/templates/api/terms.html.heex:55
-#, elixir-autogen, elixir-format
-msgctxt "terms"
-msgid "When we say “we”, “our”, or “us” in this document, we are referring to the owners, operators and administrators of this Mobilizon instance. The Mobilizon software is provided by the team of Mobilizon contributors, supported by <a href=\"https://framasoft.org\">Framasoft</a>, a French not-for-profit organization advocating for Free/Libre Software. Unless explicitly stated, this Mobilizon instance is an independent service using Mobilizon's source code. You may find more information about this instance on the <a href=\"/about/instance\">\"About this instance\"</a> page."
 msgstr ""
 
 #: lib/web/templates/api/terms.html.heex:105
@@ -1659,7 +1653,7 @@ msgstr ""
 
 #: lib/web/templates/email/pending_participation_notification.html.heex:47
 #: lib/web/templates/email/pending_participation_notification.text.eex:4
-#, elixir-format
+#, elixir-format, elixir-autogen
 msgid "You have one pending attendance request to process for the following event:"
 msgid_plural "You have %{number_participation_requests} attendance requests to process for the following event:"
 msgstr[0] ""
@@ -2051,4 +2045,10 @@ msgstr ""
 #: lib/web/templates/email/email_configuration_test.text.eex:1
 #, elixir-autogen, elixir-format
 msgid "Well done!"
+msgstr ""
+
+#: lib/web/templates/api/terms.html.heex:55
+#, elixir-autogen, elixir-format, fuzzy
+msgctxt "terms"
+msgid "When we say “we”, “our”, or “us” in this document, we are referring to the owners, operators and administrators of this Mobilizon instance. The Mobilizon software is provided by the team of Mobilizon contributors. Unless explicitly stated, this Mobilizon instance is an independent service using Mobilizon's source code. You may find more information about this instance on the <a href=\"/about/instance\">\"About this instance\"</a> page."
 msgstr ""

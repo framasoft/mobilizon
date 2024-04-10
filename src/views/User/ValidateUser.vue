@@ -31,7 +31,7 @@ import { ref, onBeforeMount, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useMutation } from "@vue/apollo-composable";
 import { IUser } from "@/types/current-user.model";
-import { useHead } from "@unhead/vue";
+import { useHead } from "@/utils/head";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n({ useScope: "global" });

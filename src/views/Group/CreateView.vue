@@ -231,7 +231,7 @@ import {
   useHost,
 } from "@/composition/config";
 import { Notifier } from "@/plugins/notifier";
-import { useHead } from "@unhead/vue";
+import { useHead } from "@/utils/head";
 import { Openness, GroupVisibility } from "@/types/enums";
 import FullAddressAutoComplete from "@/components/Event/FullAddressAutoComplete.vue";
 

@@ -359,7 +359,7 @@ msgid "Mobilizon on %{instance}: email changed"
 msgstr "Mobilizon na %{instance}: zmieniono e-mail"
 
 #: lib/web/email/notification.ex:52
-#, elixir-format
+#, elixir-format, elixir-autogen
 msgid "One event planned today"
 msgid_plural "%{nb_events} events planned today"
 msgstr[0] "Jedno wydarzenie zaplanowane na dzisiaj"
@@ -368,7 +368,7 @@ msgstr[2] "%{nv_events} wydareń zaplanowanych na dzisiaj"
 
 #: lib/web/templates/email/on_day_notification.html.heex:47
 #: lib/web/templates/email/on_day_notification.text.eex:3
-#, elixir-format
+#, elixir-format, elixir-autogen
 msgid "You have one event today:"
 msgid_plural "You have %{total} events today:"
 msgstr[0] "Masz dzisiaj jedno wydarzenie:"
@@ -420,7 +420,7 @@ msgid "You have been invited by %{inviter} to join group %{group}"
 msgstr "Dostałeś(-aś) zaproszenie od %{inviter}, aby dołączyć do grupy %{group}"
 
 #: lib/web/email/notification.ex:81
-#, elixir-format
+#, elixir-format, elixir-autogen
 msgid "One event planned this week"
 msgid_plural "%{nb_events} events planned this week"
 msgstr[0] "Jedno wydarzenie zaplanowane na ten tydzień"
@@ -428,7 +428,7 @@ msgstr[1] "%{nb_events} wydarzenia zaplanowane na ten tydzień"
 msgstr[2] "%{nb_events} wydarzeń zaplanowanych na ten tydzień"
 
 #: lib/web/email/notification.ex:107
-#, elixir-format
+#, elixir-format, elixir-autogen
 msgid "One participation request for event %{title} to process"
 msgid_plural "%{number_participation_requests} participation requests for event %{title} to process"
 msgstr[0] "Jedno zgłoszenie uczestnictwa dla wydarzenia %{title} do zatwierdzenia"
@@ -441,7 +441,7 @@ msgstr[2] ""
 
 #: lib/web/templates/email/notification_each_week.html.heex:47
 #: lib/web/templates/email/notification_each_week.text.eex:3
-#, elixir-format
+#, elixir-format, elixir-autogen
 msgid "You have one event this week:"
 msgid_plural "You have %{total} events this week:"
 msgstr[0] "Masz w tym tygodniu jedno wydarzenie:"
@@ -947,7 +947,7 @@ msgstr "Nie używaj go do żadnych rzeczywistych zastosowań."
 #: lib/web/templates/email/notification_each_week.text.eex:11
 #: lib/web/templates/email/on_day_notification.html.heex:89
 #: lib/web/templates/email/on_day_notification.text.eex:11
-#, elixir-format
+#, elixir-format, elixir-autogen
 msgid "Would you wish to cancel your attendance, visit the event page through the link above and click the « Attending » button."
 msgid_plural "Would you wish to cancel your attendance to one or several events, visit the event pages through the links above and click the « Attending » button."
 msgstr[0] ""
@@ -1289,7 +1289,7 @@ msgstr ""
 "Zespół moderatorów(-ek) Twojej instancji zdecydował się zawiesić "
 "%{nazwa_grupy} (%{adres_grupy}). Nie należysz już do tej grupy."
 
-#: lib/web/email/group.ex:108
+#: lib/web/email/group.ex:106
 #, elixir-autogen, elixir-format
 msgid "The group %{group} has been suspended on %{instance}"
 msgstr "Grupa %{group} została zawieszona na %{instance}"
@@ -1418,21 +1418,6 @@ msgstr ""
 "Zastrzegamy sobie prawo do zmiany niniejszego Regulaminu w dowolnym "
 "momencie. Na przykład, możemy być zmuszeni do zmiany niniejszych Warunków, "
 "jeśli wprowadzimy nową funkcję."
-
-#: lib/web/templates/api/terms.html.heex:55
-#, elixir-autogen, elixir-format
-msgctxt "terms"
-msgid "When we say “we”, “our”, or “us” in this document, we are referring to the owners, operators and administrators of this Mobilizon instance. The Mobilizon software is provided by the team of Mobilizon contributors, supported by <a href=\"https://framasoft.org\">Framasoft</a>, a French not-for-profit organization advocating for Free/Libre Software. Unless explicitly stated, this Mobilizon instance is an independent service using Mobilizon's source code. You may find more information about this instance on the <a href=\"/about/instance\">\"About this instance\"</a> page."
-msgstr ""
-"Kiedy mówimy „my”, „nasz” lub „nas” w tym dokumencie, mamy na myśli "
-"właścicieli(-ki), operatorów(-ki) i administratorów(-ki) tej instancji "
-"Mobilizon. Oprogramowanie Mobilizon jest dostarczane przez zespół "
-"współpracowników(-czek) Mobilizon, wspieranych przez <a href=\"https"
-"://framasoft.org\">Framasoft</a>, francuską organizację non-profit "
-"działającą na rzecz darmowego/wolnego oprogramowania. O ile wyraźnie nie "
-"zaznaczono, ta instancja Mobilizon jest niezależną usługą korzystającą z "
-"kodu źródłowego Mobilizon. Więcej informacji o tej instancji można znaleźć "
-"na stronie <a href=\"/about/instance\">„Informacje o tej instancji”</a>."
 
 #: lib/web/templates/api/terms.html.heex:105
 #, elixir-autogen, elixir-format
@@ -1969,7 +1954,7 @@ msgstr ""
 
 #: lib/web/templates/email/pending_participation_notification.html.heex:47
 #: lib/web/templates/email/pending_participation_notification.text.eex:4
-#, elixir-format
+#, elixir-format, elixir-autogen
 msgid "You have one pending attendance request to process for the following event:"
 msgid_plural "You have %{number_participation_requests} attendance requests to process for the following event:"
 msgstr[0] "Masz jedną prośbę o zatwierdzenie uczestnictwa do przejrzenia:"
@@ -2412,3 +2397,18 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Well done!"
 msgstr ""
+
+#: lib/web/templates/api/terms.html.heex:55
+#, elixir-autogen, elixir-format, fuzzy
+msgctxt "terms"
+msgid "When we say “we”, “our”, or “us” in this document, we are referring to the owners, operators and administrators of this Mobilizon instance. The Mobilizon software is provided by the team of Mobilizon contributors. Unless explicitly stated, this Mobilizon instance is an independent service using Mobilizon's source code. You may find more information about this instance on the <a href=\"/about/instance\">\"About this instance\"</a> page."
+msgstr ""
+"Kiedy mówimy „my”, „nasz” lub „nas” w tym dokumencie, mamy na myśli "
+"właścicieli(-ki), operatorów(-ki) i administratorów(-ki) tej instancji "
+"Mobilizon. Oprogramowanie Mobilizon jest dostarczane przez zespół "
+"współpracowników(-czek) Mobilizon, wspieranych przez <a href=\"https"
+"://framasoft.org\">Framasoft</a>, francuską organizację non-profit "
+"działającą na rzecz darmowego/wolnego oprogramowania. O ile wyraźnie nie "
+"zaznaczono, ta instancja Mobilizon jest niezależną usługą korzystającą z "
+"kodu źródłowego Mobilizon. Więcej informacji o tej instancji można znaleźć "
+"na stronie <a href=\"/about/instance\">„Informacje o tej instancji”</a>."

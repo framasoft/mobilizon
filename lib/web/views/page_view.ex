@@ -6,6 +6,7 @@ defmodule Mobilizon.Web.PageView do
   use Mobilizon.Web, :view
 
   alias Mobilizon.Actors.Actor
+  alias Mobilizon.Config
   alias Mobilizon.Discussions.{Comment, Discussion}
   alias Mobilizon.Events.Event
   alias Mobilizon.Posts.Post
@@ -91,4 +92,27 @@ defmodule Mobilizon.Web.PageView do
   def root?(assigns) do
     assigns |> Map.get(:conn, %{request_path: "/"}) |> Map.get(:request_path, "/") == "/"
   end
+
+  defp favicon do
+    case Config.instance_favicon() do
+      %{file: %{url: url}, metadata: metadata} ->
+        %{
+          src: url,
+          sizes:
+            case metadata do
+              %{width: width} -> "#{width}x#{width}"
+              _ -> "any"
+            end
+        }
+
+      _ ->
+        %{
+          src: "/img/icons/apple-touch-icon-152x152.png",
+          sizes: "152x152"
+        }
+    end
+  end
+
+  def favicon_url, do: Map.get(favicon(), :src)
+  def favicon_sizes, do: Map.get(favicon(), :sizes)
 end

@@ -110,7 +110,7 @@ import { useQuery } from "@vue/apollo-composable";
 import { ILanguage } from "@/types/admin.model";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { useHead } from "@unhead/vue";
+import { useHead } from "@/utils/head";
 import { integerTransformer, useRouteQuery } from "vue-use-route-query";
 import { formatDateTimeString } from "@/filters/datetime";
 

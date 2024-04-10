@@ -45,7 +45,7 @@ import { LEAVE_EVENT } from "../../graphql/event";
 import { computed, ref, watchEffect } from "vue";
 import { useMutation } from "@vue/apollo-composable";
 import { useI18n } from "vue-i18n";
-import { useHead } from "@unhead/vue";
+import { useHead } from "@/utils/head";
 import { IActor } from "@/types/actor";
 import { IEvent } from "@/types/event.model";
 import { useAnonymousActorId } from "@/composition/apollo/config";

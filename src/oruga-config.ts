@@ -34,6 +34,8 @@ export const orugaConfig = {
     sizeClass: (size: string) => {
       return `input-size-${size}`;
     },
+    iconLeftSpaceClass: "input-iconspace-left",
+    iconRightSpaceClass: "input-iconspace-right",
   },
   taginput: {
     itemClass: "taginput-item",

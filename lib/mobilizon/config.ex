@@ -4,7 +4,8 @@ defmodule Mobilizon.Config do
   """
 
   alias Mobilizon.Actors
-  alias Mobilizon.Admin.Setting
+  alias Mobilizon.Admin
+  alias Mobilizon.Medias.Media
   alias Mobilizon.Service.GitStatus
   require Logger
   import Mobilizon.Service.Export.Participants.Common, only: [enabled_formats: 0]
@@ -29,53 +30,15 @@ defmodule Mobilizon.Config do
   @spec instance_config :: mobilizon_config
   def instance_config, do: Application.get_env(:mobilizon, :instance)
 
-  @spec db_instance_config :: list(Setting.t())
-  def db_instance_config, do: Mobilizon.Admin.get_all_admin_settings()
-
   @spec config_cache :: map()
   def config_cache do
-    case Cachex.fetch(:config, :all_db_config, fn _key ->
-           value =
-             Enum.reduce(
-               Mobilizon.Admin.get_all_admin_settings(),
-               %{},
-               &arrange_values/2
-             )
-
-           {:commit, value}
-         end) do
+    case Cachex.fetch(
+           :config,
+           :all_db_config,
+           fn _key -> {:commit, Admin.get_all_admin_settings()} end
+         ) do
       {status, value} when status in [:ok, :commit] -> value
       _err -> %{}
-    end
-  end
-
-  @spec arrange_values(Setting.t(), map()) :: map()
-  defp arrange_values(setting, acc) do
-    {_, new_data} =
-      Map.get_and_update(acc, setting.group, fn current_value ->
-        new_value = current_value || %{}
-
-        {current_value, Map.put(new_value, setting.name, process_value(setting.value))}
-      end)
-
-    new_data
-  end
-
-  @spec process_value(String.t() | nil) :: any()
-  defp process_value(nil), do: nil
-  defp process_value(""), do: nil
-
-  defp process_value(value) do
-    case Jason.decode(value) do
-      {:ok, val} ->
-        val
-
-      {:error, _} ->
-        case value do
-          "true" -> true
-          "false" -> false
-          value -> value
-        end
     end
   end
 
@@ -115,10 +78,23 @@ defmodule Mobilizon.Config do
   @spec instance_slogan :: String.t() | nil
   def instance_slogan, do: config_cached_value("instance", "instance_slogan")
 
+  @spec instance_logo :: Media.t() | nil
+  def instance_logo, do: config_cached_value("instance", "instance_logo")
+
+  @spec instance_favicon :: Media.t() | nil
+  def instance_favicon, do: config_cached_value("instance", "instance_favicon")
+
+  @spec default_picture :: Media.t() | nil
+  def default_picture, do: config_cached_value("instance", "default_picture")
+
+  @spec primary_color :: Media.t() | nil
+  def primary_color, do: config_cached_value("instance", "primary_color")
+
+  @spec secondary_color :: Media.t() | nil
+  def secondary_color, do: config_cached_value("instance", "secondary_color")
+
   @spec contact :: String.t() | nil
-  def contact do
-    config_cached_value("instance", "contact")
-  end
+  def contact, do: config_cached_value("instance", "contact")
 
   @spec instance_terms(String.t()) :: String.t()
   def instance_terms(locale \\ "en") do
@@ -201,6 +177,9 @@ defmodule Mobilizon.Config do
 
   @spec instance_demo_mode? :: boolean
   def instance_demo_mode?, do: to_boolean(instance_config()[:demo])
+
+  @spec instance_long_events? :: boolean
+  def instance_long_events?, do: instance_config()[:duration_of_long_event] > 0
 
   @spec instance_repository :: String.t()
   def instance_repository, do: instance_config()[:repository]
@@ -470,6 +449,9 @@ defmodule Mobilizon.Config do
       instance_slogan: instance_slogan(),
       registrations_open: instance_registrations_open?(),
       contact: contact(),
+      primary_color: primary_color(),
+      secondary_color: secondary_color(),
+      instance_logo: instance_logo(),
       instance_terms: instance_terms(),
       instance_terms_type: instance_terms_type(),
       instance_terms_url: instance_terms_url(),

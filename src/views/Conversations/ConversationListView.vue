@@ -54,7 +54,7 @@ import {
 import { PROFILE_CONVERSATIONS } from "@/graphql/event";
 import ConversationListItem from "../../components/Conversations/ConversationListItem.vue";
 import EmptyContent from "../../components/Utils/EmptyContent.vue";
-import { useHead } from "@unhead/vue";
+import { useHead } from "@/utils/head";
 import { IPerson } from "@/types/actor";
 import { useOruga } from "@oruga-ui/oruga-next";
 import { arrayTransformer } from "@/utils/route";

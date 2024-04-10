@@ -25,6 +25,7 @@ defmodule Mobilizon.Events.EventOptions do
           show_participation_price: boolean,
           offers: [EventOffer.t()],
           participation_condition: [EventParticipationCondition.t()],
+          hide_number_of_participants: boolean,
           show_start_time: boolean,
           show_end_time: boolean,
           timezone: String.t() | nil,
@@ -41,6 +42,7 @@ defmodule Mobilizon.Events.EventOptions do
     :program,
     :comment_moderation,
     :show_participation_price,
+    :hide_number_of_participants,
     :show_start_time,
     :show_end_time,
     :timezone,
@@ -59,6 +61,7 @@ defmodule Mobilizon.Events.EventOptions do
     field(:program, :string)
     field(:comment_moderation, CommentModeration)
     field(:show_participation_price, :boolean)
+    field(:hide_number_of_participants, :boolean, default: false)
     field(:show_start_time, :boolean, default: true)
     field(:show_end_time, :boolean, default: true)
     field(:timezone, :string)

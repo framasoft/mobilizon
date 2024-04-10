@@ -189,7 +189,7 @@ import {
   onMounted,
   onUnmounted,
 } from "vue";
-import { useHead } from "@unhead/vue";
+import { useHead } from "@/utils/head";
 import { useRouter } from "vue-router";
 import { useCurrentActorClient } from "../../composition/apollo/actor";
 import { AbsintheGraphQLError } from "../../types/errors.model";

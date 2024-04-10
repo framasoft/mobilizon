@@ -110,7 +110,13 @@ body {
   @apply border-red-500;
 }
 .input-icon-right {
-  right: 0.5rem;
+  @apply right-2;
+}
+.input-iconspace-left {
+  @apply pl-8;
+}
+.input-iconspace-right {
+  @apply pr-8;
 }
 .input[type="text"]:disabled,
 .input[type="email"]:disabled {

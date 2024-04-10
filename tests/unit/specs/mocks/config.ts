@@ -49,6 +49,7 @@ export const configMock = {
       },
       countryCode: "fr",
       demoMode: false,
+      longEvents: false,
       description: "Mobilizon.fr est l'instance Mobilizon de Framasoft.",
       features: {
         __typename: "Features",

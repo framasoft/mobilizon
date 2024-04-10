@@ -103,7 +103,7 @@ import {
 import { useI18n } from "vue-i18n";
 import { useEventCategories } from "@/composition/apollo/config";
 import EmptyContent from "@/components/Utils/EmptyContent.vue";
-import { useHead } from "@unhead/vue";
+import { useHead } from "@/utils/head";
 
 const { t } = useI18n({ useScope: "global" });
 

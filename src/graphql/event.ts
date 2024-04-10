@@ -59,40 +59,6 @@ const FULL_EVENT_FRAGMENT = gql`
     tags {
       ...TagFragment
     }
-    relatedEvents {
-      id
-      uuid
-      title
-      beginsOn
-      endsOn
-      status
-      language
-      picture {
-        id
-        url
-        name
-        metadata {
-          width
-          height
-          blurhash
-        }
-      }
-      physicalAddress {
-        ...AdressFragment
-      }
-      organizerActor {
-        ...ActorFragment
-      }
-      attributedTo {
-        ...ActorFragment
-      }
-      options {
-        ...EventOptions
-      }
-      tags {
-        ...TagFragment
-      }
-    }
     options {
       ...EventOptions
     }

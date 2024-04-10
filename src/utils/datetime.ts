@@ -69,10 +69,15 @@ function formatDateTimeForEvent(dateTime: Date, locale: Locale): string {
   return format(dateTime, "PPp", { locale });
 }
 
+function formatDateForEvent(dateTime: Date, locale: Locale): string {
+  return format(dateTime, "PP", { locale });
+}
+
 export {
   localeMonthNames,
   localeShortWeekDayNames,
   formatBytes,
   roundToNearestMinute,
   formatDateTimeForEvent,
+  formatDateForEvent,
 };

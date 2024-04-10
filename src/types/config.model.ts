@@ -37,10 +37,15 @@ export interface IConfig {
   longDescription: string;
   contact: string;
   slogan: string;
+  instanceLogo: { url: string };
+  defaultPicture: { url: string };
+  primaryColor: string;
+  secondaryColor: string;
 
   registrationsOpen: boolean;
   registrationsAllowlist: boolean;
   demoMode: boolean;
+  longEvents: boolean;
   countryCode: string;
   eventCategories: { id: string; label: string }[];
   languages: string[];

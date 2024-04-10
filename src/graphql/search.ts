@@ -33,6 +33,7 @@ export const SEARCH_EVENTS_AND_GROUPS = gql`
     $searchTarget: SearchTarget
     $beginsOn: DateTime
     $endsOn: DateTime
+    $longevents: Boolean
     $bbox: String
     $zoom: Int
     $eventPage: Int
@@ -54,6 +55,7 @@ export const SEARCH_EVENTS_AND_GROUPS = gql`
       searchTarget: $searchTarget
       beginsOn: $beginsOn
       endsOn: $endsOn
+      longevents: $longevents
       bbox: $bbox
       zoom: $zoom
       page: $eventPage
@@ -67,6 +69,7 @@ export const SEARCH_EVENTS_AND_GROUPS = gql`
         title
         uuid
         beginsOn
+        endsOn
         picture {
           id
           url
@@ -152,6 +155,7 @@ export const SEARCH_EVENTS = gql`
     $endsOn: DateTime
     $eventPage: Int
     $limit: Int
+    $longevents: Boolean
   ) {
     searchEvents(
       location: $location
@@ -164,6 +168,7 @@ export const SEARCH_EVENTS = gql`
       endsOn: $endsOn
       page: $eventPage
       limit: $limit
+      longevents: $longevents
     ) {
       total
       elements {
@@ -171,6 +176,56 @@ export const SEARCH_EVENTS = gql`
         title
         uuid
         beginsOn
+        picture {
+          id
+          url
+        }
+        status
+        tags {
+          ...TagFragment
+        }
+        physicalAddress {
+          ...AdressFragment
+        }
+        organizerActor {
+          ...ActorFragment
+        }
+        attributedTo {
+          ...ActorFragment
+        }
+        options {
+          ...EventOptions
+        }
+        __typename
+      }
+    }
+  }
+  ${EVENT_OPTIONS_FRAGMENT}
+  ${TAG_FRAGMENT}
+  ${ADDRESS_FRAGMENT}
+  ${ACTOR_FRAGMENT}
+`;
+
+export const SEARCH_CALENDAR_EVENTS = gql`
+  query SearchEvents(
+    $beginsOn: DateTime
+    $endsOn: DateTime
+    $eventPage: Int
+    $limit: Int
+  ) {
+    searchEvents(
+      beginsOn: $beginsOn
+      endsOn: $endsOn
+      page: $eventPage
+      limit: $limit
+    ) {
+      total
+      elements {
+        id
+        title
+        uuid
+        beginsOn
+        endsOn
         picture {
           id
           url

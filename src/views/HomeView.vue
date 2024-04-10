@@ -144,41 +144,6 @@
   <CloseGroups :userLocation="userLocation" @doGeoLoc="performGeoLocation()" />
   <OnlineEvents />
   <LastEvents v-if="instanceName" :instanceName="instanceName" />
-  <!-- Unlogged content section -->
-  <picture v-if="!currentUser?.isLoggedIn">
-    <source
-      media="(max-width: 799px)"
-      :srcset="`/img/pics/homepage-480w.webp`"
-      type="image/webp"
-    />
-
-    <source
-      media="(max-width: 1024px)"
-      :srcset="`/img/pics/homepage-1024w.webp`"
-      type="image/webp"
-    />
-
-    <source
-      media="(max-width: 1920px)"
-      :srcset="`/img/pics/homepage-1920w.webp`"
-      type="image/webp"
-    />
-
-    <source
-      media="(min-width: 1921px)"
-      :srcset="`/img/pics/homepage.webp`"
-      type="image/webp"
-    />
-
-    <img
-      :src="`/img/pics/homepage-1024w.webp`"
-      width="3840"
-      height="2719"
-      alt=""
-      loading="lazy"
-    />
-  </picture>
-  <presentation v-if="!currentUser?.isLoggedIn" />
 </template>
 
 <script lang="ts" setup>
@@ -214,7 +179,6 @@ import {
   UPDATE_CURRENT_USER_LOCATION_CLIENT,
 } from "@/graphql/location";
 import { LocationType } from "@/types/user-location.model";
-import Presentation from "@/components/Home/MobilizonPresentation.vue";
 import CategoriesPreview from "@/components/Home/CategoriesPreview.vue";
 import UnloggedIntroduction from "@/components/Home/UnloggedIntroduction.vue";
 import SearchFields from "@/components/Home/SearchFields.vue";

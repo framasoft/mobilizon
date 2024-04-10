@@ -98,7 +98,6 @@
         </form>
       </div>
       <discussion-comment
-        class="border rounded-md p-2 mt-4"
         v-for="comment in discussion.comments.elements"
         :key="comment.id"
         :model-value="comment"
@@ -172,7 +171,7 @@ import {
   computed,
   inject,
 } from "vue";
-import { useHead } from "@unhead/vue";
+import { useHead } from "@/utils/head";
 import { useRouter } from "vue-router";
 import { useCurrentActorClient } from "@/composition/apollo/actor";
 import { AbsintheGraphQLError } from "@/types/errors.model";
@@ -180,6 +179,7 @@ import { MemberRole } from "@/types/enums";
 import { PERSON_MEMBERSHIPS } from "@/graphql/actor";
 import { Dialog } from "@/plugins/dialog";
 import { useI18n } from "vue-i18n";
+import { watch } from "vue";
 
 const props = defineProps<{ slug: string }>();
 
@@ -187,6 +187,8 @@ const page = ref(1);
 const COMMENTS_PER_PAGE = 10;
 
 const { currentActor } = useCurrentActorClient();
+
+const slug = computed(() => props.slug);
 
 const {
   result: discussionResult,
@@ -197,52 +199,55 @@ const {
 } = useQuery<{ discussion: IDiscussion }>(
   GET_DISCUSSION,
   () => ({
-    slug: props.slug,
+    slug: slug.value,
     page: page.value,
     limit: COMMENTS_PER_PAGE,
   }),
   () => ({
-    enabled: props.slug !== undefined,
+    enabled: slug.value !== undefined,
   })
 );
 
-subscribeToMore({
-  document: DISCUSSION_COMMENT_CHANGED,
-  variables: () => ({
-    slug: props.slug,
-    page: page.value,
-    limit: COMMENTS_PER_PAGE,
-  }),
-  updateQuery(
-    previousResult: any,
-    { subscriptionData }: { subscriptionData: any }
-  ) {
-    const previousDiscussion = previousResult.discussion;
-    const lastComment =
-      subscriptionData.data.discussionCommentChanged.lastComment;
-    hasMoreComments.value = !previousDiscussion.comments.elements.some(
-      (comment: IComment) => comment.id === lastComment.id
-    );
-    if (hasMoreComments.value) {
-      return {
-        discussion: {
-          ...previousDiscussion,
-          lastComment: lastComment,
-          comments: {
-            elements: [
-              ...previousDiscussion.comments.elements.filter(
-                ({ id }: { id: string }) => id !== lastComment.id
-              ),
-              lastComment,
-            ],
-            total: previousDiscussion.comments.total + 1,
+watch(slug, (newSlug: string | undefined | null) => {
+  if (!newSlug) return;
+  subscribeToMore({
+    document: DISCUSSION_COMMENT_CHANGED,
+    variables: () => ({
+      slug: slug.value,
+      page: page.value,
+      limit: COMMENTS_PER_PAGE,
+    }),
+    updateQuery(
+      previousResult: any,
+      { subscriptionData }: { subscriptionData: any }
+    ) {
+      const previousDiscussion = previousResult.discussion;
+      const lastComment =
+        subscriptionData.data.discussionCommentChanged.lastComment;
+      hasMoreComments.value = !previousDiscussion.comments.elements.some(
+        (comment: IComment) => comment.id === lastComment.id
+      );
+      if (hasMoreComments.value) {
+        return {
+          discussion: {
+            ...previousDiscussion,
+            lastComment: lastComment,
+            comments: {
+              elements: [
+                ...previousDiscussion.comments.elements.filter(
+                  ({ id }: { id: string }) => id !== lastComment.id
+                ),
+                lastComment,
+              ],
+              total: previousDiscussion.comments.total + 1,
+            },
           },
-        },
-      };
-    }
+        };
+      }
 
-    return previousDiscussion;
-  },
+      return previousDiscussion;
+    },
+  });
 });
 
 const discussion = computed(() => discussionResult.value?.discussion);
@@ -272,7 +277,7 @@ const { mutate: replyToDiscussionMutation } = useMutation<{
     }>({
       query: GET_DISCUSSION,
       variables: {
-        slug: props.slug,
+        slug: slug.value,
         page: page.value,
       },
     });
@@ -281,7 +286,7 @@ const { mutate: replyToDiscussionMutation } = useMutation<{
 
     store.writeQuery({
       query: GET_DISCUSSION,
-      variables: { slug: props.slug, page: page.value },
+      variables: { slug: slug.value, page: page.value },
       data: {
         discussion: {
           ...discussionCached,
@@ -324,7 +329,7 @@ const { mutate: updateComment } = useMutation<
     }>({
       query: GET_DISCUSSION,
       variables: {
-        slug: props.slug,
+        slug: slug.value,
         page: page.value,
       },
     });
@@ -339,7 +344,7 @@ const { mutate: updateComment } = useMutation<
     }
     store.writeQuery({
       query: GET_DISCUSSION,
-      variables: { slug: props.slug, page: page.value },
+      variables: { slug: slug.value, page: page.value },
       data: { discussion: discussionCached },
     });
   },
@@ -379,7 +384,7 @@ const loadMoreComments = async (): Promise<void> => {
     await fetchMore({
       // New variables
       variables: {
-        slug: props.slug,
+        slug: slug.value,
         page: page.value,
         limit: COMMENTS_PER_PAGE,
       },

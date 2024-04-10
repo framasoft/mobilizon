@@ -58,6 +58,70 @@
           </small>
           <o-input v-model="settingsToWrite.contact" id="instance-contact" />
         </div>
+        <label class="field flex flex-col">
+          <p>{{ t("Logo") }}</p>
+          <small>
+            {{
+              t(
+                "Logo of the instance. Defaults to the upstream Mobilizon logo."
+              )
+            }}
+          </small>
+          <picture-upload
+            v-model:modelValue="instanceLogoFile"
+            :defaultImage="settingsToWrite.instanceLogo"
+            :textFallback="t('Logo')"
+            :maxSize="maxSize"
+          />
+        </label>
+        <label class="field flex flex-col">
+          <p>{{ t("Favicon") }}</p>
+          <small>
+            {{
+              t(
+                "Browser tab icon and PWA icon of the instance. Defaults to the upstream Mobilizon icon."
+              )
+            }}
+          </small>
+          <picture-upload
+            v-model:modelValue="instanceFaviconFile"
+            :defaultImage="settingsToWrite.instanceFavicon"
+            :textFallback="t('Favicon')"
+            :maxSize="maxSize"
+          />
+        </label>
+        <label class="field flex flex-col">
+          <p>{{ t("Default Picture") }}</p>
+          <small>
+            {{ t("Default picture when an event or group doesn't have one.") }}
+          </small>
+          <picture-upload
+            v-model:modelValue="defaultPictureFile"
+            :defaultImage="settingsToWrite.defaultPicture"
+            :textFallback="t('Default Picture')"
+            :maxSize="maxSize"
+          />
+        </label>
+        <!-- piece of code to manage instance colors
+        <div class="field flex flex-col">
+          <label class="" for="primary-color">{{ t("Primary Color") }}</label>
+          <o-input
+            type="color"
+            v-model="settingsToWrite.primaryColor"
+            id="primary-color"
+          />
+        </div>
+        <div class="field flex flex-col">
+          <label class="" for="secondary-color">{{
+            t("Secondary Color")
+          }}</label>
+          <o-input
+            type="color"
+            v-model="settingsToWrite.secondaryColor"
+            id="secondary-color"
+          />
+        </div>
+        -->
         <o-field :label="t('Allow registrations')">
           <o-switch v-model="settingsToWrite.registrationsOpen">
             <p
@@ -389,8 +453,17 @@ import RouteName from "@/router/name";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import { ref, computed, watch, inject } from "vue";
 import { useI18n } from "vue-i18n";
-import { useHead } from "@unhead/vue";
+import { useHead } from "@/utils/head";
 import type { Notifier } from "@/plugins/notifier";
+
+// Media upload related
+import PictureUpload from "@/components/PictureUpload.vue";
+import {
+  initWrappedMedia,
+  loadWrappedMedia,
+  asMediaInput,
+} from "@/utils/image";
+import { useDefaultMaxSize } from "@/composition/config";
 
 const defaultAdminSettings: IAdminSettings = {
   instanceName: "",
@@ -398,6 +471,11 @@ const defaultAdminSettings: IAdminSettings = {
   instanceSlogan: "",
   instanceLongDescription: "",
   contact: "",
+  instanceLogo: null,
+  instanceFavicon: null,
+  defaultPicture: null,
+  primaryColor: "",
+  secondaryColor: "",
   instanceTerms: "",
   instanceTermsType: InstanceTermsType.DEFAULT,
   instanceTermsUrl: null,
@@ -409,12 +487,30 @@ const defaultAdminSettings: IAdminSettings = {
   instanceLanguages: [],
 };
 
-const { result: adminSettingsResult } = useQuery<{
+const { onResult: onAdminSettingsResult } = useQuery<{
   adminSettings: IAdminSettings;
 }>(ADMIN_SETTINGS);
-const adminSettings = computed(
-  () => adminSettingsResult.value?.adminSettings ?? defaultAdminSettings
-);
+
+const adminSettings = ref<IAdminSettings>();
+
+onAdminSettingsResult(async ({ data }) => {
+  if (!data) return;
+  adminSettings.value =
+    {
+      ...data.adminSettings,
+    } ?? defaultAdminSettings;
+
+  loadWrappedMedia(instanceLogo, adminSettings.value.instanceLogo);
+  loadWrappedMedia(instanceFavicon, adminSettings.value.instanceFavicon);
+  loadWrappedMedia(defaultPicture, adminSettings.value.defaultPicture);
+});
+
+const instanceLogo = initWrappedMedia();
+const { file: instanceLogoFile } = instanceLogo;
+const instanceFavicon = initWrappedMedia();
+const { file: instanceFaviconFile } = instanceFavicon;
+const defaultPicture = initWrappedMedia();
+const { file: defaultPictureFile } = defaultPicture;
 
 const { result: languageResult } = useQuery<{ languages: ILanguage[] }>(
   LANGUAGES
@@ -463,6 +559,9 @@ const {
 } = useMutation(SAVE_ADMIN_SETTINGS);
 
 saveAdminSettingsDone(() => {
+  instanceLogo.firstHash = instanceLogo.hash;
+  instanceFavicon.firstHash = instanceFavicon.hash;
+  defaultPicture.firstHash = defaultPicture.hash;
   notifier?.success(t("Admin settings successfully saved.") as string);
 });
 
@@ -472,10 +571,28 @@ saveAdminSettingsError((e) => {
 });
 
 const updateSettings = async (): Promise<void> => {
-  const variables = { ...settingsToWrite.value };
-  console.debug("updating settings with variables", variables);
+  const variables = {
+    ...settingsToWrite.value,
+    ...asMediaInput(
+      instanceLogo,
+      "instanceLogo",
+      adminSettings.value?.instanceLogo?.id
+    ),
+    ...asMediaInput(
+      instanceFavicon,
+      "instanceFavicon",
+      adminSettings.value?.instanceFavicon?.id
+    ),
+    ...asMediaInput(
+      defaultPicture,
+      "defaultPicture",
+      adminSettings.value?.defaultPicture?.id
+    ),
+  };
   saveAdminSettings(variables);
 };
+
+const maxSize = useDefaultMaxSize();
 
 const getFilteredLanguages = (text: string): void => {
   filteredLanguages.value = languages.value

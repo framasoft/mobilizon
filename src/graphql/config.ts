@@ -10,8 +10,24 @@ export const CONFIG = gql`
       registrationsOpen
       registrationsAllowlist
       demoMode
+      longEvents
       countryCode
       languages
+      primaryColor
+      secondaryColor
+      instanceLogo {
+        url
+      }
+      defaultPicture {
+        id
+        url
+        name
+        metadata {
+          width
+          height
+          blurhash
+        }
+      }
       eventCategories {
         id
         label
@@ -425,6 +441,14 @@ export const DEMO_MODE = gql`
   }
 `;
 
+export const LONG_EVENTS = gql`
+  query LongEvents {
+    config {
+      longEvents
+    }
+  }
+`;
+
 export const ANALYTICS = gql`
   query Analytics {
     config {
@@ -448,6 +472,42 @@ export const SEARCH_CONFIG = gql`
         global {
           isEnabled
           isDefault
+        }
+      }
+    }
+  }
+`;
+
+export const INSTANCE_LOGO = gql`
+  query InstanceLogo {
+    config {
+      instanceLogo {
+        url
+      }
+    }
+  }
+`;
+
+export const COLORS = gql`
+  query Colors {
+    config {
+      primaryColor
+      secondaryColor
+    }
+  }
+`;
+
+export const DEFAULT_PICTURE = gql`
+  query DefaultPicture {
+    config {
+      defaultPicture {
+        id
+        url
+        name
+        metadata {
+          width
+          height
+          blurhash
         }
       }
     }

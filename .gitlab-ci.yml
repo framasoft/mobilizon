@@ -306,7 +306,7 @@ docker-latest:
 
 # Packaging app for amd64
 package-app:
-  image: mobilizon/buildpack:1.15.7-erlang-26.1.2-${SYSTEM}
+  image: mobilizon/buildpack:1.16.1-erlang-26.2.2-${SYSTEM}
   stage: build
   variables: &release-variables
     MIX_ENV: "prod"
@@ -340,7 +340,6 @@ package-app:
             "debian-buster",
             "ubuntu-jammy",
             "ubuntu-focal",
-            "ubuntu-bionic",
             "fedora-38",
             "fedora-39",
           ]

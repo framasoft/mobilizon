@@ -36,6 +36,7 @@ config :mobilizon, :instance,
   unconfirmed_user_grace_period_hours: 48,
   activity_expire_days: 365,
   activity_keep_number: 100,
+  duration_of_long_event: 30,
   enable_instance_feeds: true,
   email_from: "noreply@localhost",
   email_reply_to: "noreply@localhost"
@@ -204,6 +205,8 @@ config :codepagex, :encodings, [
   ~r[iso8859]i,
   :"VENDORS/MICSFT/WINDOWS/CP1252"
 ]
+
+config :gettext, :default_locale, "en"
 
 config :mobilizon, Mobilizon.Web.Gettext, split_module_by: [:locale, :domain]
 

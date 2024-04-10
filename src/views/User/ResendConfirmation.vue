@@ -54,7 +54,7 @@ import RouteName from "@/router/name";
 import { ref, computed } from "vue";
 import { useMutation } from "@vue/apollo-composable";
 import { useI18n } from "vue-i18n";
-import { useHead } from "@unhead/vue";
+import { useHead } from "@/utils/head";
 
 const { t } = useI18n({ useScope: "global" });
 useHead({

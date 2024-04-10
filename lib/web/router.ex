@@ -114,12 +114,19 @@ defmodule Mobilizon.Web.Router do
   end
 
   scope "/", Mobilizon.Web do
+    get("/manifest.webmanifest", ManifestController, :manifest)
+    get("/manifest.json", ManifestController, :manifest)
+    get("/favicon.ico", ManifestController, :favicon)
+  end
+
+  scope "/", Mobilizon.Web do
     pipe_through(:activity_pub_and_html)
     pipe_through(:activity_pub_signature)
 
     get("/@:name", PageController, :actor)
     get("/events/me", PageController, :my_events)
     get("/events/create", PageController, :create_event)
+    get("/events/calendar", PageController, :calendar)
     get("/events/:uuid", PageController, :event)
     get("/comments/:uuid", PageController, :comment)
     get("/resource/:uuid", PageController, :resource)
@@ -188,6 +195,7 @@ defmodule Mobilizon.Web.Router do
     get("/events/create", PageController, :create_event)
     get("/events/list", PageController, :list_events)
     get("/events/me", PageController, :my_events)
+    get("/events/calendar", PageController, :calendar)
     get("/events/:uuid/edit", PageController, :edit_event)
 
     # This is a hack to ease link generation into emails

@@ -4,11 +4,15 @@ import {
   ANONYMOUS_ACTOR_ID,
   ANONYMOUS_PARTICIPATION_CONFIG,
   ANONYMOUS_REPORTS_CONFIG,
+  DEFAULT_PICTURE,
   DEMO_MODE,
+  LONG_EVENTS,
   EVENT_CATEGORIES,
   EVENT_PARTICIPANTS,
   FEATURES,
   GEOCODING_AUTOCOMPLETE,
+  COLORS,
+  INSTANCE_LOGO,
   LOCATION,
   MAPS_TILES,
   REGISTRATIONS,
@@ -74,6 +78,36 @@ export function useInstanceName() {
 
   const instanceName = computed(() => result.value?.config?.name);
   return { instanceName, error, loading };
+}
+
+export function useInstanceLogoUrl() {
+  const { result, error, loading } = useQuery<{
+    config: Pick<IConfig, "instanceLogo">;
+  }>(INSTANCE_LOGO);
+
+  const instanceLogoUrl = computed(
+    () => result.value?.config?.instanceLogo?.url
+  );
+  return { instanceLogoUrl, error, loading };
+}
+
+export function useColors() {
+  const { result, error, loading } = useQuery<{
+    config: Pick<IConfig, "primaryColor" | "secondaryColor">;
+  }>(COLORS);
+
+  const primaryColor = computed(() => result.value?.config?.primaryColor);
+  const secondaryColor = computed(() => result.value?.config?.secondaryColor);
+  return { primaryColor, secondaryColor, error, loading };
+}
+
+export function useDefaultPicture() {
+  const { result, error, loading } = useQuery<{
+    config: Pick<IConfig, "defaultPicture">;
+  }>(DEFAULT_PICTURE);
+
+  const defaultPicture = computed(() => result.value?.config?.defaultPicture);
+  return { defaultPicture, error, loading };
 }
 
 export function useAnonymousActorId() {
@@ -186,6 +220,15 @@ export function useIsDemoMode() {
 
   const isDemoMode = computed(() => result.value?.config.demoMode);
   return { isDemoMode, error, loading };
+}
+
+export function useIsLongEvents() {
+  const { result, error, loading } = useQuery<{
+    config: Pick<IConfig, "longEvents">;
+  }>(LONG_EVENTS);
+
+  const islongEvents = computed(() => result.value?.config.longEvents);
+  return { islongEvents, error, loading };
 }
 
 export function useAnalytics() {

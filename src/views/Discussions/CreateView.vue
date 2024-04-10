@@ -70,7 +70,7 @@ import { useI18n } from "vue-i18n";
 import { useMutation } from "@vue/apollo-composable";
 import { IDiscussion } from "@/types/discussions";
 import { useRouter } from "vue-router";
-import { useHead } from "@unhead/vue";
+import { useHead } from "@/utils/head";
 import { Notifier } from "@/plugins/notifier";
 import { AbsintheGraphQLError } from "@/types/errors.model";
 

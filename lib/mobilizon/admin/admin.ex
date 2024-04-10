@@ -9,7 +9,8 @@ defmodule Mobilizon.Admin do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.{Admin, Users}
   alias Mobilizon.Admin.ActionLog
-  alias Mobilizon.Admin.Setting
+  alias Mobilizon.Admin.{Setting, SettingMedia}
+  alias Mobilizon.Medias.Media
   alias Mobilizon.Storage.{Page, Repo}
   alias Mobilizon.Users.User
 
@@ -78,9 +79,47 @@ defmodule Mobilizon.Admin do
 
   defp stringify_struct(struct), do: struct
 
-  @spec get_all_admin_settings :: list(Setting.t())
+  @spec get_all_admin_settings :: map()
   def get_all_admin_settings do
-    Repo.all(Setting)
+    medias =
+      SettingMedia
+      |> Repo.all()
+      |> Repo.preload(:media)
+      |> Enum.map(fn %SettingMedia{group: group, name: name, media: media} ->
+        {group, name, media}
+      end)
+
+    values =
+      Setting
+      |> Repo.all()
+      |> Enum.map(fn %Setting{group: group, name: name, value: value} ->
+        {group, name, get_setting_value(value)}
+      end)
+
+    all_settings = Enum.concat(values, medias)
+
+    Enum.reduce(
+      all_settings,
+      %{},
+      # For each {group,name,value}
+      fn {group, name, value}, acc ->
+        # We update the %{group: map} in the accumulator
+        {_, new_acc} =
+          Map.get_and_update(
+            acc,
+            group,
+            # We put the %{name: value} into the %{group: map}
+            fn group_map ->
+              {
+                group_map,
+                Map.put(group_map || %{}, name, value)
+              }
+            end
+          )
+
+        new_acc
+      end
+    )
   end
 
   @spec get_admin_setting_value(String.t(), String.t(), String.t() | nil) ::
@@ -119,21 +158,40 @@ defmodule Mobilizon.Admin do
     end
   end
 
+  @spec get_admin_setting_media(String.t(), String.t(), String.t() | nil) ::
+          {:ok, Media.t()} | {:error, :not_found} | nil
+  def get_admin_setting_media(group, name, fallback \\ nil)
+      when is_binary(group) and is_binary(name) do
+    case SettingMedia
+         |> where(group: ^group)
+         |> where(name: ^name)
+         |> preload(:media)
+         |> Repo.one() do
+      nil ->
+        fallback
+
+      %SettingMedia{media: media} ->
+        media
+
+      %SettingMedia{} ->
+        fallback
+    end
+  end
+
   @spec save_settings(String.t(), map()) :: {:ok, any} | {:error, any}
   def save_settings(group, args) do
+    {medias, values} = Map.split(args, [:instance_logo, :instance_favicon, :default_picture])
+
     Multi.new()
-    |> do_save_setting(group, args)
+    |> do_save_media_setting(group, medias)
+    |> do_save_value_setting(group, values)
     |> Repo.transaction()
   end
 
-  def clear_settings(group) do
-    Setting |> where([s], s.group == ^group) |> Repo.delete_all()
-  end
+  @spec do_save_value_setting(Ecto.Multi.t(), String.t(), map()) :: Ecto.Multi.t()
+  defp do_save_value_setting(transaction, _group, args) when args == %{}, do: transaction
 
-  @spec do_save_setting(Ecto.Multi.t(), String.t(), map()) :: Ecto.Multi.t()
-  defp do_save_setting(transaction, _group, args) when args == %{}, do: transaction
-
-  defp do_save_setting(transaction, group, args) do
+  defp do_save_value_setting(transaction, group, args) do
     key = hd(Map.keys(args))
     {val, rest} = Map.pop(args, key)
 
@@ -150,7 +208,40 @@ defmodule Mobilizon.Admin do
         conflict_target: [:group, :name]
       )
 
-    do_save_setting(transaction, group, rest)
+    do_save_value_setting(transaction, group, rest)
+  end
+
+  @spec do_save_media_setting(Ecto.Multi.t(), String.t(), map()) :: Ecto.Multi.t()
+  defp do_save_media_setting(transaction, _group, args) when args == %{}, do: transaction
+
+  defp do_save_media_setting(transaction, group, args) do
+    key = hd(Map.keys(args))
+    {val, rest} = Map.pop(args, key)
+
+    transaction =
+      case val do
+        val ->
+          Multi.insert(
+            transaction,
+            key,
+            SettingMedia.changeset(%SettingMedia{}, %{
+              group: group,
+              name: Atom.to_string(key),
+              media: val
+            }),
+            on_conflict: :replace_all,
+            conflict_target: [:group, :name]
+          )
+      end
+
+    do_save_media_setting(transaction, group, rest)
+  end
+
+  def clear_settings(group) do
+    Multi.new()
+    |> Multi.delete_all(:settings, Setting |> where([s], s.group == ^group))
+    |> Multi.delete_all(:settings_medias, SettingMedia |> where([s], s.group == ^group))
+    |> Repo.transaction()
   end
 
   @spec convert_to_string(any()) :: String.t()

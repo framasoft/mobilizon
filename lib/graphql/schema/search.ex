@@ -273,6 +273,8 @@ defmodule Mobilizon.GraphQL.Schema.SearchType do
         description: "Radius around the location to search in"
       )
 
+      arg(:longevents, :boolean, description: "if mention filter in or out long events")
+
       arg(:bbox, :string, description: "The bbox to search events into")
       arg(:zoom, :integer, description: "The zoom level for searching events")
 

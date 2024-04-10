@@ -213,7 +213,7 @@ import { computed, reactive, ref, watch } from "vue";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
-import { useHead } from "@unhead/vue";
+import { useHead } from "@/utils/head";
 import { AbsintheGraphQLErrors } from "@/types/errors.model";
 
 type errorType = "danger" | "warning";

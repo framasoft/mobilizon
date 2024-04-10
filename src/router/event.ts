@@ -7,9 +7,11 @@ const participations = () => import("@/views/Event/ParticipantsView.vue");
 const editEvent = () => import("@/views/Event/EditView.vue");
 const event = () => import("@/views/Event/EventView.vue");
 const myEvents = () => import("@/views/Event/MyEventsView.vue");
+const eventCalendar = () => import("@/views/Event/CalendarView.vue");
 
 export enum EventRouteName {
   EVENT_LIST = "EventList",
+  EVENT_CALENDAR = "EventCalendar",
   CREATE_EVENT = "CreateEvent",
   MY_EVENTS = "MyEvents",
   EDIT_EVENT = "EditEvent",
@@ -26,6 +28,14 @@ export enum EventRouteName {
 }
 
 export const eventRoutes: RouteRecordRaw[] = [
+  {
+    path: "/events/calendar",
+    name: EventRouteName.EVENT_CALENDAR,
+    component: eventCalendar,
+    meta: {
+      requiredAuth: false,
+    },
+  },
   {
     path: "/events/create",
     name: EventRouteName.CREATE_EVENT,

@@ -4,6 +4,12 @@ export const useHost = (): string => {
   return window.location.hostname;
 };
 
+export const useDefaultMaxSize = (): number | undefined => {
+  const { uploadLimits } = useUploadLimits();
+
+  return uploadLimits.value?.default;
+};
+
 export const useAvatarMaxSize = (): number | undefined => {
   const { uploadLimits } = useUploadLimits();
 

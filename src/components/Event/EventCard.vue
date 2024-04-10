@@ -12,6 +12,31 @@
       class="rounded-lg"
       :class="{ 'sm:w-full sm:max-w-[20rem]': mode === 'row' }"
     >
+      <div
+        class="-mt-3 h-0 mb-3 ltr:ml-0 rtl:mr-0 block relative z-10"
+        :class="{
+          'sm:hidden': mode === 'row',
+          'calendar-simple': !isDifferentBeginsEndsDate,
+          'calendar-double': isDifferentBeginsEndsDate,
+        }"
+      >
+        <date-calendar-icon
+          :small="true"
+          v-if="!mergedOptions.hideDate"
+          :date="event.beginsOn.toString()"
+        />
+        <MenuDown
+          :small="true"
+          class="left-3 relative"
+          v-if="!mergedOptions.hideDate && isDifferentBeginsEndsDate"
+        />
+        <date-calendar-icon
+          :small="true"
+          v-if="!mergedOptions.hideDate && isDifferentBeginsEndsDate"
+          :date="event.endsOn?.toString()"
+        />
+      </div>
+
       <figure class="block relative pt-40">
         <lazy-image-wrapper
           :picture="event.picture"
@@ -49,19 +74,28 @@
     <div class="p-2 flex-auto" :class="{ 'sm:flex-1': mode === 'row' }">
       <div class="relative flex flex-col h-full">
         <div
-          class="-mt-3 h-0 flex mb-3 ltr:ml-0 rtl:mr-0 items-end self-start"
+          class="-mt-3 h-0 flex mb-3 ltr:ml-0 rtl:mr-0 items-end self-end"
           :class="{ 'sm:hidden': mode === 'row' }"
         >
-          <date-calendar-icon
+          <start-time-icon
             :small="true"
-            v-if="!mergedOptions.hideDate"
+            v-if="!mergedOptions.hideDate && event.options.showStartTime"
             :date="event.beginsOn.toString()"
           />
         </div>
         <span
           class="text-gray-700 dark:text-white font-semibold hidden"
           :class="{ 'sm:block': mode === 'row' }"
+          v-if="!isDifferentBeginsEndsDate"
           >{{ formatDateTimeWithCurrentLocale }}</span
+        >
+        <span
+          class="text-gray-700 dark:text-white font-semibold hidden"
+          :class="{ 'sm:block': mode === 'row' }"
+          v-if="isDifferentBeginsEndsDate"
+          >{{ formatBeginsOnDateWithCurrentLocale }}
+          <ArrowRightThin :small="true" style="display: ruby" />
+          {{ formatEndsOnDateWithCurrentLocale }}</span
         >
         <div class="w-full flex flex-col justify-between h-full">
           <h2
@@ -152,6 +186,16 @@
     </div>
   </LinkOrRouterLink>
 </template>
+<style scoped>
+.calendar-simple {
+  bottom: -117px;
+  left: 5px;
+}
+.calendar-double {
+  bottom: -45px;
+  left: 5px;
+}
+</style>
 
 <script lang="ts" setup>
 import {
@@ -161,6 +205,9 @@ import {
   organizerAvatarUrl,
 } from "@/types/event.model";
 import DateCalendarIcon from "@/components/Event/DateCalendarIcon.vue";
+import StartTimeIcon from "@/components/Event/StartTimeIcon.vue";
+import ArrowRightThin from "vue-material-design-icons/ArrowRightThin.vue";
+import MenuDown from "vue-material-design-icons/MenuDown.vue";
 import LazyImageWrapper from "@/components/Image/LazyImageWrapper.vue";
 import { EventStatus } from "@/types/enums";
 import RouteName from "../../router/name";
@@ -170,7 +217,7 @@ import { computed, inject } from "vue";
 import MobilizonTag from "@/components/TagElement.vue";
 import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
 import Video from "vue-material-design-icons/Video.vue";
-import { formatDateTimeForEvent } from "@/utils/datetime";
+import { formatDateForEvent, formatDateTimeForEvent } from "@/utils/datetime";
 import type { Locale } from "date-fns";
 import LinkOrRouterLink from "../core/LinkOrRouterLink.vue";
 import { useI18n } from "vue-i18n";
@@ -211,6 +258,28 @@ const actorAvatarURL = computed<string | null>(() =>
 );
 
 const dateFnsLocale = inject<Locale>("dateFnsLocale");
+
+const isDifferentBeginsEndsDate = computed(() => {
+  if (!dateFnsLocale) return;
+  const beginsOnStr = formatDateForEvent(
+    new Date(props.event.beginsOn),
+    dateFnsLocale
+  );
+  const endsOnStr = props.event.endsOn
+    ? formatDateForEvent(new Date(props.event.endsOn), dateFnsLocale)
+    : null;
+  return endsOnStr && endsOnStr != beginsOnStr;
+});
+
+const formatBeginsOnDateWithCurrentLocale = computed(() => {
+  if (!dateFnsLocale) return;
+  return formatDateForEvent(new Date(props.event.beginsOn), dateFnsLocale);
+});
+
+const formatEndsOnDateWithCurrentLocale = computed(() => {
+  if (!dateFnsLocale) return;
+  return formatDateForEvent(new Date(props.event.endsOn), dateFnsLocale);
+});
 
 const formatDateTimeWithCurrentLocale = computed(() => {
   if (!dateFnsLocale) return;

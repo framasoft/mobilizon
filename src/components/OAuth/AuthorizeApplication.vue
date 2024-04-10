@@ -90,7 +90,7 @@
 </template>
 
 <script lang="ts" setup>
-import { useHead } from "@unhead/vue";
+import { useHead } from "@/utils/head";
 import { computed, inject, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useMutation } from "@vue/apollo-composable";

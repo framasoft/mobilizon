@@ -146,7 +146,7 @@ import { useFetchEventBasic } from "@/composition/apollo/event";
 import { useAnonymousActorId } from "@/composition/apollo/config";
 import { computed, reactive, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { useHead } from "@unhead/vue";
+import { useHead } from "@/utils/head";
 import { useMutation } from "@vue/apollo-composable";
 
 const error = ref<boolean | string>(false);

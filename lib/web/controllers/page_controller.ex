@@ -18,6 +18,8 @@ defmodule Mobilizon.Web.PageController do
   defdelegate my_events(conn, params), to: PageController, as: :index
   @spec create_event(Plug.Conn.t(), any) :: Plug.Conn.t()
   defdelegate create_event(conn, params), to: PageController, as: :index
+  @spec calendar(Plug.Conn.t(), any) :: Plug.Conn.t()
+  defdelegate calendar(conn, params), to: PageController, as: :index
   @spec list_events(Plug.Conn.t(), any) :: Plug.Conn.t()
   defdelegate list_events(conn, params), to: PageController, as: :index
   @spec edit_event(Plug.Conn.t(), any) :: Plug.Conn.t()

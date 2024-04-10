@@ -90,7 +90,7 @@ import RouteName from "@/router/name";
 import { useQuery } from "@vue/apollo-composable";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { useHead } from "@unhead/vue";
+import { useHead } from "@/utils/head";
 import NumberDashboardTile from "@/components/Dashboard/NumberDashboardTile.vue";
 import LinkedNumberDashboardTile from "@/components/Dashboard/LinkedNumberDashboardTile.vue";
 import { InstanceFilterFollowStatus } from "@/types/enums";

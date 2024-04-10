@@ -185,7 +185,8 @@ defmodule Mobilizon.Medias do
                  [from: "events_medias", param: "media_id"],
                  [from: "posts", param: "picture_id"],
                  [from: "posts_medias", param: "media_id"],
-                 [from: "comments_medias", param: "media_id"]
+                 [from: "comments_medias", param: "media_id"],
+                 [from: "admin_settings_medias", param: "media_id"]
                ]
                |> Enum.map_join(" UNION ", fn [from: from, param: param] ->
                  "SELECT 1 FROM #{from} WHERE #{from}.#{param} = m0.id"

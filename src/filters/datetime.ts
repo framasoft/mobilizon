@@ -4,6 +4,10 @@ function parseDateTime(value: string): Date {
   return new Date(value);
 }
 
+function formatDateISOStringWithoutTime(value: string): string {
+  return parseDateTime(value).toISOString().split("T")[0];
+}
+
 function formatDateString(value: string): string {
   return parseDateTime(value).toLocaleString(locale(), {
     weekday: "long",
@@ -76,4 +80,9 @@ function formatDateTimeString(
 
 const locale = () => i18n.global.locale.replace("_", "-");
 
-export { formatDateString, formatTimeString, formatDateTimeString };
+export {
+  formatDateISOStringWithoutTime,
+  formatDateString,
+  formatTimeString,
+  formatDateTimeString,
+};

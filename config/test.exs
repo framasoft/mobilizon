@@ -2,7 +2,8 @@ import Config
 
 config :mobilizon, :instance,
   name: "Test instance",
-  registrations_open: true
+  registrations_open: true,
+  duration_of_long_event: 0
 
 # We don't run a server during test. If one is required,
 # you can enable the server option below.

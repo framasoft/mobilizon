@@ -5,11 +5,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
 
   import Mobilizon.Users.Guards
 
-  alias Mobilizon.{Actors, Admin, Config, Events, Instances, Users}
+  alias Mobilizon.{Actors, Admin, Config, Events, Instances, Media, Users}
   alias Mobilizon.Actors.{Actor, Follower}
-  alias Mobilizon.Admin.{ActionLog, Setting}
+  alias Mobilizon.Admin.{ActionLog, Setting, SettingMedia}
   alias Mobilizon.Cldr.Language
-  alias Mobilizon.Config
   alias Mobilizon.Discussions.Comment
   alias Mobilizon.Events.Event
   alias Mobilizon.Federation.ActivityPub.{Actions, Relay}
@@ -20,6 +19,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
   alias Mobilizon.Storage.Page
   alias Mobilizon.Users.User
   alias Mobilizon.Web.Email
+
+  alias Mobilizon.GraphQL.Resolvers.Media, as: MediaResolver
+
   import Mobilizon.Web.Gettext
   require Logger
 
@@ -268,8 +270,11 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
     with {:ok, res} <- Admin.save_settings("instance", args),
          res <-
            res
-           |> Enum.map(fn {key, %Setting{value: value}} ->
-             {key, Admin.get_setting_value(value)}
+           |> Enum.map(fn {key, val} ->
+             case val do
+               %Setting{value: value} -> {key, Admin.get_setting_value(value)}
+               %SettingMedia{media: media} -> {key, media}
+             end
            end)
            |> Enum.into(%{}),
          :ok <- eventually_update_instance_actor(res) do
@@ -282,6 +287,38 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
   def save_settings(_parent, _args, _resolution) do
     {:error,
      dgettext("errors", "You need to be logged-in and an administrator to save admin settings")}
+  end
+
+  @spec get_media_setting(any(), any(), Absinthe.Resolution.t()) ::
+          {:ok, Media.t()} | {:error, String.t()}
+  def get_media_setting(_parent, %{group: group, name: name}, %{
+        context: %{current_user: %User{role: role}}
+      })
+      when is_admin(role) do
+    {:ok, MediaResolver.transform_media(Admin.get_admin_setting_media(group, name, nil))}
+  end
+
+  def get_media_setting(_parent, _args, _resolution) do
+    {:error,
+     dgettext("errors", "You need to be logged-in and an administrator to access admin settings")}
+  end
+
+  @spec get_instance_logo(any(), any(), Absinthe.Resolution.t()) ::
+          {:ok, Media.t() | nil} | {:error, String.t()}
+  def get_instance_logo(parent, _args, resolution) do
+    get_media_setting(parent, %{group: "instance", name: "instance_logo"}, resolution)
+  end
+
+  @spec get_instance_favicon(any(), any(), Absinthe.Resolution.t()) ::
+          {:ok, Media.t() | nil} | {:error, String.t()}
+  def get_instance_favicon(parent, _args, resolution) do
+    get_media_setting(parent, %{group: "instance", name: "instance_favicon"}, resolution)
+  end
+
+  @spec get_default_picture(any(), any(), Absinthe.Resolution.t()) ::
+          {:ok, Media.t() | nil} | {:error, String.t()}
+  def get_default_picture(parent, _args, resolution) do
+    get_media_setting(parent, %{group: "instance", name: "default_picture"}, resolution)
   end
 
   @spec update_user(any, map(), Absinthe.Resolution.t()) ::

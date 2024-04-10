@@ -1,4 +1,5 @@
 import type { IEvent } from "@/types/event.model";
+import type { IMedia } from "@/types/media.model";
 import type { IGroup } from "./actor";
 import { InstancePrivacyType, InstanceTermsType } from "./enums";
 
@@ -25,6 +26,10 @@ export interface IAdminSettings {
   instanceSlogan: string;
   instanceLongDescription: string;
   contact: string;
+  instanceLogo: IMedia | null;
+  defaultPicture: IMedia | null;
+  primaryColor: string;
+  secondaryColor: string;
   instanceTerms: string;
   instanceTermsType: InstanceTermsType;
   instanceTermsUrl: string | null;

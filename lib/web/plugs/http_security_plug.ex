@@ -77,7 +77,7 @@ defmodule Mobilizon.Web.Plugs.HTTPSecurityPlug do
   # unsafe-eval is because of JS issues with regenerator-runtime
   @script_src "script-src 'self' 'unsafe-eval' "
   @style_src "style-src 'self' "
-  @font_src "font-src 'self' "
+  @font_src "font-src 'self' data: "
 
   @spec csp_string(Keyword.t()) :: String.t()
   defp csp_string(options) do
@@ -116,6 +116,8 @@ defmodule Mobilizon.Web.Plugs.HTTPSecurityPlug do
       if Config.get(:env) == :dev, do: [@style_src | "'unsafe-inline' "], else: @style_src
 
     style_src = [style_src] ++ [get_csp_config(:style_src, options)]
+
+    style_src = [style_src] ++ ["'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU='"]
 
     font_src = [@font_src] ++ [get_csp_config(:font_src, options)]
 

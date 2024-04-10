@@ -31,6 +31,7 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
     )
 
     field(:demo_mode, :boolean, description: "Whether the demo mode is enabled")
+    field(:long_events, :boolean, description: "Whether the long events mode is enabled")
     field(:country_code, :string, description: "The country code from the IP")
     field(:location, :lonlat, description: "The IP's location")
     field(:geocoding, :geocoding, description: "The instance's geocoding settings")
@@ -58,6 +59,17 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
 
       resolve(&Config.terms/3)
     end
+
+    field(:instance_logo, :media, description: "The instance's logo") do
+      resolve(&Config.instance_logo/3)
+    end
+
+    field(:default_picture, :media, description: "The default picture") do
+      resolve(&Config.default_picture/3)
+    end
+
+    field(:primary_color, :string, description: "The instance's primary color")
+    field(:secondary_color, :string, description: "The instance's secondary color")
 
     field(:privacy, :privacy, description: "The instance's privacy policy") do
       arg(:locale, :string,

@@ -11,7 +11,10 @@
 <script lang="ts" setup>
 import { computed } from "vue";
 import { IMedia } from "@/types/media.model";
+import { useDefaultPicture } from "@/composition/apollo/config";
 import LazyImage from "../Image/LazyImage.vue";
+
+const { defaultPicture } = useDefaultPicture();
 
 const DEFAULT_CARD_URL = "/img/mobilizon_default_card.png";
 const DEFAULT_BLURHASH = "MCHKI4El-P-U}+={R-WWoes,Iu-P=?R,xD";
@@ -38,6 +41,9 @@ const props = withDefaults(
 
 const pictureOrDefault = computed(() => {
   if (props.picture === null) {
+    if (defaultPicture?.value?.url) {
+      return defaultPicture.value;
+    }
     return DEFAULT_PICTURE;
   }
   return {

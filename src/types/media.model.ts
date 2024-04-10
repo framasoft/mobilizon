@@ -1,3 +1,5 @@
+import type { Ref } from "vue";
+
 export interface IMedia {
   id: string;
   url: string;
@@ -20,4 +22,10 @@ export interface IMediaMetadata {
   width?: number;
   height?: number;
   blurhash?: string;
+}
+
+export interface IModifiableMedia {
+  file: Ref<File | null>;
+  firstHash: string | null;
+  hash: string | null;
 }

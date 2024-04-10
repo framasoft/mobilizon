@@ -627,6 +627,14 @@
   "Local times ({timezone})": "Heures locales ({timezone})",
   "Locality": "Commune",
   "Location": "Lieu",
+  "Logo": "Logo",
+  "Logo of the instance. Defaults to the upstream Mobilizon logo.": "Logo de l'instance.",
+  "Favicon": "Favicon",
+  "Browser tab icon and PWA icon of the instance. Defaults to the upstream Mobilizon icon.": "Icône de l'onglet du navigateur et de la progressive web app.",
+  "Default Picture": "Image par défaut",
+  "Default picture when an event or group doesn't have one.": "Image par défaut quand un évènement ou groupe n'en a pas.",
+  "Primary Color": "Couleur primaire",
+  "Secondary Color": "Couleur secondaire",
   "Log in": "Se connecter",
   "Log out": "Se déconnecter",
   "Login": "Se connecter",
@@ -716,6 +724,7 @@
   "No end date": "Pas de date de fin",
   "No event found at this address": "Aucun événement trouvé à cette addresse",
   "No events found": "Aucun événement trouvé",
+  "No activities found": "Aucun activité trouvé",
   "No events found for {search}": "Aucun événement trouvé pour {search}",
   "No follower matches the filters": "Aucun·e abonné·e ne correspond aux filtres",
   "No group found": "Aucun groupe trouvé",
@@ -1544,6 +1553,7 @@
   "{count} participants": "Aucun·e participant·e | Un·e participant·e | {count} participant·e·s",
   "{count} requests waiting": "Une demande en attente|{count} demandes en attente",
   "{eventsCount} events found": "Aucun événement trouvé|Un événement trouvé|{eventsCount} événements trouvés",
+  "{eventsCount} activities found": "Aucune activité trouvé|Une activité trouvé|{eventsCount} activités trouvés",
   "{folder} - Resources": "{folder} - Ressources",
   "{groupsCount} groups found": "Aucun groupe trouvé|Un groupe trouvé|{groupsCount} groupes trouvés",
   "{group} activity timeline": "Timeline de l'activité de {group}",
@@ -1638,5 +1648,6 @@
   "Only instances with an application actor can be followed": "Seules les instances avec un acteur application peuvent être suivies",
   "Domain or instance name": "Domaine ou nom de l'instance",
   "You need to enter a text": "Vous devez entrer un texte",
-  "Error while adding tag: {error}": "Erreur lors de l'ajout d'un tag : {error}"
+  "Error while adding tag: {error}": "Erreur lors de l'ajout d'un tag : {error}",
+  "From this instance only": "Depuis cette instance uniquement"
 }

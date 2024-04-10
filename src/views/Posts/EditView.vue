@@ -154,7 +154,7 @@ import {
   useCurrentActorClient,
   usePersonStatusGroup,
 } from "@/composition/apollo/actor";
-import { useHead } from "@unhead/vue";
+import { useHead } from "@/utils/head";
 import { useI18n } from "vue-i18n";
 import { computed, inject, onMounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";

@@ -173,6 +173,8 @@ const icons: Record<string, () => Promise<any>> = {
     import(
       `../../../node_modules/vue-material-design-icons/CalendarRemove.vue`
     ),
+  CalendarStar: () =>
+    import(`../../../node_modules/vue-material-design-icons/CalendarStar.vue`),
   FileDocumentEdit: () =>
     import(
       `../../../node_modules/vue-material-design-icons/FileDocumentEdit.vue`

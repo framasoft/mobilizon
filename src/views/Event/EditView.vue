@@ -241,19 +241,36 @@
              {{ t('Page limited to my group (asks for auth)') }}
           </o-radio>
         </div>-->
+      </section>
+      <section class="my-4">
+        <h2>
+          {{ t("How to register") }}
+        </h2>
+
+        <div class="field">
+          <o-radio
+            v-model="registerOption"
+            name="registerOption"
+            :native-value="RegisterOption.MOBILIZON"
+            >{{ t("I want to manage the registration on Mobilizon") }}</o-radio
+          >
+        </div>
+
+        <div class="field">
+          <o-radio
+            v-model="registerOption"
+            name="registerOption"
+            :native-value="RegisterOption.EXTERNAL"
+            >{{
+              t("I want to manage the registration with an external provider")
+            }}</o-radio
+          >
+        </div>
 
         <o-field
-          :label="t('External registration')"
-          v-if="features?.eventExternal"
+          v-if="registerOption === RegisterOption.EXTERNAL"
+          :label="t('URL')"
         >
-          <o-switch v-model="externalParticipation">
-            {{
-              t("I want to manage the registration with an external provider")
-            }}
-          </o-switch>
-        </o-field>
-
-        <o-field v-if="externalParticipation" :label="t('URL')">
           <o-input
             icon="link"
             type="url"
@@ -264,7 +281,10 @@
         </o-field>
 
         <o-field
-          v-if="anonymousParticipationConfig?.allowed && !externalParticipation"
+          v-if="
+            anonymousParticipationConfig?.allowed &&
+            registerOption === RegisterOption.MOBILIZON
+          "
           :label="t('Anonymous participations')"
         >
           <o-switch v-model="eventOptions.anonymousParticipation">
@@ -287,20 +307,35 @@
 
         <o-field
           :label="t('Participation approval')"
-          v-show="!externalParticipation"
+          v-show="registerOption === RegisterOption.MOBILIZON"
         >
           <o-switch v-model="needsApproval">{{
             t("I want to approve every participation request")
           }}</o-switch>
         </o-field>
 
-        <o-field :label="t('Number of places')" v-show="!externalParticipation">
+        <o-field
+          :label="t('Showing participants')"
+          v-show="registerOption === RegisterOption.MOBILIZON"
+        >
+          <o-switch v-model="hideParticipants">{{
+            t("Hide the number of participants")
+          }}</o-switch>
+        </o-field>
+
+        <o-field
+          :label="t('Number of places')"
+          v-show="registerOption === RegisterOption.MOBILIZON"
+        >
           <o-switch v-model="limitedPlaces">{{
             t("Limited number of places")
           }}</o-switch>
         </o-field>
 
-        <div class="" v-if="limitedPlaces && !externalParticipation">
+        <div
+          class=""
+          v-if="limitedPlaces && registerOption === RegisterOption.MOBILIZON"
+        >
           <o-field :label="t('Number of places')" label-for="number-of-places">
             <o-input
               type="number"
@@ -635,7 +670,7 @@ import {
 import { useMutation } from "@vue/apollo-composable";
 import { Dialog } from "@/plugins/dialog";
 import { Notifier } from "@/plugins/notifier";
-import { useHead } from "@unhead/vue";
+import { useHead } from "@/utils/head";
 import { useOruga } from "@oruga-ui/oruga-next";
 import type { Locale } from "date-fns";
 import sortBy from "lodash/sortBy";
@@ -1091,6 +1126,15 @@ const needsApproval = computed({
   },
 });
 
+const hideParticipants = computed({
+  get(): boolean {
+    return event.value?.options.hideNumberOfParticipants;
+  },
+  set(value: boolean) {
+    event.value.options.hideNumberOfParticipants = value;
+  },
+});
+
 const checkTitleLength = computed((): Array<string | undefined> => {
   return event.value.title.length > 80
     ? ["info", t("The event title will be ellipsed.")]
@@ -1359,12 +1403,19 @@ const orderedCategories = computed(() => {
   return sortBy(eventCategories.value, ["label"]);
 });
 
-const externalParticipation = computed({
+const RegisterOption = {
+  MOBILIZON: "mobilizon",
+  EXTERNAL: "external",
+};
+
+const registerOption = computed({
   get() {
-    return event.value?.joinOptions === EventJoinOptions.EXTERNAL;
+    return event.value?.joinOptions === EventJoinOptions.EXTERNAL
+      ? RegisterOption.EXTERNAL
+      : RegisterOption.MOBILIZON;
   },
   set(newValue) {
-    if (newValue === true) {
+    if (newValue === RegisterOption.EXTERNAL) {
       event.value.joinOptions = EventJoinOptions.EXTERNAL;
     } else {
       event.value.joinOptions = EventJoinOptions.FREE;

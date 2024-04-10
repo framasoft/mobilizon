@@ -5,6 +5,105 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 4.1.0 (2024-02-29)
+
+This release is the last provided by Framasoft. [The project is now supported by the Kaihuri association](https://framacolibri.org/t/mobilizon-nous/19752).
+
+The highlights for this release are the following:
+ - improved event federation with https://event-federation.eu and https://gancio.org, as well as adding event metadata in summary for micro-blogging platforms that make use of it like Mastodon
+ - allowing to filter events by local-only, so that you can find only the events created on this instance
+
+
+### Features
+
+* **activitpub:** add summary of metadata to events ([1441d35](https://framagit.org/framasoft/mobilizon/commits/1441d35e0b0c3a151b8626711b3acaf30d3dcf58))
+* **activitypub:** allow simple text for address field ([64237cf](https://framagit.org/framasoft/mobilizon/commits/64237cfc2633794a48022a059c79155b1ece14d1)), closes [#1387](https://framagit.org/framasoft/mobilizon/issues/1387)
+* **activitypub:** implement FEP-2677 to identify the application actor used for federation ([f10977a](https://framagit.org/framasoft/mobilizon/commits/f10977a99ac73ce5a702a12ed31e773a4b0f6961)), closes [#1367](https://framagit.org/framasoft/mobilizon/issues/1367)
+* allow to filter events by local-only ([9d99684](https://framagit.org/framasoft/mobilizon/commits/9d996844025f9d128305a54f8f169fb4b1ffac44)), closes [#1322](https://framagit.org/framasoft/mobilizon/issues/1322)
+* **config:** enable instance feeds by default ([ab3f5df](https://framagit.org/framasoft/mobilizon/commits/ab3f5dfd278dc55dd0f28bb11cf4a976d212e9fc))
+* **docker:** add new environment variables for Docker config ([28430d6](https://framagit.org/framasoft/mobilizon/commits/28430d6d57a85b568c839e75ba1bcbff90e4149e))
+* **front:** upgrade to Oruga 0.8.x ([a9676d6](https://framagit.org/framasoft/mobilizon/commits/a9676d6481e6966d939ea4e44ad610eb9231c370))
+* **graphql:** increase max_complexity to 300 ([dcbb8ea](https://framagit.org/framasoft/mobilizon/commits/dcbb8eae01012e6e3aa2c83e06cc50f61176b8ef))
+* **http:** allow to provide self-signed certificates ([baa11c1](https://framagit.org/framasoft/mobilizon/commits/baa11c18b03684e508e56793a800878e95644962)), closes [#1355](https://framagit.org/framasoft/mobilizon/issues/1355)
+* **nodeinfo:** extract and save NodeInfo information from instances to display it on instances list ([99b2339](https://framagit.org/framasoft/mobilizon/commits/99b2339424edb5b0c514581fbd6a42e4f0fcc5e1)), closes [#1392](https://framagit.org/framasoft/mobilizon/issues/1392)
+
+### Bug Fixes
+
+* **activitypub:** also handle as:Public and Public values for public addressing ([4dc2f48](https://framagit.org/framasoft/mobilizon/commits/4dc2f489e79d4f7d64ba3d5c2588d5d6ec0bc99c)), closes [#1413](https://framagit.org/framasoft/mobilizon/issues/1413)
+* **activitypub:** consider PM as private conversations even if attributed_to_id is defined ([387d3b1](https://framagit.org/framasoft/mobilizon/commits/387d3b1c30ec719a992c565fd495ef2b6642641e))
+* **activitypub:** do not try to calculate timezone from missing geo-coordinates ([001a0ed](https://framagit.org/framasoft/mobilizon/commits/001a0ed1a50894ad1abe0f7fc9dc5b9666de5dae))
+* **activitypub:** handle actors following with manually_approves_followers not set ([7351468](https://framagit.org/framasoft/mobilizon/commits/73514688423b92b9f62b52fd54f2e523abeb3e34))
+* **activitypub:** handle any type of error when fetching Application actor from NodeInfo ([9308c53](https://framagit.org/framasoft/mobilizon/commits/9308c5399dc2e7afd8844d083de2ea291a3c5a66))
+* **activitypub:** handle issue with AP Fetcher not catching some changeset errors ([e3b3643](https://framagit.org/framasoft/mobilizon/commits/e3b36434cb05feb2e6add2b6b229e83b9dccf825)), closes [#1409](https://framagit.org/framasoft/mobilizon/issues/1409)
+* **activitypub:** make relay outbox events ordered by desc publication date ([e73fd9b](https://framagit.org/framasoft/mobilizon/commits/e73fd9b370b9679a0ab424a0bd44f262a21a4697))
+* **activitypub:** refresh NodeInfo metadata straight away when adding a new instance to follow ([2f4b8fe](https://framagit.org/framasoft/mobilizon/commits/2f4b8feeba9e7e1c4d1fc967505b3ed80e314b3c))
+* allow html_to_text to receive nil, e.g. for empty event descriptions ([5030b75](https://framagit.org/framasoft/mobilizon/commits/5030b755a0880a022d0656598b591cb47ebd7dc5))
+* **announcements:** error message not showing when an event announcement is created with empty text ([ef20585](https://framagit.org/framasoft/mobilizon/commits/ef20585f8cc1e4ac2f2f3359a70b7f456d2adeeb))
+* **announcements:** make sure only valid announcements are shown to the user ([c9a1c35](https://framagit.org/framasoft/mobilizon/commits/c9a1c35aa7a1d399b524dc5cc1fbebb38681ee24))
+* **backend:** avoid duplicating locality and region if they are the same ([5de22f9](https://framagit.org/framasoft/mobilizon/commits/5de22f91e22109da9e2169928dc744acd94b7299))
+* **backend:** fix sending N notifications to a single conversation participant ([9537988](https://framagit.org/framasoft/mobilizon/commits/95379885c8fb3decd19fa434774023a7b05ef0b5)), closes [#1384](https://framagit.org/framasoft/mobilizon/issues/1384)
+* **backend:** hide non-public replies to comments in event comment threads ([10c4038](https://framagit.org/framasoft/mobilizon/commits/10c4038b856b7e5c4981dcdce0bb9a885afb3cea))
+* **backend:** only send announcement event emails when the comment author has the right to do so ([0bd00de](https://framagit.org/framasoft/mobilizon/commits/0bd00de501b36c5f2320c2530019f302bf084517))
+* **backend:** validate length of instance actor details and set description column to text ([f7585cf](https://framagit.org/framasoft/mobilizon/commits/f7585cfc759576475133bcc86d2e816b2553626d)), closes [#1393](https://framagit.org/framasoft/mobilizon/issues/1393)
+* **back:** fix instances filtering ([b3ba45e](https://framagit.org/framasoft/mobilizon/commits/b3ba45e8a73038dc70286afbb479c1db51b6fbcd))
+* **back:** sitemapper fix after upgrade ([1acf931](https://framagit.org/framasoft/mobilizon/commits/1acf931ac558ac0818213264a6177a1f647393f1))
+* **docker:** add --break-system-packages to pip install to add weasyprint and pyexcel-ods3 ([889cb91](https://framagit.org/framasoft/mobilizon/commits/889cb91f2649861a87eb7e959065cfb49b30f366))
+* **docker:** remove openssl1.1-compat ([75d7816](https://framagit.org/framasoft/mobilizon/commits/75d7816a6cd1fe6754a66c1bb81153068b9c13e3)), closes [#1390](https://framagit.org/framasoft/mobilizon/issues/1390)
+* **event announcements:** only show comments from event organizers in event announcement list ([01eecbf](https://framagit.org/framasoft/mobilizon/commits/01eecbf1d46614241c92e1a38e30057a84c55744))
+* **feeds:** increase feed item limit from 500 to 5000 ([ff0440c](https://framagit.org/framasoft/mobilizon/commits/ff0440c634ac17813607f5929cd4024d87601c3b))
+* **feeds:** make sure posts for feeds are ordered by publication date desc ([3c75856](https://framagit.org/framasoft/mobilizon/commits/3c7585614971849035011ede6c0d5d2d5621df81))
+* **front-end:** fix current actor not being set on first access when relogging ([ae466b8](https://framagit.org/framasoft/mobilizon/commits/ae466b879cd09a9d04ffab0469ee991c7d90ce8e))
+* **front-end:** fix issues with expired accessToken refreshment queue ([d4489f6](https://framagit.org/framasoft/mobilizon/commits/d4489f691b312891013767f7e39d92a9b0863387))
+* **front:** add a required attribute to the text editor and show error message if text empty on blur ([ba66874](https://framagit.org/framasoft/mobilizon/commits/ba66874cc3e5979c2a9a6f86ea55463eca911472))
+* **front:** add announcements link on EventParticipationCard as well as EventView ([83eb5c6](https://framagit.org/framasoft/mobilizon/commits/83eb5c6a69ac312c19dc3cef10f26ab686cb4be7))
+* **front:** add condition on DraggableList in ResourceFolder.vue ([a408b47](https://framagit.org/framasoft/mobilizon/commits/a408b476cf2151298c7cf4eb6b3268334be13599))
+* **front:** correctly show error message when a tag is too short ([cba2075](https://framagit.org/framasoft/mobilizon/commits/cba2075431d1de4bf621e1d2b2a2e5f0641997c6)), closes [#1382](https://framagit.org/framasoft/mobilizon/issues/1382)
+* **front:** create head without old options ([45f8757](https://framagit.org/framasoft/mobilizon/commits/45f8757d72d1a2c72d069ced6fcbe21571d334c5))
+* **frontend:** various fixes ([456dc36](https://framagit.org/framasoft/mobilizon/commits/456dc36f64b3eb7c43d8ff69aa458b89b5a5b4ab))
+* **front:** escape event.title when it's passed to dialog component HTML message ([f4ee116](https://framagit.org/framasoft/mobilizon/commits/f4ee11611294c2cc957453768f768de0a51b05a7))
+* **front:** fix debouncing instances filtering ([fe0cf93](https://framagit.org/framasoft/mobilizon/commits/fe0cf9360428185d261dad4065a7bea1dd8d8d59))
+* **front:** fix dialog from EventParticipationCard.vue without input ([89641c5](https://framagit.org/framasoft/mobilizon/commits/89641c502ef5771f93cfa55caea6b52c63e73b4b))
+* **front:** fix ErrorComponent.vue sentry integration ([00d8bc7](https://framagit.org/framasoft/mobilizon/commits/00d8bc733d52a810c438e1081496e3b0ac58958f))
+* **front:** fix focus when creating a new resource ([76668e0](https://framagit.org/framasoft/mobilizon/commits/76668e0bebd2bd235925494f90fac6400e74d179))
+* **front:** fix focusing text editor ([3b7124a](https://framagit.org/framasoft/mobilizon/commits/3b7124a57b2dedf5583fdebced6b9a4e502e8731))
+* **front:** fix reporting group ([57d0372](https://framagit.org/framasoft/mobilizon/commits/57d0372ce8b29952caff8bbf7c902c7862a77b49))
+* **front:** fix TagInput display ([790db90](https://framagit.org/framasoft/mobilizon/commits/790db906a6e814352aa694c26febb9d6a43fa321))
+* **front:** fix TagInput width properly ([6a4123f](https://framagit.org/framasoft/mobilizon/commits/6a4123f385fb2e20aab1c1cbc666c5d1a3f93589))
+* **front:** husky fixes after upgrade ([04edc4f](https://framagit.org/framasoft/mobilizon/commits/04edc4fef08306c55067abd0e22443c4cb43d7c8))
+* **front:** improve display of SendPasswordReset view ([1d39eb5](https://framagit.org/framasoft/mobilizon/commits/1d39eb548898b3c4840b4a36950a62b4ce46ba90))
+* **front:** only update identity username from name if it's a new identity ([34c0dd6](https://framagit.org/framasoft/mobilizon/commits/34c0dd6498247cf6a90576a602c4e305c80c9692))
+* **front:** patch vue-i18n-extract because of mjs incompatibility ([1f4a7c2](https://framagit.org/framasoft/mobilizon/commits/1f4a7c253bfe40809b432f3a36faa6b5fb340ae9))
+* **front:** remove broken identity check in EventMinimalistCard ([ee63814](https://framagit.org/framasoft/mobilizon/commits/ee6381463d9f8e6d130e29b410cf5e2700f3c10b))
+* **front:** reset instances list to page 1 if filter or follow status changes ([2b5439b](https://framagit.org/framasoft/mobilizon/commits/2b5439b1d0ef1f60c19019540a01eb6d437eee23))
+* **front:** reset page to lower or page 1 if we didn't found results in instances view ([48f57ec](https://framagit.org/framasoft/mobilizon/commits/48f57ec1cf3ce81c3c83333bea59c2a7d8c70e99))
+* **front:** rollback to vue 3.3 for now ([5cb4fc1](https://framagit.org/framasoft/mobilizon/commits/5cb4fc11c4ccc381a041cb2615913a8fb77e1b85))
+* **front:** show correct label when adding a new calc or videoconference resource in resources ([cecbea6](https://framagit.org/framasoft/mobilizon/commits/cecbea6db52d360e046d69cf0762eb1208c45f19))
+* **front:** tagInput fixes ([f6bcb02](https://framagit.org/framasoft/mobilizon/commits/f6bcb02b9802e04bd8e9c80092a0680b64482688))
+* **front:** uI fixes ([0948cce](https://framagit.org/framasoft/mobilizon/commits/0948cce83e5af128f78b67891ed24c323b159f0f))
+* **front:** use functions to generate classnames dynamically ([98230a5](https://framagit.org/framasoft/mobilizon/commits/98230a56bb5e1c75f070e4d4c352028741869066))
+* **front:** various cleanups ([6a482b0](https://framagit.org/framasoft/mobilizon/commits/6a482b0d9754fc85f1f61922e92852fbca52beb9))
+* **front:** various little CSS fixes ([51d43aa](https://framagit.org/framasoft/mobilizon/commits/51d43aa2d1d1f099078895d67a45fc27b74d4604))
+* **front:** various UI improvements ([a6a1ab7](https://framagit.org/framasoft/mobilizon/commits/a6a1ab71c23264805d61b5312982e6d345454027))
+* **front:** vite fixes after upgrade (everything is esm) ([b1ecf4b](https://framagit.org/framasoft/mobilizon/commits/b1ecf4b36f5855c895f72c4d9dc0f7e1beb449e1))
+* **graphql:** add missing operation name for RegisterPerson ([a47f4f6](https://framagit.org/framasoft/mobilizon/commits/a47f4f6444d12a13a6f7e79ed6746e74088ca294))
+* **graphql:** fix checking actor identity when publishing event announcements ([5bc0593](https://framagit.org/framasoft/mobilizon/commits/5bc0593ed6e772d48722c308ccb444dc49f3c079))
+* **nodeinfo:** fix getting application actor information from NodeInfo response ([dd775b6](https://framagit.org/framasoft/mobilizon/commits/dd775b6ae25f381cf76e00999fd7d37764870122))
+* **nodeinfo:** make sure we only process JSON content ([da3b074](https://framagit.org/framasoft/mobilizon/commits/da3b0746198544d7977d9c0b32d8a26e1da64d40))
+* **front:** fix adding tags to an event ([d75d464](https://framagit.org/framasoft/mobilizon/commits/d75d464135332f639bd275684109a89980718b75)), closes [#1419](https://framagit.org/framasoft/mobilizon/issues/1419)
+* **front:** fix space around input icons ([ba9299c](https://framagit.org/framasoft/mobilizon/commits/ba9299c6321cd62bb84efb6db5b6e122e4b1b264))
+* **backend:** set Gettext default locale to "en" ([d390a91](https://framagit.org/framasoft/mobilizon/commits/d390a915d80ce5d2447f5323b78c71e9e1aa58dc))
+* **front:** fix discussion comment changed subscription done before having slug value ([0670297](https://framagit.org/framasoft/mobilizon/commits/067029705dd3c78b54ea4765357ba58930144aab))
+* **front:** fix typing for canReport prop on DiscussionComment ([c2055d9](https://framagit.org/framasoft/mobilizon/commits/c2055d92ae7707b5aab3fd14ea827df0696cca61))
+* **front:** remove extra classes on comment that are not needed ([a9b9775](https://framagit.org/framasoft/mobilizon/commits/a9b977540b900416cfe0d5739cba13e506f83120))
+
+## 4.1.0-beta.1 (2024-02-27)
+
+### Bug Fixes
+
+* **front:** fix adding tags to an event ([d75d464](https://framagit.org/framasoft/mobilizon/commits/d75d464135332f639bd275684109a89980718b75)), closes [#1419](https://framagit.org/framasoft/mobilizon/issues/1419)
+* **front:** fix space around input icons ([ba9299c](https://framagit.org/framasoft/mobilizon/commits/ba9299c6321cd62bb84efb6db5b6e122e4b1b264))
+
+
 ## 4.1.0-alpha.1 (2024-02-09)
 
 ### Features

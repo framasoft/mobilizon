@@ -268,7 +268,7 @@ import { useMutation, useQuery } from "@vue/apollo-composable";
 import { computed, inject, ref } from "vue";
 import { IPost } from "@/types/post.model";
 import { DELETE_POST, FETCH_POST } from "@/graphql/post";
-import { useHead } from "@unhead/vue";
+import { useHead } from "@/utils/head";
 import { formatDateTimeString } from "@/filters/datetime";
 import { useRouter } from "vue-router";
 import { useCreateReport } from "@/composition/apollo/report";

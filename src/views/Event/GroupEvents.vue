@@ -116,7 +116,7 @@ import {
   useRouteQuery,
 } from "vue-use-route-query";
 import { MemberRole } from "@/types/enums";
-import { useHead } from "@unhead/vue";
+import { useHead } from "@/utils/head";
 import { useI18n } from "vue-i18n";
 
 const EVENTS_PAGE_LIMIT = 10;
