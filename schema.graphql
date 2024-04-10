@@ -169,6 +169,18 @@ type Config {
   "The instance's slogan"
   slogan: String
 
+  "The instance's logo"
+  instanceLogo: Media
+
+  "The default picture"
+  defaultPicture: Media
+
+  "The instance's primary color"
+  primaryColor: String
+
+  "The instance's secondary color"
+  secondaryColor: String
+
   "The instance's contact details"
   contact: String
 
@@ -186,6 +198,9 @@ type Config {
 
   "Whether the demo mode is enabled"
   demoMode: Boolean
+
+  "Whether the long events mode is enabled"
+  longEvents: Boolean
 
   "The country code from the IP"
   countryCode: String
@@ -1878,6 +1893,15 @@ type RootMutationType {
     "The instance's contact details"
     contact: String
 
+    "The instance's logo"
+    instanceLogo: MediaInput
+
+    "The instance's favicon"
+    instanceFavicon: MediaInput
+
+    "The default picture"
+    defaultPicture: MediaInput
+
     "The instance's terms body text"
     instanceTerms: String
 
@@ -2242,6 +2266,9 @@ type RootQueryType {
 
     "Filter events by their end date"
     endsOn: DateTime
+
+    "Filter for long events in function of configuration parameter 'duration_of_long_event'"
+    longevents: Boolean
   ): Events
 
   "Interact with an URI"
@@ -3697,6 +3724,15 @@ type AdminSettings {
 
   "The instance's contact details"
   contact: String
+
+  "The instance's logo"
+  instanceLogo: Media
+
+  "The instance's favicon"
+  instanceFavicon: Media
+
+  "The default picture"
+  defaultPicture: Media
 
   "The instance's terms body text"
   instanceTerms: String

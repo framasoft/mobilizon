@@ -442,7 +442,7 @@ import { displayNameAndUsername, displayName } from "../../types/actor";
 import { Paginate } from "@/types/paginate";
 import { useQuery } from "@vue/apollo-composable";
 import { integerTransformer, useRouteQuery } from "vue-use-route-query";
-import { useHead } from "@unhead/vue";
+import { useHead } from "@/utils/head";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { formatDateTimeString } from "@/filters/datetime";

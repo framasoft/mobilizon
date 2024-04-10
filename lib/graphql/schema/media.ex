@@ -52,8 +52,9 @@ defmodule Mobilizon.GraphQL.Schema.MediaType do
   input_object :media_input_object do
     field(:name, non_null(:string), description: "The media's name")
     field(:alt, :string, description: "The media's alternative text")
-    field(:file, non_null(:upload), description: "The media file")
+    field(:file, :upload, description: "The media file")
     field(:actor_id, :id, description: "The media owner")
+    field(:url, :string, description: "The media URL")
   end
 
   object :media_queries do

@@ -56,7 +56,7 @@
 import { USER_SETTINGS } from "@/graphql/user";
 import { IUser } from "@/types/current-user.model";
 import { useQuery } from "@vue/apollo-composable";
-import { useHead } from "@unhead/vue";
+import { useHead } from "@/utils/head";
 import { computed, defineAsyncComponent, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import RouteName from "@/router/name";

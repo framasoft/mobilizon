@@ -113,7 +113,7 @@ import { useQuery } from "@vue/apollo-composable";
 import { computed } from "vue";
 import { useCurrentUserClient } from "@/composition/apollo/user";
 import { useI18n } from "vue-i18n";
-import { useHead } from "@unhead/vue";
+import { useHead } from "@/utils/head";
 
 const { currentUser } = useCurrentUserClient();
 

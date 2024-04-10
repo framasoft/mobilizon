@@ -195,6 +195,23 @@ export const ADMIN_SETTINGS_FRAGMENT = gql`
     instanceLongDescription
     instanceSlogan
     contact
+    instanceLogo {
+      id
+      url
+      name
+    }
+    instanceFavicon {
+      id
+      url
+      name
+    }
+    defaultPicture {
+      id
+      url
+      name
+    }
+    primaryColor
+    secondaryColor
     instanceTerms
     instanceTermsType
     instanceTermsUrl
@@ -223,6 +240,11 @@ export const SAVE_ADMIN_SETTINGS = gql`
     $instanceLongDescription: String
     $instanceSlogan: String
     $contact: String
+    $instanceLogo: MediaInput
+    $instanceFavicon: MediaInput
+    $defaultPicture: MediaInput
+    $primaryColor: String
+    $secondaryColor: String
     $instanceTerms: String
     $instanceTermsType: InstanceTermsType
     $instanceTermsUrl: String
@@ -239,6 +261,11 @@ export const SAVE_ADMIN_SETTINGS = gql`
       instanceLongDescription: $instanceLongDescription
       instanceSlogan: $instanceSlogan
       contact: $contact
+      instanceLogo: $instanceLogo
+      instanceFavicon: $instanceFavicon
+      defaultPicture: $defaultPicture
+      primaryColor: $primaryColor
+      secondaryColor: $secondaryColor
       instanceTerms: $instanceTerms
       instanceTermsType: $instanceTermsType
       instanceTermsUrl: $instanceTermsUrl

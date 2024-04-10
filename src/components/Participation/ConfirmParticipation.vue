@@ -70,7 +70,7 @@ import { CONFIRM_PARTICIPATION } from "../../graphql/event";
 import { computed, ref, watchEffect } from "vue";
 import { useMutation } from "@vue/apollo-composable";
 import { useI18n } from "vue-i18n";
-import { useHead } from "@unhead/vue";
+import { useHead } from "@/utils/head";
 
 const { t } = useI18n({ useScope: "global" });
 

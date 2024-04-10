@@ -63,7 +63,7 @@ import { SEND_RESET_PASSWORD } from "../../graphql/auth";
 import RouteName from "../../router/name";
 import { computed, ref } from "vue";
 import { useMutation } from "@vue/apollo-composable";
-import { useHead } from "@unhead/vue";
+import { useHead } from "@/utils/head";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n({ useScope: "global" });

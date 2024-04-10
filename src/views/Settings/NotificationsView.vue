@@ -339,7 +339,7 @@ import {
 } from "vue";
 import { IConfig } from "@/types/config.model";
 import { useI18n } from "vue-i18n";
-import { useHead } from "@unhead/vue";
+import { useHead } from "@/utils/head";
 import { Dialog } from "@/plugins/dialog";
 
 type NotificationSubType = { label: string; id: string };

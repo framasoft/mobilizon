@@ -1,7 +1,7 @@
 [Mobilizon](https://joinmobilizon.org) takes security, privacy and user control seriously, and we want to put them front and centre of our project.
 
 This document outlines security procedures and general policies for the Mobilizon project.
-Framasoft, the Mobilizon maintainer team and community take all security bugs in Mobilizon seriously. Thank you for improving the security of Mobilizon. We appreciate your efforts and responsible disclosure and will make every effort to acknowledge your contributions.
+The Mobilizon maintainer team and community take all security bugs in Mobilizon seriously. Thank you for improving the security of Mobilizon. We appreciate your efforts and responsible disclosure and will make every effort to acknowledge your contributions.
 
 ### Goals
 
@@ -14,8 +14,6 @@ Framasoft, the Mobilizon maintainer team and community take all security bugs in
 * Secure from malicious creation, alteration or deletion of public data.
 
 * GDPR compliance.
-
-Framasoft is both a developer of open-source/free/libre self-hosted software, and a service provider with users in the European Union. As a result, we are putting user privacy, data sovereignty, and GDPR compliance into our security plans, including asking both the Framasoft community and outside hackers to review our approaches and implementations.
 
 ### Challenges
 
@@ -33,14 +31,14 @@ This means there are more attack surfaces compared to typical proprietary, centr
 
 We are committed to working with security researchers to verify, reproduce, and respond to legitimate reported vulnerabilities. You can help us by following these simple guidelines:
 
-* Alert us about the vulnerability as soon as you become aware of it by emailing the lead maintainer at tcit+mobilizon@framasoft.org.
+* Alert us about the vulnerability as soon as you become aware of it by emailing the lead maintainer.
 * Provide details needed to reproduce and validate the vulnerability and a Proof of Concept (PoC) as soon as possible
 * Act in good faith to avoid privacy violations, destruction of data, and interruption or degradation of services
 * Do not access or modify users’ private data, without explicit permission of the owner. Only interact with your own accounts or test accounts for security research purposes;
-* Contact Framasoft or a maintainer of the Mobilizon project (or the instance admin) immediately if you do inadvertently encounter user data. Do not view, alter, save, store, transfer, or otherwise access the data, and immediately purge any local information upon reporting the vulnerability;
+* Contact a maintainer of the Mobilizon project (or the instance admin) immediately if you do inadvertently encounter user data. Do not view, alter, save, store, transfer, or otherwise access the data, and immediately purge any local information upon reporting the vulnerability;
 * The lead maintainer will acknowledge your email within 48 hours, and will send a more detailed response within 48 hours indicating the next steps in handling your report. After the initial reply to your report, the security team will endeavor to keep you informed of the progress towards a fix and full announcement, and may ask for additional information or guidance.
 * Give us time to confirm, determine the affected versions and prepare fixes to correct the issue before disclosing it to other parties (if after waiting a reasonable amount of time, we are clearly unable or unwilling to do anything about it, please do hold us accountable!)
-* Please test against a local instance of the software, and refrain from running any Denial of Service or automated testing tools against Framasoft's (and our partners') infrastructure
+* Please test against a local instance of the software, and refrain from running any Denial of Service or automated testing tools against the project managers (and their partners') infrastructure
 
 Note : Please report security bugs in third-party modules to the person or team maintaining the module.
 

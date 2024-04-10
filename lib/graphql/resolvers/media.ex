@@ -18,6 +18,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Media do
     do_fetch_media(media_id)
   end
 
+  def media(%{media_id: media_id} = _parent, _args, _resolution) do
+    do_fetch_media(media_id)
+  end
+
   def media(%{picture: media} = _parent, _args, _resolution), do: {:ok, media}
   def media(_parent, %{id: media_id}, _resolution), do: do_fetch_media(media_id)
   def media(_parent, _args, _resolution), do: {:ok, nil}
@@ -133,8 +137,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Media do
 
   def user_size(_parent, _args, _resolution), do: {:error, :unauthenticated}
 
-  @spec transform_media(Media.t()) :: map()
-  defp transform_media(%Media{id: id, file: file, metadata: metadata}) do
+  @spec transform_media(Media.t() | nil) :: map() | nil
+  def transform_media(nil), do: nil
+
+  def transform_media(%Media{id: id, file: file, metadata: metadata}) do
     %{
       name: file.name,
       url: file.url,

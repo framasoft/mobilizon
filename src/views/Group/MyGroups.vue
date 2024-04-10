@@ -48,7 +48,6 @@
     >
       <div class="">
         <div class="">
-          <div class="img-container" />
           <div class="text-center prose dark:prose-invert max-w-full">
             <p>
               {{ t("You are not part of any group.") }}
@@ -92,7 +91,7 @@ import { useMutation, useQuery } from "@vue/apollo-composable";
 import { IUser } from "@/types/current-user.model";
 import { integerTransformer, useRouteQuery } from "vue-use-route-query";
 import { computed, inject } from "vue";
-import { useHead } from "@unhead/vue";
+import { useHead } from "@/utils/head";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { Notifier } from "@/plugins/notifier";
@@ -200,24 +199,5 @@ section {
 
 .group-member-card {
   margin-bottom: 1rem;
-}
-
-.not-found {
-  .img-container {
-    background-image: url("../../../img/pics/group-480w.webp");
-
-    @media (min-resolution: 2dppx) {
-      & {
-        background-image: url("../../../img/pics/group-1024w.webp");
-      }
-    }
-
-    max-width: 450px;
-    height: 300px;
-    box-shadow: 0 0 8px 8px white inset;
-    background-size: cover;
-    border-radius: 10px;
-    margin: auto auto 1rem;
-  }
 }
 </style>

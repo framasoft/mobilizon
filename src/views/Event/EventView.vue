@@ -18,6 +18,16 @@
           />
         </div>
 
+        <div
+          class="start-time-icon-wrapper relative"
+          v-if="event?.beginsOn && event?.options.showStartTime"
+        >
+          <start-time-icon
+            :date="event.beginsOn.toString()"
+            class="absolute right-3 -top-16"
+          />
+        </div>
+
         <section class="intro px-2 pt-4" dir="auto">
           <div class="flex flex-wrap gap-2 justify-end">
             <div class="flex-1 min-w-[300px]">
@@ -289,6 +299,7 @@ import {
   usernameWithDomain,
 } from "@/types/actor";
 import DateCalendarIcon from "@/components/Event/DateCalendarIcon.vue";
+import StartTimeIcon from "@/components/Event/StartTimeIcon.vue";
 import SkeletonDateCalendarIcon from "@/components/Event/SkeletonDateCalendarIcon.vue";
 import Earth from "vue-material-design-icons/Earth.vue";
 import Link from "vue-material-design-icons/Link.vue";
@@ -326,7 +337,7 @@ import {
 import { useI18n } from "vue-i18n";
 import { Notifier } from "@/plugins/notifier";
 import { AbsintheGraphQLErrors } from "@/types/errors.model";
-import { useHead } from "@unhead/vue";
+import { useHead } from "@/utils/head";
 
 const IntegrationTwitch = defineAsyncComponent(
   () => import("@/components/Event/Integrations/TwitchIntegration.vue")

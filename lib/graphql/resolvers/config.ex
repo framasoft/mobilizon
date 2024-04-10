@@ -5,7 +5,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Config do
 
   alias Mobilizon.Config
   alias Mobilizon.Events.Categories
+  alias Mobilizon.Medias.Media
   alias Mobilizon.Service.{AntiSpam, FrontEndAnalytics}
+
+  alias Mobilizon.GraphQL.Resolvers.Media, as: MediaResolver
 
   @doc """
   Gets config.
@@ -29,6 +32,16 @@ defmodule Mobilizon.GraphQL.Resolvers.Config do
     data = Map.merge(config_cache(), %{location: location, country_code: country_code})
 
     {:ok, data}
+  end
+
+  @spec instance_logo(any(), map(), Absinthe.Resolution.t()) :: {:ok, Media.t()}
+  def instance_logo(_parent, _params, _resolution) do
+    {:ok, MediaResolver.transform_media(Config.instance_logo())}
+  end
+
+  @spec default_picture(any(), map(), Absinthe.Resolution.t()) :: {:ok, Media.t()}
+  def default_picture(_parent, _params, _resolution) do
+    {:ok, MediaResolver.transform_media(Config.default_picture())}
   end
 
   @spec terms(any(), map(), Absinthe.Resolution.t()) :: {:ok, map()}
@@ -94,10 +107,15 @@ defmodule Mobilizon.GraphQL.Resolvers.Config do
       registrations_allowlist: Config.instance_registrations_allowlist?(),
       contact: Config.contact(),
       demo_mode: Config.instance_demo_mode?(),
+      long_events: Config.instance_long_events?(),
       description: Config.instance_description(),
       long_description: Config.instance_long_description(),
       slogan: Config.instance_slogan(),
       languages: Config.instance_languages(),
+      instance_logo: Config.instance_logo(),
+      primary_color: Config.primary_color(),
+      secondary_color: Config.secondary_color(),
+      default_picture: Config.default_picture(),
       anonymous: %{
         participation: %{
           allowed: Config.anonymous_participation?(),

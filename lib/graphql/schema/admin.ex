@@ -124,6 +124,24 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
     field(:instance_terms_type, :instance_terms_type, description: "The instance's terms type")
     field(:instance_terms_url, :string, description: "The instance's terms URL")
 
+    field(:instance_logo, :media,
+      description: "The instance's logo",
+      resolve: &Admin.get_instance_logo/3
+    )
+
+    field(:instance_favicon, :media,
+      description: "The instance's favicon",
+      resolve: &Admin.get_instance_favicon/3
+    )
+
+    field(:default_picture, :media,
+      description: "The default picture",
+      resolve: &Admin.get_default_picture/3
+    )
+
+    field(:primary_color, :string, description: "The instance's primary color")
+    field(:secondary_color, :string, description: "The instance's secondary color")
+
     field(:instance_privacy_policy, :string,
       description: "The instance's privacy policy body text"
     )
@@ -412,6 +430,25 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
       arg(:instance_long_description, :string, description: "The instance's long description")
       arg(:instance_slogan, :string, description: "The instance's slogan")
       arg(:contact, :string, description: "The instance's contact details")
+
+      arg(:instance_logo, :media_input,
+        description:
+          "The instance's logo, either as an object or directly the ID of an existing media"
+      )
+
+      arg(:instance_favicon, :media_input,
+        description:
+          "The instance's favicon, either as an object or directly the ID of an existing media"
+      )
+
+      arg(:default_picture, :media_input,
+        description:
+          "The default picture, either as an object or directly the ID of an existing media"
+      )
+
+      arg(:primary_color, :string, description: "The instance's primary color")
+      arg(:secondary_color, :string, description: "The instance's secondary color")
+
       arg(:instance_terms, :string, description: "The instance's terms body text")
       arg(:instance_terms_type, :instance_terms_type, description: "The instance's terms type")
       arg(:instance_terms_url, :string, description: "The instance's terms URL")

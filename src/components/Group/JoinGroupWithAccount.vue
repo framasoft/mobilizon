@@ -16,7 +16,7 @@ import { useGroup } from "@/composition/apollo/group";
 import { displayName } from "@/types/actor";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { useHead } from "@unhead/vue";
+import { useHead } from "@/utils/head";
 
 const props = defineProps<{
   preferredUsername: string;

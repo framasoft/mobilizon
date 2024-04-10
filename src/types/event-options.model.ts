@@ -24,6 +24,7 @@ export interface IEventOptions {
   program: string;
   commentModeration: CommentModeration;
   showParticipationPrice: boolean;
+  hideNumberOfParticipants: boolean;
   showStartTime: boolean;
   showEndTime: boolean;
   timezone: string | null;
@@ -52,6 +53,8 @@ export class EventOptions implements IEventOptions {
   commentModeration = CommentModeration.ALLOW_ALL;
 
   showParticipationPrice = false;
+
+  hideNumberOfParticipants = false;
 
   showStartTime = true;
 

@@ -1,21 +1,8 @@
 <template>
   <footer
-    class="bg-violet-2 color-secondary flex flex-col items-center py-2 px-3"
+    class="bg-violet-2 color-secondary flex flex-col items-center py-3 px-3"
     ref="footer"
   >
-    <picture class="flex max-w-xl">
-      <source
-        :srcset="`/img/pics/footer_${random}-1024w.webp 1x, /img/pics/footer_${random}-1920w.webp 2x`"
-        type="image/webp"
-      />
-      <img
-        :src="`/img/pics/footer_${random}-1024w.webp`"
-        alt=""
-        width="1024"
-        height="428"
-        loading="lazy"
-      />
-    </picture>
     <ul
       class="inline-flex flex-wrap justify-around gap-3 text-lg text-white underline decoration-yellow-1"
     >
@@ -92,14 +79,10 @@ import { saveLocaleData } from "@/utils/auth";
 import { loadLanguageAsync } from "@/utils/i18n";
 import RouteName from "../router/name";
 import langs from "../i18n/langs.json";
-import { computed, watch } from "vue";
+import { watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 const { locale, t } = useI18n({ useScope: "global" });
-
-const random = computed((): number => {
-  return Math.floor(Math.random() * 4) + 1;
-});
 
 watch(locale, async () => {
   if (locale) {
@@ -113,3 +96,9 @@ const isLangSelected = (lang: string): boolean => {
   return lang === locale.value;
 };
 </script>
+
+<style lang="scss">
+footer > ul > li {
+  margin: auto 0;
+}
+</style>

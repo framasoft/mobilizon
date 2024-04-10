@@ -6,6 +6,7 @@ export const EVENT_OPTIONS_FRAGMENT = gql`
     remainingAttendeeCapacity
     showRemainingAttendeeCapacity
     anonymousParticipation
+    hideNumberOfParticipants
     showStartTime
     showEndTime
     timezone

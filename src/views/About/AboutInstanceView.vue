@@ -123,7 +123,7 @@ import { IStatistics } from "../../types/statistics.model";
 import { useQuery } from "@vue/apollo-composable";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { useHead } from "@unhead/vue";
+import { useHead } from "@/utils/head";
 
 const { result: configResult } = useQuery<{ config: IConfig }>(ABOUT);
 

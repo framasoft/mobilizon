@@ -166,7 +166,7 @@ import SkeletonActivityItem from "../../components/Activity/SkeletonActivityItem
 import RouteName from "../../router/name";
 import TimelineText from "vue-material-design-icons/TimelineText.vue";
 import { useQuery } from "@vue/apollo-composable";
-import { useHead } from "@unhead/vue";
+import { useHead } from "@/utils/head";
 import { enumTransformer, useRouteQuery } from "vue-use-route-query";
 import { computed, defineAsyncComponent, ref } from "vue";
 import { useI18n } from "vue-i18n";

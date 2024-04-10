@@ -263,6 +263,10 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
       description: "Whether or not to show the participation price"
     )
 
+    field(:hide_number_of_participants, :boolean,
+      description: "Whether or not the number of participants is hidden"
+    )
+
     field(:show_start_time, :boolean, description: "Show event start time")
     field(:show_end_time, :boolean, description: "Show event end time")
 
@@ -314,6 +318,10 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
 
     field(:show_participation_price, :boolean,
       description: "Whether or not to show the participation price"
+    )
+
+    field(:hide_number_of_participants, :boolean,
+      description: "Whether or not the number of participants is hidden"
     )
 
     field(:show_start_time, :boolean, description: "Show event start time")

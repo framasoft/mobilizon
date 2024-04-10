@@ -2,21 +2,6 @@
   <div class="container mx-auto" id="error-wrapper">
     <div class="">
       <section>
-        <div class="text-center">
-          <picture>
-            <source
-              :srcset="`/img/pics/error-480w.webp  1x, /img/pics/error-1024w.webp 2x`"
-              type="image/webp"
-            />
-            <img
-              :src="`/img/pics/error-480w.webp`"
-              alt=""
-              width="480"
-              height="312"
-              loading="lazy"
-            />
-          </picture>
-        </div>
         <o-notification variant="danger" class="">
           <h1>
             {{
@@ -108,7 +93,7 @@ import { IAnalyticsConfig, IConfig } from "@/types/config.model";
 import { computed, defineAsyncComponent, ref } from "vue";
 import { useQuery, useQueryLoading } from "@vue/apollo-composable";
 import { useI18n } from "vue-i18n";
-import { useHead } from "@unhead/vue";
+import { useHead } from "@/utils/head";
 import { useAnalytics } from "@/composition/apollo/config";
 import { INSTANCE_NAME } from "@/graphql/config";
 const SentryFeedback = defineAsyncComponent(

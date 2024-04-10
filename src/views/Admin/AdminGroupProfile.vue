@@ -336,7 +336,7 @@ import EmptyContent from "../../components/Utils/EmptyContent.vue";
 import { ApolloCache, FetchResult } from "@apollo/client/core";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import { computed, inject } from "vue";
-import { useHead } from "@unhead/vue";
+import { useHead } from "@/utils/head";
 import { integerTransformer, useRouteQuery } from "vue-use-route-query";
 import { useI18n } from "vue-i18n";
 import {

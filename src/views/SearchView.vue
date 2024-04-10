@@ -45,6 +45,16 @@
               :size="24"
             />
 
+            <Calendar
+              v-if="content.contentType === ContentType.SHORTEVENTS"
+              :size="24"
+            />
+
+            <CalendarStar
+              v-if="content.contentType === ContentType.LONGEVENTS"
+              :size="24"
+            />
+
             <AccountMultiple
               v-if="content.contentType === ContentType.GROUPS"
               :size="24"
@@ -443,8 +453,15 @@
         class="hidden sm:flex items-center justify-between dark:text-slate-100 mb-2"
       >
         <p v-if="totalCount === 0">
-          <span v-if="contentType === ContentType.EVENTS">{{
-            t("No events found")
+          <span
+            v-if="
+              contentType === ContentType.EVENTS ||
+              contentType === ContentType.SHORTEVENTS
+            "
+            >{{ t("No events found") }}</span
+          >
+          <span v-else-if="contentType === ContentType.LONGEVENTS">{{
+            t("No activities found")
           }}</span>
           <span v-else-if="contentType === ContentType.GROUPS">{{
             t("No groups found")
@@ -452,7 +469,12 @@
           <span v-else>{{ t("No results found") }}</span>
         </p>
         <p v-else>
-          <span v-if="contentType === 'EVENTS'">
+          <span
+            v-if="
+              contentType === ContentType.EVENTS ||
+              contentType === ContentType.SHORTEVENTS
+            "
+          >
             {{
               t(
                 "{eventsCount} events found",
@@ -461,7 +483,16 @@
               )
             }}
           </span>
-          <span v-else-if="contentType === 'GROUPS'">
+          <span v-else-if="contentType === ContentType.LONGEVENTS">
+            {{
+              t(
+                "{eventsCount} activities found",
+                { eventsCount: searchEvents?.total },
+                searchEvents?.total ?? 0
+              )
+            }}
+          </span>
+          <span v-else-if="contentType === ContentType.GROUPS">
             {{
               t(
                 "{groupsCount} groups found",
@@ -597,7 +628,13 @@
             :aria-current-label="t('Current page')"
           />
         </template>
-        <template v-else-if="contentType === ContentType.EVENTS">
+        <template
+          v-else-if="
+            contentType === ContentType.EVENTS ||
+            contentType === ContentType.SHORTEVENTS ||
+            contentType === ContentType.LONGEVENTS
+          "
+        >
           <template v-if="searchLoading">
             <SkeletonEventResultList v-for="i in 8" :key="i" />
           </template>
@@ -625,12 +662,22 @@
             >
             </o-pagination>
           </template>
-          <EmptyContent v-else-if="searchLoading === false" icon="calendar">
+          <EmptyContent
+            v-else-if="searchLoading === false"
+            :icon="
+              contentType === ContentType.LONGEVENTS
+                ? 'calendar-star'
+                : 'calendar'
+            "
+          >
             <span v-if="searchIsUrl">
               {{ t("No event found at this address") }}
             </span>
-            <span v-else-if="!search">
+            <span v-else-if="!search && contentType !== ContentType.LONGEVENTS">
               {{ t("No events found") }}
+            </span>
+            <span v-else-if="!search && contentType === ContentType.LONGEVENTS">
+              {{ t("No activities found") }}
             </span>
             <i18n-t keypath="No events found for {search}" tag="span" v-else>
               <template #search>
@@ -694,7 +741,7 @@
             icon="account-multiple"
           >
             <span v-if="!search">
-              {{ t("No events found") }}
+              {{ t("No groups found") }}
             </span>
             <i18n-t keypath="No groups found for {search}" tag="span" v-else>
               <template #search>
@@ -767,10 +814,11 @@ import {
   booleanTransformer,
 } from "vue-use-route-query";
 import Calendar from "vue-material-design-icons/Calendar.vue";
+import CalendarStar from "vue-material-design-icons/CalendarStar.vue";
 import AccountMultiple from "vue-material-design-icons/AccountMultiple.vue";
 import Magnify from "vue-material-design-icons/Magnify.vue";
 
-import { useHead } from "@unhead/vue";
+import { useHead } from "@/utils/head";
 import type { Locale } from "date-fns";
 import FilterSection from "@/components/Search/filters/FilterSection.vue";
 import { listShortDisjunctionFormatter } from "@/utils/listFormat";
@@ -778,6 +826,7 @@ import langs from "@/i18n/langs.json";
 import {
   useEventCategories,
   useFeatures,
+  useIsLongEvents,
   useSearchConfig,
 } from "@/composition/apollo/config";
 import { coordsToGeoHash } from "@/utils/location";
@@ -892,7 +941,7 @@ const searchTarget = useRouteQuery(
 const mode = useRouteQuery("mode", ViewMode.LIST, enumTransformer(ViewMode));
 const sortBy = useRouteQuery(
   "sortBy",
-  SortValues.MATCH_DESC,
+  SortValues.START_TIME_ASC,
   enumTransformer(SortValues)
 );
 const bbox = useRouteQuery("bbox", undefined);
@@ -904,6 +953,7 @@ const GROUP_PAGE_LIMIT = 16;
 
 const { features } = useFeatures();
 const { eventCategories } = useEventCategories();
+const { islongEvents } = useIsLongEvents();
 
 const orderedCategories = computed(() => {
   if (!eventCategories.value) return [];
@@ -1017,20 +1067,41 @@ const searchIsUrl = computed((): boolean => {
 });
 
 const contentTypeMapping = computed(() => {
-  return [
-    {
-      contentType: "ALL",
-      label: t("Everything"),
-    },
-    {
-      contentType: "EVENTS",
-      label: t("Events"),
-    },
-    {
-      contentType: "GROUPS",
-      label: t("Groups"),
-    },
-  ];
+  if (islongEvents.value) {
+    return [
+      {
+        contentType: "ALL",
+        label: t("Everything"),
+      },
+      {
+        contentType: "SHORTEVENTS",
+        label: t("Events"),
+      },
+      {
+        contentType: "LONGEVENTS",
+        label: t("Activities"),
+      },
+      {
+        contentType: "GROUPS",
+        label: t("Groups"),
+      },
+    ];
+  } else {
+    return [
+      {
+        contentType: "ALL",
+        label: t("Everything"),
+      },
+      {
+        contentType: "EVENTS",
+        label: t("Events"),
+      },
+      {
+        contentType: "GROUPS",
+        label: t("Groups"),
+      },
+    ];
+  }
 });
 
 const eventDistance = computed(() => {
@@ -1138,6 +1209,16 @@ const geoHashLocation = computed(() =>
 
 const radius = computed(() => Number.parseInt(distance.value.slice(0, -3)));
 
+const longEvents = computed(() => {
+  if (contentType.value === ContentType.SHORTEVENTS) {
+    return false;
+  } else if (contentType.value === ContentType.LONGEVENTS) {
+    return true;
+  } else {
+    return null;
+  }
+});
+
 const totalCount = computed(() => {
   return (searchEvents.value?.total ?? 0) + (searchGroups.value?.total ?? 0);
 });
@@ -1150,7 +1231,11 @@ const sortOptions = computed(() => {
     },
   ];
 
-  if (contentType.value == ContentType.EVENTS) {
+  if (
+    contentType.value === ContentType.EVENTS ||
+    contentType.value === ContentType.SHORTEVENTS ||
+    contentType.value === ContentType.LONGEVENTS
+  ) {
     options.push(
       {
         key: SortValues.START_TIME_ASC,
@@ -1171,7 +1256,7 @@ const sortOptions = computed(() => {
     );
   }
 
-  if (contentType.value == ContentType.GROUPS) {
+  if (contentType.value === ContentType.GROUPS) {
     options.push({
       key: SortValues.MEMBER_COUNT_DESC,
       label: t("Number of members"),
@@ -1282,6 +1367,12 @@ watch(
       case ContentType.EVENTS:
         eventPage.value = 1;
         break;
+      case ContentType.SHORTEVENTS:
+        eventPage.value = 1;
+        break;
+      case ContentType.LONGEVENTS:
+        eventPage.value = 1;
+        break;
       case ContentType.GROUPS:
         groupPage.value = 1;
         break;
@@ -1298,6 +1389,7 @@ const { result: searchElementsResult, loading: searchLoading } = useQuery<{
   location: geoHashLocation.value,
   beginsOn: start.value,
   endsOn: end.value,
+  longevents: longEvents.value,
   radius: geoHashLocation.value ? radius.value : undefined,
   eventPage:
     contentType.value === ContentType.ALL ? page.value : eventPage.value,

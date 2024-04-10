@@ -706,7 +706,7 @@ import AccountMultiplePlus from "vue-material-design-icons/AccountMultiplePlus.v
 import Earth from "vue-material-design-icons/Earth.vue";
 import { useI18n } from "vue-i18n";
 import { useCreateReport } from "@/composition/apollo/report";
-import { useHead } from "@unhead/vue";
+import { useHead } from "@/utils/head";
 import Discussions from "@/components/Group/Sections/DiscussionsSection.vue";
 import Resources from "@/components/Group/Sections/ResourcesSection.vue";
 import Posts from "@/components/Group/Sections/PostsSection.vue";

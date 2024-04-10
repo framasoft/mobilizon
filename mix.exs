@@ -1,7 +1,7 @@
 defmodule Mobilizon.Mixfile do
   use Mix.Project
 
-  @version "4.1.0-alpha.1"
+  @version "5.0.0-beta.1"
 
   def project do
     [
@@ -185,7 +185,7 @@ defmodule Mobilizon.Mixfile do
       {:floki, "~> 0.31"},
       {:ip_reserved, "~> 0.1.0"},
       {:fast_sanitize, "~> 0.1"},
-      {:ueberauth, "0.10.7", override: true},
+      {:ueberauth, "0.10.8", override: true},
       {:ueberauth_twitter, "~> 0.4"},
       {:ueberauth_discord, "~> 0.7"},
       {:ueberauth_github, "~> 0.8.1"},

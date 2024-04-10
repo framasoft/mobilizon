@@ -16,6 +16,7 @@ defmodule Mobilizon.Events do
 
   alias Mobilizon.Actors.{Actor, Follower}
   alias Mobilizon.Addresses.Address
+  alias Mobilizon.Config
 
   alias Mobilizon.Events.{
     Event,
@@ -571,6 +572,7 @@ defmodule Mobilizon.Events do
     |> events_for_search_query()
     |> events_for_begins_on(Map.get(args, :begins_on, DateTime.utc_now()))
     |> events_for_ends_on(Map.get(args, :ends_on))
+    |> events_for_longevents(args)
     |> events_for_category(args)
     |> events_for_categories(args)
     |> events_for_languages(args)
@@ -1374,6 +1376,38 @@ defmodule Mobilizon.Events do
         (is_nil(q.ends_on) and q.begins_on <= ^ends_on) or
           q.ends_on <= ^ends_on
       )
+    end
+  end
+
+  @spec events_for_longevents(Ecto.Queryable.t(), map()) :: Ecto.Query.t()
+  defp events_for_longevents(query, args) do
+    duration = Config.get([:instance, :duration_of_long_event], 0)
+
+    if duration <= 0 do
+      query
+    else
+      longevents = Map.get(args, :longevents)
+
+      case longevents do
+        nil ->
+          query
+
+        true ->
+          where(
+            query,
+            [q],
+            not is_nil(q.ends_on) and
+              q.ends_on > fragment("? + '1 days'::interval * ?", q.begins_on, ^duration)
+          )
+
+        false ->
+          where(
+            query,
+            [q],
+            is_nil(q.ends_on) or
+              q.ends_on <= fragment("? + '1 days'::interval * ?", q.begins_on, ^duration)
+          )
+      end
     end
   end
 

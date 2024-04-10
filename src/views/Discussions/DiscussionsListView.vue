@@ -83,7 +83,7 @@ import EmptyContent from "@/components/Utils/EmptyContent.vue";
 import { usePersonStatusGroup } from "@/composition/apollo/actor";
 import { useI18n } from "vue-i18n";
 import { useRouteQuery, integerTransformer } from "vue-use-route-query";
-import { useHead } from "@unhead/vue";
+import { useHead } from "@/utils/head";
 import { computed } from "vue";
 
 const page = useRouteQuery("page", 1, integerTransformer);

@@ -38,7 +38,7 @@ import { computed, reactive } from "vue";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { useRouteQuery } from "vue-use-route-query";
-import { useHead } from "@unhead/vue";
+import { useHead } from "@/utils/head";
 
 const router = useRouter();
 const { t } = useI18n({ useScope: "global" });

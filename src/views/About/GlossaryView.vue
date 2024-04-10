@@ -71,7 +71,7 @@
 
 <script lang="ts" setup>
 import { useQuery } from "@vue/apollo-composable";
-import { useHead } from "@unhead/vue";
+import { useHead } from "@/utils/head";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { ABOUT } from "../../graphql/config";

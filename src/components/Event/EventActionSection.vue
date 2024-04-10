@@ -23,7 +23,10 @@
     <div class="flex flex-col gap-1 mt-1">
       <p
         class="inline-flex gap-2 ml-auto"
-        v-if="event.joinOptions !== EventJoinOptions.EXTERNAL"
+        v-if="
+          event.joinOptions !== EventJoinOptions.EXTERNAL &&
+          !event.options.hideNumberOfParticipants
+        "
       >
         <TicketConfirmationOutline />
         <router-link

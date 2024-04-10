@@ -2,20 +2,6 @@
   <section class="container mx-auto py-4 is-max-desktop max-w-2xl">
     <div class="">
       <div class="">
-        <picture>
-          <source
-            :srcset="`/img/pics/error-480w.webp 1x, /img/pics/error-1024w.webp 2x`"
-            type="image/webp"
-          />
-
-          <img
-            :src="`/img/pics/error-480w.webp`"
-            alt=""
-            width="2616"
-            height="1698"
-            loading="lazy"
-          />
-        </picture>
         <h1 class="text-4xl mb-3">
           {{ $t("The page you're looking for doesn't exist.") }}
         </h1>
@@ -55,7 +41,7 @@
   </section>
 </template>
 <script lang="ts" setup>
-import { useHead } from "@unhead/vue";
+import { useHead } from "@/utils/head";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";

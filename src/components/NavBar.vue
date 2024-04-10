@@ -3,9 +3,7 @@
     class="bg-white border-gray-200 px-2 sm:px-4 py-2.5 dark:bg-zinc-900"
     id="navbar"
   >
-    <div
-      class="container mx-auto flex flex-wrap items-center mx-auto gap-2 sm:gap-4"
-    >
+    <div class="container mx-auto flex flex-wrap items-center gap-2 sm:gap-4">
       <router-link
         :to="{ name: RouteName.HOME }"
         class="flex items-center"
@@ -181,34 +179,92 @@
         <ul
           class="flex flex-col md:flex-row md:space-x-8 mt-2 md:mt-0 md:font-lightbold"
         >
-          <li v-if="currentActor?.id">
+          <search-fields
+            v-if="showMobileMenu"
+            class="m-auto w-auto"
+            v-model:search="search"
+            v-model:location="location"
+          />
+
+          <li class="m-auto" v-if="islongEvents">
+            <router-link
+              :to="{
+                name: RouteName.SEARCH,
+                query: { contentType: 'SHORTEVENTS' },
+              }"
+              class="block py-2 pr-4 pl-3 text-zinc-700 border-b border-gray-100 hover:bg-zinc-50 md:hover:bg-transparent md:border-0 md:hover:text-mbz-purple-700 md:p-0 dark:text-zinc-400 md:dark:hover:text-white dark:hover:bg-zinc-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+              >{{ t("Events") }}</router-link
+            >
+          </li>
+          <li class="m-auto" v-else>
+            <router-link
+              :to="{ name: RouteName.SEARCH, query: { contentType: 'EVENTS' } }"
+              class="block py-2 pr-4 pl-3 text-zinc-700 border-b border-gray-100 hover:bg-zinc-50 md:hover:bg-transparent md:border-0 md:hover:text-mbz-purple-700 md:p-0 dark:text-zinc-400 md:dark:hover:text-white dark:hover:bg-zinc-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+              >{{ t("Events") }}</router-link
+            >
+          </li>
+          <li class="m-auto" v-if="islongEvents">
+            <router-link
+              :to="{
+                name: RouteName.SEARCH,
+                query: { contentType: 'LONGEVENTS' },
+              }"
+              class="block py-2 pr-4 pl-3 text-zinc-700 border-b border-gray-100 hover:bg-zinc-50 md:hover:bg-transparent md:border-0 md:hover:text-mbz-purple-700 md:p-0 dark:text-zinc-400 md:dark:hover:text-white dark:hover:bg-zinc-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+              >{{ t("Activities") }}</router-link
+            >
+          </li>
+          <li class="m-auto">
+            <router-link
+              :to="{ name: RouteName.SEARCH, query: { contentType: 'GROUPS' } }"
+              class="block py-2 pr-4 pl-3 text-zinc-700 border-b border-gray-100 hover:bg-zinc-50 md:hover:bg-transparent md:border-0 md:hover:text-mbz-purple-700 md:p-0 dark:text-zinc-400 md:dark:hover:text-white dark:hover:bg-zinc-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+              >{{ t("Groups") }}</router-link
+            >
+          </li>
+          <li class="m-auto">
+            <router-link
+              :to="{ name: RouteName.EVENT_CALENDAR }"
+              class="block relative py-2 pr-4 pl-3 text-zinc-700 border-b border-gray-100 hover:bg-zinc-50 md:hover:bg-transparent md:border-0 md:hover:text-mbz-purple-700 md:p-0 dark:text-zinc-400 md:dark:hover:text-white dark:hover:bg-zinc-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+              >{{ t("Calendar")
+              }}<span class="absolute right-0 text-sm"
+                ><br />(beta)</span
+              ></router-link
+            >
+          </li>
+          <li class="m-auto" v-if="currentActor?.id">
             <router-link
               :to="{ name: RouteName.MY_EVENTS }"
               class="block py-2 pr-4 pl-3 text-zinc-700 border-b border-gray-100 hover:bg-zinc-50 md:hover:bg-transparent md:border-0 md:hover:text-mbz-purple-700 md:p-0 dark:text-zinc-400 md:dark:hover:text-white dark:hover:bg-zinc-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
               >{{ t("My events") }}</router-link
             >
           </li>
-          <li v-if="currentActor?.id">
+          <li class="m-auto" v-if="currentActor?.id">
             <router-link
               :to="{ name: RouteName.MY_GROUPS }"
               class="block py-2 pr-4 pl-3 text-zinc-700 border-b border-gray-100 hover:bg-zinc-50 md:hover:bg-transparent md:border-0 md:hover:text-mbz-purple-700 md:p-0 dark:text-zinc-400 md:dark:hover:text-white dark:hover:bg-zinc-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
               >{{ t("My groups") }}</router-link
             >
           </li>
-          <li v-if="!currentActor?.id">
+          <li class="m-auto" v-if="!currentActor?.id">
             <router-link
               :to="{ name: RouteName.LOGIN }"
               class="block py-2 pr-4 pl-3 text-zinc-700 border-b border-gray-100 hover:bg-zinc-50 md:hover:bg-transparent md:border-0 md:hover:text-mbz-purple-700 md:p-0 dark:text-zinc-400 md:dark:hover:text-white dark:hover:bg-zinc-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
               >{{ t("Login") }}</router-link
             >
           </li>
-          <li v-if="!currentActor?.id && canRegister">
+          <li class="m-auto" v-if="!currentActor?.id && canRegister">
             <router-link
               :to="{ name: RouteName.REGISTER }"
               class="block py-2 pr-4 pl-3 text-zinc-700 border-b border-gray-100 hover:bg-zinc-50 md:hover:bg-transparent md:border-0 md:hover:text-mbz-purple-700 md:p-0 dark:text-zinc-400 md:dark:hover:text-white dark:hover:bg-zinc-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
               >{{ t("Register") }}</router-link
             >
           </li>
+
+          <search-fields
+            v-if="!showMobileMenu"
+            class="m-auto w-auto"
+            v-model:search="search"
+            v-model:location="location"
+          />
         </ul>
       </div>
     </div>
@@ -219,7 +275,7 @@
 import MobilizonLogo from "@/components/MobilizonLogo.vue";
 import { ICurrentUserRole } from "@/types/enums";
 import { logout } from "../utils/auth";
-import { IPerson, displayName } from "../types/actor";
+import { displayName } from "../types/actor";
 import RouteName from "../router/name";
 import { computed, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -234,13 +290,18 @@ import {
 import { useLazyQuery, useMutation } from "@vue/apollo-composable";
 import { UPDATE_DEFAULT_ACTOR } from "@/graphql/actor";
 import { changeIdentity } from "@/utils/identity";
-import { useRegistrationConfig } from "@/composition/apollo/config";
+import {
+  useRegistrationConfig,
+  useIsLongEvents,
+} from "@/composition/apollo/config";
 import { useOruga } from "@oruga-ui/oruga-next";
 import {
   UNREAD_ACTOR_CONVERSATIONS,
   UNREAD_ACTOR_CONVERSATIONS_SUBSCRIPTION,
 } from "@/graphql/user";
 import { ICurrentUser } from "@/types/current-user.model";
+
+const { islongEvents } = useIsLongEvents();
 
 const { currentUser } = useCurrentUserClient();
 const { currentActor } = useCurrentActorClient();

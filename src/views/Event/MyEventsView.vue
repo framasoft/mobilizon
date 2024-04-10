@@ -151,7 +151,6 @@
             true // !$apollo.loading
           "
         >
-          <div class="img-container h-64 prose" />
           <div class="text-center prose dark:prose-invert max-w-full">
             <p>
               {{
@@ -237,7 +236,7 @@ import {
 import { Locale } from "date-fns";
 import { useI18n } from "vue-i18n";
 import { useRestrictions } from "@/composition/apollo/config";
-import { useHead } from "@unhead/vue";
+import { useHead } from "@/utils/head";
 
 const EventParticipationCard = defineAsyncComponent(
   () => import("@/components/Event/EventParticipationCard.vue")
@@ -500,24 +499,3 @@ useHead({
   title: computed(() => t("My events")),
 });
 </script>
-
-<style lang="scss">
-.not-found {
-  .img-container {
-    background-image: url("../../../img/pics/event_creation-480w.webp");
-
-    @media (min-resolution: 2dppx) {
-      & {
-        background-image: url("../../../img/pics/event_creation-1024w.webp");
-      }
-    }
-
-    max-width: 450px;
-    height: 300px;
-    box-shadow: 0 0 8px 8px white inset;
-    background-size: cover;
-    border-radius: 10px;
-    margin: auto auto 1rem;
-  }
-}
-</style>

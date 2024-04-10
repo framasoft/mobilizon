@@ -235,7 +235,7 @@ import {
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import { computed, inject, ref, watch } from "vue";
 import { useRouter } from "vue-router";
-import { useHead } from "@unhead/vue";
+import { useHead } from "@/utils/head";
 import CloudQuestion from "../../../node_modules/vue-material-design-icons/CloudQuestion.vue";
 import { Notifier } from "@/plugins/notifier";
 import MastodonLogo from "@/components/Share/MastodonLogo.vue";

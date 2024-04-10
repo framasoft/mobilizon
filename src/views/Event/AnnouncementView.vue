@@ -24,7 +24,7 @@
 import RouteName from "@/router/name";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { useHead } from "@unhead/vue";
+import { useHead } from "@/utils/head";
 import EventConversations from "../../components/Conversations/EventConversations.vue";
 import NewPrivateMessage from "../../components/Participation/NewPrivateMessage.vue";
 import { useFetchEvent } from "@/composition/apollo/event";

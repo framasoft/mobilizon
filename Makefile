@@ -19,8 +19,8 @@ stop:
 	@bash docker/message.sh "Mobilizon is stopped"
 test: stop
 	@bash docker/message.sh "Running tests"
-	docker compose -f docker compose.yml -f docker compose.test.yml run api mix prepare_test
-	docker compose -f docker compose.yml -f docker compose.test.yml run api mix test $(only)
+	docker compose -f docker-compose.yml -f docker-compose.test.yml run api mix prepare_test
+	docker compose -f docker-compose.yml -f docker-compose.test.yml run api mix test $(only)
 	@bash docker/message.sh "Done running tests"
 format: 
 	docker compose run --rm api bash -c "mix format && mix credo --strict"

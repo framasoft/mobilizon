@@ -184,13 +184,13 @@ msgstr "Les inscriptions ne sont pas ouvertes"
 msgid "The current password is invalid"
 msgstr "Le mot de passe actuel est invalide"
 
-#: lib/graphql/resolvers/admin.ex:334
+#: lib/graphql/resolvers/admin.ex:335
 #: lib/graphql/resolvers/user.ex:527
 #, elixir-autogen, elixir-format
 msgid "The new email doesn't seem to be valid"
 msgstr "La nouvelle adresse e-mail ne semble pas être valide"
 
-#: lib/graphql/resolvers/admin.ex:323
+#: lib/graphql/resolvers/admin.ex:324
 #: lib/graphql/resolvers/user.ex:514
 #, elixir-autogen, elixir-format
 msgid "The new email must be different"
@@ -624,7 +624,7 @@ msgstr "Vous ne pouvez pas rejoindre ce groupe"
 msgid "You don't have permission to delete this token"
 msgstr "Vous n'avez pas la permission de supprimer ce jeton"
 
-#: lib/graphql/resolvers/admin.ex:56
+#: lib/graphql/resolvers/admin.ex:57
 #, elixir-autogen, elixir-format
 msgid "You need to be logged-in and a moderator to list action logs"
 msgstr "Vous devez être connecté·e et une modérateur·ice pour lister les journaux de modération"
@@ -644,17 +644,17 @@ msgstr "Vous devez être connecté·e et une modérateur·ice pour modifier un s
 msgid "You need to be logged-in and a moderator to view a report"
 msgstr "Vous devez être connecté·e pour et une modérateur·ice pour visionner un signalement"
 
-#: lib/graphql/resolvers/admin.ex:258
+#: lib/graphql/resolvers/admin.ex:259
 #, elixir-autogen, elixir-format
 msgid "You need to be logged-in and an administrator to access admin settings"
 msgstr "Vous devez être connecté·e et un·e administrateur·ice pour accéder aux paramètres administrateur"
 
-#: lib/graphql/resolvers/admin.ex:242
+#: lib/graphql/resolvers/admin.ex:243
 #, elixir-autogen, elixir-format
 msgid "You need to be logged-in and an administrator to access dashboard statistics"
 msgstr "Vous devez être connecté·e et un·e administrateur·ice pour accéder aux panneau de statistiques"
 
-#: lib/graphql/resolvers/admin.ex:283
+#: lib/graphql/resolvers/admin.ex:284
 #, elixir-autogen, elixir-format
 msgid "You need to be logged-in and an administrator to save admin settings"
 msgstr "Vous devez être connecté·e et un·e administrateur·ice pour sauvegarder les paramètres administrateur"
@@ -941,7 +941,7 @@ msgstr "Impossible de quitter l'événement"
 msgid "Failed to update the group"
 msgstr "Impossible de mettre à jour le groupe"
 
-#: lib/graphql/resolvers/admin.ex:357
+#: lib/graphql/resolvers/admin.ex:358
 #: lib/graphql/resolvers/user.ex:547
 #, elixir-autogen, elixir-format
 msgid "Failed to update user email"
@@ -1072,22 +1072,22 @@ msgstr "Vous devez être connecté⋅e pour supprimer un⋅e membre"
 msgid "Your email seems to be using an invalid format"
 msgstr "Votre email semble utiliser un format invalide"
 
-#: lib/graphql/resolvers/admin.ex:399
+#: lib/graphql/resolvers/admin.ex:400
 #, elixir-autogen, elixir-format
 msgid "Can't confirm an already confirmed user"
 msgstr "Impossible de confirmer un⋅e utilisateur⋅ice déjà confirmé⋅e"
 
-#: lib/graphql/resolvers/admin.ex:403
+#: lib/graphql/resolvers/admin.ex:404
 #, elixir-autogen, elixir-format
 msgid "Deconfirming users is not supported"
 msgstr "Dé-confirmer des utilisateur⋅ices n'est pas supporté"
 
-#: lib/graphql/resolvers/admin.ex:375
+#: lib/graphql/resolvers/admin.ex:376
 #, elixir-autogen, elixir-format
 msgid "The new role must be different"
 msgstr "Le nouveau rôle doit être différent"
 
-#: lib/graphql/resolvers/admin.ex:314
+#: lib/graphql/resolvers/admin.ex:315
 #, elixir-autogen, elixir-format
 msgid "You need to be logged-in and an administrator to edit an user's details"
 msgstr "Vous devez être connecté·e et un·e administrateur·ice pour éditer les détails d'un⋅e utilisateur⋅ice"
@@ -1097,7 +1097,7 @@ msgstr "Vous devez être connecté·e et un·e administrateur·ice pour éditer 
 msgid "A profile or group with that name already exists"
 msgstr "Un profil ou un groupe avec ce nom existe déjà"
 
-#: lib/graphql/resolvers/admin.ex:542
+#: lib/graphql/resolvers/admin.ex:560
 #, elixir-autogen, elixir-format
 msgid "Unable to find an instance to follow at this address"
 msgstr "Impossible de trouver une instance à suivre à cette adresse"
@@ -1361,7 +1361,7 @@ msgstr "L'enregistrement externe n'est pas autorisé"
 msgid "The same push subscription has already been registered"
 msgstr "Le même abonnement push a déjà été enregistré"
 
-#: lib/graphql/resolvers/admin.ex:536
+#: lib/graphql/resolvers/admin.ex:554
 #, elixir-autogen, elixir-format
 msgid "This instance is pending follow approval"
 msgstr "Cette instance est en attente d'une approbation de suivi"
@@ -1371,7 +1371,7 @@ msgstr "Cette instance est en attente d'une approbation de suivi"
 msgid "Timezone ID %{timezone} is invalid"
 msgstr "L'ID de fuseau horaire %{timezone} est invalide"
 
-#: lib/graphql/resolvers/admin.ex:539
+#: lib/graphql/resolvers/admin.ex:557
 #, elixir-autogen, elixir-format
 msgid "You are already following this instance"
 msgstr "Vous suivez déjà cette instance"
@@ -1393,12 +1393,12 @@ msgstr ""
 "Le jeton que vous avez fourni n'est pas valide. Assurez-vous que l'URL est exactement la même que celle fournie dans le courriel que vous "
 "avez reçu."
 
-#: lib/graphql/resolvers/conversation.ex:161
+#: lib/graphql/resolvers/conversation.ex:164
 #, elixir-autogen, elixir-format
 msgid "Conversation needs to mention at least one participant that's not yourself"
 msgstr "La conversation doit mentionner au moins un·e participant·e qui n'est pas vous-même"
 
-#: lib/graphql/resolvers/participant.ex:396
+#: lib/graphql/resolvers/participant.ex:401
 #, elixir-autogen, elixir-format
 msgid "There are no participants matching the audience you've selected."
 msgstr "Il n'y a pas de participant·es correspondant à l'audience que vous avez sélectionnée."

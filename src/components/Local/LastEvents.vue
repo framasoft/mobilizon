@@ -6,18 +6,7 @@
     v-on="attrs"
   >
     <template #title>
-      {{ t("Last published events") }}
-    </template>
-    <template #subtitle>
-      <i18n-t
-        class="text-slate-700 dark:text-slate-300"
-        tag="p"
-        keypath="On {instance} and other federated instances"
-      >
-        <template #instance>
-          <b>{{ instanceName }}</b>
-        </template>
-      </i18n-t>
+      {{ t("Agenda") }}
     </template>
     <template #content>
       <skeleton-event-result
@@ -69,8 +58,8 @@ const attrs = useAttrs();
 const { result: resultEvents, loading: loadingEvents } = useQuery<{
   events: Paginate<IEvent>;
 }>(FETCH_EVENTS, {
-  orderBy: EventSortField.INSERTED_AT,
-  direction: SortDirection.DESC,
+  orderBy: EventSortField.BEGINS_ON,
+  direction: SortDirection.ASC,
 });
 const events = computed(
   () => resultEvents.value?.events ?? { total: 0, elements: [] }

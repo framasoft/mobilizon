@@ -57,6 +57,21 @@ apolloClient
   })
   .then(({ data: configData }) => {
     instanceName.value = configData.config?.name;
+
+    const primaryColor = configData.config?.primaryColor;
+    if (primaryColor) {
+      document.documentElement.style.setProperty(
+        "--custom-primary",
+        primaryColor
+      );
+    }
+    const secondaryColor = configData.config?.secondaryColor;
+    if (secondaryColor) {
+      document.documentElement.style.setProperty(
+        "--custom-secondary",
+        secondaryColor
+      );
+    }
   });
 
 const head = createHead();
