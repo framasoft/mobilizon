@@ -149,51 +149,38 @@ geospatial_service =
     "MapQuest" -> Mobilizon.Service.Geospatial.MapQuest
     "Mimirsbrunn" -> Mobilizon.Service.Geospatial.Mimirsbrunn
     "Pelias" -> Mobilizon.Service.Geospatial.Pelias
+    "Hat" -> Mobilizon.Service.Geospatial.Hat
   end
 
 config :mobilizon, Mobilizon.Service.Geospatial, service: geospatial_service
 
-if System.get_env("MOBILIZON_GEOSPATIAL_SERVICE", "Nominatim") == "Nominatim" do
-  config :mobilizon, Mobilizon.Service.Geospatial.Nominatim,
-    endpoint:
-      System.get_env(
-        "MOBILIZON_GEOSPATIAL_NOMINATIM_ENDPOINT",
-        "https://nominatim.openstreetmap.org"
-      ),
-    api_key: System.get_env("MOBILIZON_GEOSPATIAL_NOMINATIM_API_KEY", nil)
-end
+config :mobilizon, Mobilizon.Service.Geospatial.Nominatim,
+  endpoint:
+    System.get_env(
+      "MOBILIZON_GEOSPATIAL_NOMINATIM_ENDPOINT",
+      "https://nominatim.openstreetmap.org"
+    ),
+  api_key: System.get_env("MOBILIZON_GEOSPATIAL_NOMINATIM_API_KEY", nil)
 
-if System.get_env("MOBILIZON_GEOSPATIAL_SERVICE", "Nominatim") == "Addok" do
-  config :mobilizon, Mobilizon.Service.Geospatial.Addok,
-    endpoint:
-      System.get_env("MOBILIZON_GEOSPATIAL_ADDOK_ENDPOINT", "https://api-adresse.data.gouv.fr")
-end
+config :mobilizon, Mobilizon.Service.Geospatial.Addok,
+  endpoint:
+    System.get_env("MOBILIZON_GEOSPATIAL_ADDOK_ENDPOINT", "https://api-adresse.data.gouv.fr")
 
-if System.get_env("MOBILIZON_GEOSPATIAL_SERVICE", "Nominatim") == "Photon" do
-  config :mobilizon, Mobilizon.Service.Geospatial.Photon,
-    endpoint: System.get_env("MOBILIZON_GEOSPATIAL_PHOTON_ENDPOINT", "https://photon.komoot.de")
-end
+config :mobilizon, Mobilizon.Service.Geospatial.Photon,
+  endpoint: System.get_env("MOBILIZON_GEOSPATIAL_PHOTON_ENDPOINT", "https://photon.komoot.de")
 
-if System.get_env("MOBILIZON_GEOSPATIAL_SERVICE", "Nominatim") == "GoogleMaps" do
-  config :mobilizon, Mobilizon.Service.Geospatial.GoogleMaps,
-    api_key: System.get_env("MOBILIZON_GEOSPATIAL_GOOGLE_MAPS_API_KEY", nil),
-    fetch_place_details: true
-end
+config :mobilizon, Mobilizon.Service.Geospatial.GoogleMaps,
+  api_key: System.get_env("MOBILIZON_GEOSPATIAL_GOOGLE_MAPS_API_KEY", nil),
+  fetch_place_details: true
 
-if System.get_env("MOBILIZON_GEOSPATIAL_SERVICE", "Nominatim") == "MapQuest" do
-  config :mobilizon, Mobilizon.Service.Geospatial.MapQuest,
-    api_key: System.get_env("MOBILIZON_GEOSPATIAL_MAP_QUEST_API_KEY", nil)
-end
+config :mobilizon, Mobilizon.Service.Geospatial.MapQuest,
+  api_key: System.get_env("MOBILIZON_GEOSPATIAL_MAP_QUEST_API_KEY", nil)
 
-if System.get_env("MOBILIZON_GEOSPATIAL_SERVICE", "Nominatim") == "Mimirsbrunn" do
-  config :mobilizon, Mobilizon.Service.Geospatial.Mimirsbrunn,
-    endpoint: System.get_env("MOBILIZON_GEOSPATIAL_MIMIRSBRUNN_ENDPOINT", nil)
-end
+config :mobilizon, Mobilizon.Service.Geospatial.Mimirsbrunn,
+  endpoint: System.get_env("MOBILIZON_GEOSPATIAL_MIMIRSBRUNN_ENDPOINT", nil)
 
-if System.get_env("MOBILIZON_GEOSPATIAL_SERVICE", "Nominatim") == "Pelias" do
-  config :mobilizon, Mobilizon.Service.Geospatial.Pelias,
-    endpoint: System.get_env("MOBILIZON_GEOSPATIAL_PELIAS_ENDPOINT", nil)
-end
+config :mobilizon, Mobilizon.Service.Geospatial.Pelias,
+  endpoint: System.get_env("MOBILIZON_GEOSPATIAL_PELIAS_ENDPOINT", nil)
 
 sentry_dsn = System.get_env("MOBILIZON_ERROR_REPORTING_SENTRY_DSN", nil)
 

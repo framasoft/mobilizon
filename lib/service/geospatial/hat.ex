@@ -7,7 +7,6 @@ defmodule Mobilizon.Service.Geospatial.Hat do
   alias Mobilizon.Service.Geospatial.Addok
   alias Mobilizon.Service.Geospatial.Nominatim
   alias Mobilizon.Service.Geospatial.Provider
-  import Mobilizon.Service.Geospatial.Provider, only: [endpoint: 1]
   require Logger
 
   @behaviour Provider
