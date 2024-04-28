@@ -1,7 +1,7 @@
 <template>
   <form
     id="search-anchor"
-    class="container mx-auto my-3 flex flex-wrap flex-col sm:flex-row items-stretch gap-2 text-center items-center justify-center dark:text-slate-100"
+    class="container mx-auto my-3 px-2 flex flex-wrap flex-col sm:flex-row items-stretch gap-2 text-center items-center justify-center dark:text-slate-100"
     role="search"
     @submit.prevent="submit"
   >
