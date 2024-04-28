@@ -3,17 +3,16 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:39+0000\n"
-"PO-Revision-Date: 2023-10-22 18:27+0000\n"
-"Last-Translator: Jaime Marquínez Ferrándiz <jaime.marquinez."
-"ferrandiz@fastmail.net>\n"
+"PO-Revision-Date: 2024-04-18 09:03+0000\n"
+"Last-Translator: GSalinas <gsalinastellez@gmail.com>\n"
 "Language-Team: Spanish <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/es/>\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.0.1\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Weblate 5.4.3\n"
 
 #: lib/web/templates/email/password_reset.html.heex:66
 #, elixir-autogen, elixir-format
@@ -2315,7 +2314,7 @@ msgstr "¡Hasta la próxima vez!"
 
 #: lib/web/templates/email/group_suspension.html.heex:67
 #: lib/web/templates/email/group_suspension.text.eex:5
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "As this group was located on this instance, all of its data has been irretrievably deleted."
 msgstr ""
 "Como este grupo estaba ubicado en esta instancia, todos sus datos se han "
@@ -2334,49 +2333,49 @@ msgstr "Eventos marcados"
 #: lib/service/export/participants/common.ex:65
 #, elixir-autogen, elixir-format
 msgid "Participant registration date"
-msgstr "Fecha de registro del participante"
+msgstr "Fecha de inscripción del participante"
 
 #: lib/web/templates/email/anonymous_participation_confirmation.html.heex:113
 #: lib/web/templates/email/event_participation_confirmed.html.heex:122
 #, elixir-autogen, elixir-format
 msgid "Cancel my attendance"
-msgstr ""
+msgstr "Cancelar mi participación"
 
 #: lib/web/templates/email/anonymous_participation_confirmation.html.heex:90
 #: lib/web/templates/email/event_participation_confirmed.html.heex:99
 #, elixir-autogen, elixir-format
 msgid "If you wish to cancel your participation, simply click on the link below."
-msgstr ""
+msgstr "Si desea cancelar su participación, haga click en el enlace abajo."
 
 #: lib/web/email/admin.ex:142
 #, elixir-autogen, elixir-format
 msgid "Email configuration test for %{instance}"
-msgstr ""
+msgstr "Test de configuración de correo electrónico para %{instance}"
 
 #: lib/web/templates/email/email_configuration_test.html.heex:47
 #: lib/web/templates/email/email_configuration_test.text.eex:3
 #, elixir-autogen, elixir-format
 msgid "If you received this email, the email configuration seems to be correct."
 msgstr ""
+"Si recibió este correo electrónico, la configuración del correo electrónico "
+"parece correcta."
 
 #: lib/web/templates/email/email_configuration_test.html.heex:18
 #: lib/web/templates/email/email_configuration_test.text.eex:1
 #, elixir-autogen, elixir-format
 msgid "Well done!"
-msgstr ""
+msgstr "Bien hecho!"
 
 #: lib/web/templates/api/terms.html.heex:55
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "When we say “we”, “our”, or “us” in this document, we are referring to the owners, operators and administrators of this Mobilizon instance. The Mobilizon software is provided by the team of Mobilizon contributors. Unless explicitly stated, this Mobilizon instance is an independent service using Mobilizon's source code. You may find more information about this instance on the <a href=\"/about/instance\">\"About this instance\"</a> page."
 msgstr ""
 "Cuando decimos \"nosotros\", \"nuestro\" o \"nosotros\" en este documento, "
 "nos referimos a los propietarios, operadores y administradores de esta "
 "instancia de Mobilizon. El software de Mobilizon es proporcionado por el "
-"equipo de contribuyentes de Mobilizon, respaldado por <a href=\"https://"
-"framasoft.org\"> Framasoft </a>, una organización educativa popular francesa "
-"sin fines de lucro que aboga por el Software Libre. A menos que se indique "
-"explícitamente, esta instancia de Mobilizon es un servicio independiente que "
-"utiliza el código fuente de Mobilizon. Puede encontrar más información sobre "
-"esta instancia en la página <a href=\"/about/instance\"> \"Acerca de esta "
+"equipo de colaboradores de Mobilizon. A menos que se indique explícitamente, "
+"esta instancia de Mobilizon es un servicio independiente que utiliza el "
+"código fuente de Mobilizon. Puede encontrar más información sobre esta "
+"instancia en la página <a href=\"/about/instance\"> \"Acerca de esta "
 "instancia\" </a>."

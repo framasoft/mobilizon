@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-25 07:55+0000\n"
-"PO-Revision-Date: 2023-12-04 18:10+0000\n"
+"PO-Revision-Date: 2024-03-08 15:25+0000\n"
 "Last-Translator: Milo Ivir <mail@milotype.de>\n"
 "Language-Team: Croatian <https://weblate.framasoft.org/projects/mobilizon/"
 "activity/hr/>\n"
@@ -13,7 +13,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 5.2.1\n"
+"X-Generator: Weblate 5.4.2\n"
 
 ## This file is a PO Template file.
 ##
@@ -58,13 +58,13 @@ msgstr "%{profile} su dodali %{member}."
 #: lib/web/templates/email/activity/_discussion_activity_item.text.eex:19
 #, elixir-autogen, elixir-format
 msgid "%{profile} archived the discussion %{discussion}."
-msgstr "%{profile} su arhivirali razgovor %{discussion}."
+msgstr "%{profile} je arhivirao/la raspravu %{discussion}."
 
 #: lib/web/templates/email/activity/_discussion_activity_item.html.heex:3
 #: lib/web/templates/email/activity/_discussion_activity_item.text.eex:1
 #, elixir-autogen, elixir-format
 msgid "%{profile} created the discussion %{discussion}."
-msgstr "%{profile} su stvorili razgovor %{discussion}."
+msgstr "%{profile} je stvorio/la raspravu %{discussion}."
 
 #: lib/web/templates/email/activity/_resource_activity_item.html.heex:4
 #: lib/web/templates/email/activity/_resource_activity_item.text.eex:2
@@ -88,7 +88,7 @@ msgstr "%{profile} su stvorili resurs %{resource}."
 #: lib/web/templates/email/activity/_discussion_activity_item.text.eex:25
 #, elixir-autogen, elixir-format
 msgid "%{profile} deleted the discussion %{discussion}."
-msgstr "%{profile} su izbrisali razgovor %{discussion}."
+msgstr "%{profile} je izbrisao/la raspravu %{discussion}."
 
 #: lib/web/templates/email/activity/_resource_activity_item.html.heex:76
 #: lib/web/templates/email/activity/_resource_activity_item.text.eex:40
@@ -130,7 +130,7 @@ msgstr "%{profile} su izašli iz grupe."
 #: lib/web/templates/email/activity/_discussion_activity_item.text.eex:13
 #, elixir-autogen, elixir-format
 msgid "%{profile} renamed the discussion %{discussion}."
-msgstr "%{profile} su preimenovali razgovor %{discussion}."
+msgstr "%{profile} je preimenovao/la raspravu %{discussion}."
 
 #: lib/web/templates/email/activity/_resource_activity_item.html.heex:24
 #: lib/web/templates/email/activity/_resource_activity_item.text.eex:14
@@ -149,7 +149,7 @@ msgstr ""
 #: lib/web/templates/email/activity/_discussion_activity_item.text.eex:7
 #, elixir-autogen, elixir-format
 msgid "%{profile} replied to the discussion %{discussion}."
-msgstr "%{profile} su odgovorili na razgovor %{discussion}."
+msgstr "%{profile} je odgovorio/la na raspravu %{discussion}."
 
 #: lib/web/templates/email/activity/_group_activity_item.html.heex:12
 #: lib/web/templates/email/activity/_group_activity_item.text.eex:7
@@ -448,32 +448,32 @@ msgstr "%{profile} su stvorili resurs %{resource} u grupi %{group}."
 #: lib/service/activity/renderer/discussion.ex:85
 #, elixir-autogen, elixir-format
 msgid "%{profile} archived the discussion %{discussion} in group %{group}."
-msgstr "%{profile} su arhivirali razgovor %{discussion} u grupi %{group}."
+msgstr "%{profile} je arhivirao/la raspravu %{discussion} u grupi %{group}."
 
 #: lib/service/activity/renderer/discussion.ex:25
 #, elixir-autogen, elixir-format
 msgid "%{profile} created the discussion %{discussion} in group %{group}."
-msgstr "%{profile} su stvorili razgovor %{discussion} u grupi %{group}."
+msgstr "%{profile} je stvorio/la raspravu %{discussion} u grupi %{group}."
 
 #: lib/service/activity/renderer/discussion.ex:100
 #, elixir-autogen, elixir-format
 msgid "%{profile} deleted the discussion %{discussion} in group %{group}."
-msgstr "%{profile} su izbrisali razgovor %{discussion} u grupi %{group}."
+msgstr "%{profile} je izbrisao/la raspravu %{discussion} u grupi %{group}."
 
 #: lib/service/activity/renderer/discussion.ex:55
 #, elixir-autogen, elixir-format
 msgid "%{profile} mentionned you in the discussion %{discussion} in group %{group}."
-msgstr "%{profile} su vas spomenuli u razgovoru %{discussion} u grupi %{group}."
+msgstr "%{profile} te je spomenuo/la u raspravi %{discussion} u grupi %{group}."
 
 #: lib/service/activity/renderer/discussion.ex:70
 #, elixir-autogen, elixir-format
 msgid "%{profile} renamed the discussion %{discussion} in group %{group}."
-msgstr "%{profile} su preimenovali razgovor %{discussion} u grupi %{group}."
+msgstr "%{profile} je preimenovao/la raspravu %{discussion} u grupi %{group}."
 
 #: lib/service/activity/renderer/discussion.ex:40
 #, elixir-autogen, elixir-format
 msgid "%{profile} replied to the discussion %{discussion} in group %{group}."
-msgstr "%{profile} su odgovorili na razgovor %{discussion} u grupi %{group}."
+msgstr "%{profile} je odgovorio/la na raspravu %{discussion} u grupi %{group}."
 
 #: lib/web/templates/email/activity/_member_activity_item.html.heex:36
 #: lib/web/templates/email/activity/_member_activity_item.text.eex:33
