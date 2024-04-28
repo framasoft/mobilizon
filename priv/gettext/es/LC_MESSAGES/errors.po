@@ -8,15 +8,15 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-11-01 21:38+0000\n"
-"Last-Translator: Berto Te <ateira@3fpj.com>\n"
+"PO-Revision-Date: 2024-04-18 09:03+0000\n"
+"Last-Translator: GSalinas <gsalinastellez@gmail.com>\n"
 "Language-Team: Spanish <https://weblate.framasoft.org/projects/mobilizon/"
 "backend-errors/es/>\n"
 "Language: es\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.14.1\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Weblate 5.4.3\n"
 
 #: lib/mobilizon/discussions/discussion.ex:68
 #, elixir-autogen
@@ -1193,9 +1193,9 @@ msgid "Application token not found"
 msgstr "Token de aplicación no encontrado"
 
 #: lib/graphql/resolvers/application.ex:90
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Error while revoking token"
-msgstr "Error al guardar el informe"
+msgstr "Error al revocar el token"
 
 #: lib/web/controllers/application_controller.ex:61
 #, elixir-autogen, elixir-format
@@ -1263,71 +1263,81 @@ msgstr "El client_id provisto o el device_code asociado es inválido"
 #, elixir-autogen, elixir-format
 msgid "The device user code was not provided before approving the application"
 msgstr ""
+"El código de usuario del dispositivo no se proporcionó antes de la "
+"aprobación de la aplicación"
 
 #: lib/web/controllers/application_controller.ex:301
 #, elixir-autogen, elixir-format
 msgid "The given device_code has expired"
-msgstr ""
+msgstr "El device_code provisto ha caducado"
 
 #: lib/graphql/resolvers/application.ex:45
 #, elixir-autogen, elixir-format
 msgid "The given redirect_uri is not in the list of allowed redirect URIs"
 msgstr ""
+"La redirect_uri dada no se encuentra en la lista de URI's de redirección "
+"permitidas"
 
 #: lib/web/controllers/application_controller.ex:155
 #, elixir-autogen, elixir-format
 msgid "The given scope is not in the list of the app declared scopes"
 msgstr ""
+"El objetivo provisto no se encuentra en la lista de objetivos declarados de "
+"la applicación"
 
 #: lib/graphql/resolvers/application.ex:112
 #: lib/graphql/resolvers/application.ex:154
 #, elixir-autogen, elixir-format
 msgid "The given user code has expired"
-msgstr ""
+msgstr "El codigo de usuario provisto ha caducado"
 
 #: lib/graphql/resolvers/application.ex:118
 #: lib/graphql/resolvers/application.ex:146
 #, elixir-autogen, elixir-format
 msgid "The given user code is invalid"
-msgstr ""
+msgstr "Elcodigo de usuario provisto es invalido"
 
 #: lib/web/controllers/application_controller.ex:408
 #, elixir-autogen, elixir-format
 msgid "The provided client_id does not match the provided code"
-msgstr ""
+msgstr "El client_id provisto no corresponde con el código provisto"
 
 #: lib/web/controllers/application_controller.ex:411
 #, elixir-autogen, elixir-format
 msgid "The provided client_secret is invalid"
-msgstr ""
+msgstr "El client_secret provisto es inválido"
 
 #: lib/web/controllers/application_controller.ex:404
 #, elixir-autogen, elixir-format
 msgid "The provided code is invalid or expired"
-msgstr ""
+msgstr "El código provisto es inválido o ha caducado"
 
 #: lib/web/controllers/application_controller.ex:415
 #, elixir-autogen, elixir-format
 msgid "The provided scope is invalid or not included in the app declared scopes"
 msgstr ""
+"El objetivo provisto es inválido o no se encuentra en la lista de objetivos "
+"declarados de la applicación"
 
 #: lib/web/controllers/application_controller.ex:47
 #, elixir-autogen, elixir-format
 msgid "The scope parameter is not a space separated list of valid scopes"
 msgstr ""
+"La variable de objetivos no es una lista separada por espacios de objetivos "
+"validos"
 
 #: lib/web/controllers/application_controller.ex:289
 #, elixir-autogen, elixir-format
 msgid "The user rejected the requested authorization"
-msgstr ""
+msgstr "El usuario rechazó la autorización solicitada"
 
 #: lib/web/controllers/application_controller.ex:401
 #, elixir-autogen, elixir-format
 msgid "This redirect URI is not allowed"
-msgstr ""
+msgstr "Esta URI de redirección no está autorizada"
 
 #: lib/web/controllers/application_controller.ex:378
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Token not found"
 msgstr "Token no encontrado"
 
@@ -1339,91 +1349,103 @@ msgstr "Demasiadas peticiones"
 #: lib/web/controllers/application_controller.ex:181
 #, elixir-autogen, elixir-format
 msgid "Unable to produce device code"
-msgstr ""
+msgstr "No se puedo generar el código de dispositivo"
 
 #: lib/web/controllers/application_controller.ex:370
 #, elixir-autogen, elixir-format
 msgid "Unable to revoke token"
-msgstr ""
+msgstr "No se puede revocar el token"
 
 #: lib/web/controllers/application_controller.ex:195
 #, elixir-autogen, elixir-format
 msgid "You need to pass both client_id and scope as parameters to obtain a device code"
 msgstr ""
+"Para obtener un código de dispositivo, es necesario pasar como parámetros el "
+"client_id y el objetivo"
 
 #: lib/web/controllers/application_controller.ex:133
 #, elixir-autogen, elixir-format
 msgid "You need to provide a valid redirect_uri to autorize an application"
-msgstr ""
+msgstr "Debe proporcionar una redirect_uri válida para autorizar una aplicación"
 
 #: lib/web/controllers/application_controller.ex:123
 #, elixir-autogen, elixir-format
 msgid "You need to specify client_id, redirect_uri, scope and state to autorize an application"
 msgstr ""
+"Debe especificar client_id, redirect_uri, scope y state para autorizar una "
+"aplicación"
 
 #: lib/graphql/resolvers/user.ex:306
 #, elixir-autogen, elixir-format
 msgid "Couldn't send an email. Internal error."
-msgstr ""
+msgstr "No se ha podido enviar un correo electrónico. Error interno."
 
 #: lib/graphql/resolvers/participant.ex:293
 #, elixir-autogen, elixir-format
 msgid "Participation is already confirmed"
-msgstr ""
+msgstr "La participación ya está confirmada"
 
 #: lib/graphql/resolvers/participant.ex:290
 #, elixir-autogen, elixir-format
 msgid "Participation is confirmed but not approved yet by an organizer"
 msgstr ""
+"La participación esta confirmada pero aún no esta aprobada por un organizador"
 
 #: lib/graphql/resolvers/event.ex:287
 #: lib/graphql/resolvers/event.ex:376
 #, elixir-autogen, elixir-format
 msgid "Providing external registration is not allowed"
-msgstr ""
+msgstr "No se permite el registro externo"
 
 #: lib/graphql/resolvers/push_subscription.ex:48
 #, elixir-autogen, elixir-format
 msgid "The same push subscription has already been registered"
-msgstr ""
+msgstr "Ya se ha registrado el mismo pedidio de suscripción"
 
 #: lib/graphql/resolvers/admin.ex:554
 #, elixir-autogen, elixir-format
 msgid "This instance is pending follow approval"
-msgstr ""
+msgstr "La instancia está pendiente de aprobación"
 
 #: lib/graphql/schema/custom/timezone.ex:25
 #, elixir-autogen, elixir-format
 msgid "Timezone ID %{timezone} is invalid"
-msgstr ""
+msgstr "El ID de zona horaria %{timezone} no es válido."
 
 #: lib/graphql/resolvers/admin.ex:557
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "You are already following this instance"
 msgstr "Ya estas siguiendo este grupo"
 
 #: lib/graphql/resolvers/user.ex:310
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "You requested again a confirmation email too soon. Please try again in a few minutes"
 msgstr ""
-"Solicitó de nuevo un correo electrónico de confirmación demasiado pronto"
+"Ha solicitado un correo electrónico de confirmación demasiado rápido. Por "
+"favor, inténtelo de nuevo en unos minutos"
 
 #: lib/graphql/resolvers/user.ex:341
 #, elixir-autogen, elixir-format
 msgid "You requested again a password reset email too soon. Please try again in a few minutes"
 msgstr ""
+"Ha solicitado un correo electrónico de restablecimiento de contraseña "
+"demasiado pronto. Por favor, inténtelo de nuevo en unos minutos"
 
 #: lib/graphql/resolvers/user.ex:368
 #, elixir-autogen, elixir-format
 msgid "The token you provided is invalid. Make sure that the URL is exactly the one provided inside the email you got."
 msgstr ""
+"El token proporcionado no es válido. Asegúrate de que la URL es exactamente "
+"la misma que la proporcionada en el correo electrónico que recibiste."
 
 #: lib/graphql/resolvers/conversation.ex:164
 #, elixir-autogen, elixir-format
 msgid "Conversation needs to mention at least one participant that's not yourself"
 msgstr ""
+"La conversación tiene que mencionar al menos un participante que no seas tú "
+"mismo"
 
 #: lib/graphql/resolvers/participant.ex:401
 #, elixir-autogen, elixir-format
 msgid "There are no participants matching the audience you've selected."
-msgstr ""
+msgstr "No hay participantes que coincidan con el público que has seleccionado."

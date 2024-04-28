@@ -8,15 +8,15 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2023-10-14 00:00+0000\n"
-"Last-Translator: Vri <vrifox@vrifox.cc>\n"
+"PO-Revision-Date: 2024-04-12 14:40+0000\n"
+"Last-Translator: Samuel Brinkmann <sbrinkmann@54gradsoftware.de>\n"
 "Language-Team: German <https://weblate.framasoft.org/projects/mobilizon/"
 "activity/de/>\n"
 "Language: de\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.0.1\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Weblate 5.4.3\n"
 
 #: lib/web/templates/email/activity/_member_activity_item.html.heex:14
 #: lib/web/templates/email/activity/_member_activity_item.text.eex:12
@@ -502,10 +502,10 @@ msgstr "Ein anonymes Profil"
 
 #: lib/web/templates/email/email_anonymous_activity.html.heex:107
 #: lib/web/templates/email/email_anonymous_activity.text.eex:14
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "%{profile} has posted a private announcement about event %{event}."
 msgstr ""
-"%{profile} hat eine Ankündigung unter der Veranstaltung %{event} "
+"%{profile} hat eine private Ankündigung zur Veranstaltung %{event} "
 "veröffentlicht."
 
 #: lib/web/templates/email/email_anonymous_activity.html.heex:50

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-25 07:56+0000\n"
-"PO-Revision-Date: 2023-12-21 20:11+0000\n"
+"PO-Revision-Date: 2024-03-08 17:59+0000\n"
 "Last-Translator: Milo Ivir <mail@milotype.de>\n"
 "Language-Team: Croatian <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/hr/>\n"
@@ -13,7 +13,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 5.3.1\n"
+"X-Generator: Weblate 5.4.2\n"
 
 #: lib/web/templates/email/password_reset.html.heex:66
 #, elixir-autogen, elixir-format
@@ -227,8 +227,8 @@ msgstr "Tokeni za tvoju identifikaciju"
 msgctxt "terms"
 msgid "We also may retain server logs which include the IP address of every request to our server."
 msgstr ""
-"Također možemo zadržati zapisnike poslužitelja koji uključuju IP adresu "
-"svakog poslanog zahtjeva na naš poslužitelj."
+"Također možemo zadržati zapisnike servera koji uključuju IP adresu svakog "
+"poslanog upita na naš server."
 
 #: lib/web/templates/api/privacy.html.heex:102
 #, elixir-autogen, elixir-format
@@ -271,12 +271,23 @@ msgstr "Promjene u našim pravilima privatnosti"
 msgctxt "terms"
 msgid "If this server is in the EU or the EEA: Our site, products and services are all directed to people who are at least 16 years old. If you are under the age of 16, per the requirements of the GDPR (<a href=\"https://en.wikipedia.org/wiki/General_Data_Protection_Regulation\">General Data Protection Regulation</a>) do not use this site."
 msgstr ""
+"Ako se ovaj server nalazi u EU ili u Europskom gospodarskom prostoru (EEA): "
+"Naša stranica, proizvodi i usluge su namijenjene za osobe koje su starije od "
+"16 godina. Ako si mlađi od 16 godina, na osnovi uredbe GDPR (<a href=\"https"
+"://hr.wikipedia.org/wiki/Op%C4%87a_uredba_o_za%C5%A1titi_podataka\">Opća "
+"uredba o zaštiti podataka</a>) nemoj koristiti ovu stranicu."
 
 #: lib/web/templates/api/privacy.html.heex:146
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "If this server is in the USA: Our site, products and services are all directed to people who are at least 13 years old. If you are under the age of 13, per the requirements of COPPA (<a href=\"https://en.wikipedia.org/wiki/Children%27s_Online_Privacy_Protection_Act\">Children's Online Privacy Protection Act</a>) do not use this site."
 msgstr ""
+"Ako se ovaj server nalazi u SAD-u: Naša stranica, proizvodi i usluge su "
+"namijenjene za osobe koje su starije od 13 godina. Ako si mlađi od 13 "
+"godina, na osnovi zakona COPPA (<a href=\"https://en.wikipedia.org/wiki/"
+"Children%27s_Online_Privacy_Protection_Act\">Children's Online Privacy "
+"Protection Act</a>) (Zakon o zaštiti privatnosti djece na internetu) nemoj "
+"koristiti ovu stranicu."
 
 #: lib/web/templates/api/privacy.html.heex:160
 #, elixir-autogen, elixir-format
@@ -291,6 +302,8 @@ msgstr ""
 msgctxt "terms"
 msgid "Law requirements can be different if this server is in another jurisdiction."
 msgstr ""
+"Zakonske regulative se mogu razlikovati ako se ovaj server nalazi u jednoj "
+"drugoj jurisdikciji."
 
 #: lib/web/templates/api/privacy.html.heex:137
 #, elixir-autogen, elixir-format
@@ -303,18 +316,30 @@ msgstr "Korištenje stranice od djece"
 msgctxt "terms"
 msgid "The email address you provide may be used to send you information, updates and notifications about other people\n    interacting with your content or sending you messages and to respond to inquiries, and/or other requests or\n    questions."
 msgstr ""
+"E-mail adresa koju navedeš može se koristiti za slanje informacija, "
+"aktualiziranja i obavijesti o drugim osobama\n"
+"     koji interagiraju s tvojim sadržajem ili ti šalju poruke te za "
+"odgovaranje na upite i/ili druge zahtjeve ili\n"
+"     pitanja."
 
 #: lib/web/templates/api/privacy.html.heex:61
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "To aid moderation of the community, for example comparing your IP address with other known ones to determine ban\n    evasion or other violations."
 msgstr ""
+"Pomoći pri moderiranju zajednice, na primjer usporedbom tvoje IP adrese s "
+"drugim poznatim adresama za utvrđivanja zabrane\n"
+"     ili drugih povreda."
 
 #: lib/web/templates/api/privacy.html.heex:54
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "To provide the core functionality of Mobilizon. Depending on this instance's policy you may only be able to\n    interact with other people's content and post your own content if you are logged in."
 msgstr ""
+"Pružiti temeljnu funkcionalnost Mobilizona. Ovisno o politici ove instance, "
+"možda ćete moći samo\n"
+"     komunicirati sa sadržajem drugih ljudi i objavljivati vlastiti sadržaj "
+"ako ste prijavljeni."
 
 #: lib/web/templates/api/privacy.html.heex:10
 #, elixir-autogen, elixir-format
@@ -556,7 +581,7 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "Your Content & Conduct"
-msgstr ""
+msgstr "Tvoj sadržaj i ponašanje"
 
 #: lib/web/templates/api/terms.html.heex:263
 #, elixir-autogen, elixir-format
@@ -575,6 +600,8 @@ msgstr ""
 msgctxt "terms"
 msgid "For full details about the Mobilizon software <a href=\"https://joinmobilizon.org\">see here</a>."
 msgstr ""
+"Pogledaj sve detalje o Mobilizon softveru <a href=\"https://joinmobilizon."
+"org\">ovdje</a>."
 
 #: lib/web/templates/api/terms.html.heex:47
 #, elixir-autogen, elixir-format
@@ -633,6 +660,10 @@ msgstr ""
 msgctxt "terms"
 msgid "You can remove the content that you posted by deleting it. Once you delete your content, it will not appear on the Service, but copies of your deleted content may remain in our system or backups for some period of time. Web server access logs might also be stored for some time in the system."
 msgstr ""
+"Sadržaj koji si objavio možeš ukloniti brisanjem. Nakon što izbrišeš svoj "
+"sadržaj, on se neće pojaviti na usluzi, ali kopije tvog izbrisanog sadržaja "
+"mogu ostati u našem sustavu ili sigurnosnim kopijama neko vrijeme. Zapisnici "
+"pristupa web serveru se također mogu neko vrijeme zadržati u sustavu."
 
 #: lib/web/templates/api/terms.html.heex:306
 #, elixir-autogen, elixir-format
@@ -886,6 +917,9 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "If you did not trigger this change yourself, it is likely that someone has gained access to your %{host} account. Please log in and change your password immediately. If you cannot login, contact the admin on %{host}."
 msgstr ""
+"Ako ovu promjenu nisi ti pokrenuo/la, vjerojatno je netko dobio pristup tvom "
+"%{host} računu. Prijavi se i odmah promijeni lozinku. Ako se ne možeš "
+"prijaviti, kontaktiraj administratora na %{host}."
 
 #: lib/web/templates/email/password_reset.text.eex:12
 #, elixir-autogen, elixir-format
@@ -1160,7 +1194,7 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "If you delete this information, you need to login again."
-msgstr ""
+msgstr "Ako izbrišeš ove podatke morat ćeš se ponovo prijaviti."
 
 #: lib/web/templates/api/privacy.html.heex:111
 #, elixir-autogen, elixir-format
@@ -1178,13 +1212,15 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "Our responsibility"
-msgstr ""
+msgstr "Naša odgovornost"
 
 #: lib/web/templates/api/privacy.html.heex:87
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "Retain server logs containing the IP address of all requests to this server, insofar as such logs are kept, no more than 90 days."
 msgstr ""
+"Zapisnici servera koji sadrže IP adrese svih upita prema ovom serveru brišu "
+"se nakon 90 dana, pod uvjetom da se takvi zapisnici vode."
 
 #: lib/web/templates/api/privacy.html.heex:3
 #: lib/web/templates/api/terms.html.heex:39
@@ -1192,7 +1228,7 @@ msgstr ""
 msgctxt "terms"
 msgid "Some terms, technical or otherwise, used in the text below may cover concepts that are difficult to grasp. We have provided <a href=\"/glossary\">a glossary</a> to help you understand them better."
 msgstr ""
-"Neki tehnički ili drugi izrazi koji se koriste u donjem tekstu mogu "
+"Neki tehnički ili drugi izrazi koji se koriste u daljnjem tekstu mogu "
 "pokrivati pojmove koji se teško razumiju. Za lakše razumijevanje pojmova "
 "postoji <a href=\"/glossary\">glosar</a>."
 
@@ -1405,15 +1441,13 @@ msgstr "Feed za %{email} na %{instance}"
 #, elixir-autogen, elixir-format
 msgid "If the issue persists, you may contact the server administrator at %{contact}."
 msgstr ""
-"Ako se problem nastavi pojavljivati, možeš se obratiti administratoru "
-"poslužitelja na %{contact}."
+"Ako se problem nastavi pojavljivati obratiti se administratoru servera na "
+"%{contact}."
 
 #: lib/web/templates/error/500_page.html.heex:59
 #, elixir-autogen, elixir-format
 msgid "If the issue persists, you may try to contact the server administrator."
-msgstr ""
-"Ako se problem nastavi pojavljivati, možeš se pokušati obratiti "
-"administratoru poslužitelja."
+msgstr "Ako se problem nastavi pojavljivati obratiti se administratoru servera."
 
 #: lib/web/templates/error/500_page.html.heex:82
 #, elixir-autogen, elixir-format
@@ -1423,7 +1457,7 @@ msgstr "Tehnički detalji"
 #: lib/web/templates/error/500_page.html.heex:52
 #, elixir-autogen, elixir-format
 msgid "The Mobilizon server %{instance} seems to be temporarily down."
-msgstr "Čini se da Mobilizon poslužitej %{instance} privremeno nije dostupan."
+msgstr "Čini se da Mobilizon server %{instance} privremeno nije dostupan."
 
 #: lib/service/export/feed.ex:72
 #, elixir-autogen, elixir-format
@@ -1448,7 +1482,7 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Your instance's moderation team has decided to suspend <b>%{group_name}</b> (%{group_address}). You are no longer a member of this group."
 msgstr ""
-"Tim za moderiranje tvoje instance je odlučio suspendiratigrupu "
+"Tim za moderiranje tvoje instance je odlučio suspendirati grupu "
 "<b>%{group_name}</b> (%{group_address}). Više nisi član ove grupe."
 
 #: lib/web/templates/email/actor_suspension_participants.html.heex:18
