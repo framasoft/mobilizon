@@ -8,15 +8,15 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2024-05-14 22:00+0000\n"
+"PO-Revision-Date: 2024-05-14 22:26+0000\n"
 "Last-Translator: Coen Holten <coenholten@proton.me>\n"
 "Language-Team: Dutch <https://weblate.framasoft.org/projects/mobilizon/"
 "backend-errors/nl/>\n"
 "Language: nl\n"
 "Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Weblate 5.5.5\n"
-"Content-Transfer-Encoding: 8bit\n"
 
 #: lib/mobilizon/discussions/discussion.ex:68
 #, elixir-autogen
@@ -52,8 +52,8 @@ msgstr "zijn nog steeds verbonden met deze invoer"
 
 msgid "should be %{count} character(s)"
 msgid_plural "should be %{count} character(s)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "moet %{count} karakter zijn"
+msgstr[1] "moet %{count} karakter(s) zijn"
 
 msgid "should have %{count} item(s)"
 msgid_plural "should have %{count} item(s)"
