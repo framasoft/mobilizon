@@ -1,7 +1,8 @@
 <template>
   <o-taginput
     :modelValue="modelValueWithDisplayName"
-    @update:modelValue="(val: IActor[]) => $emit('update:modelValue', val)"
+    @remove="remove"
+    @add="add"
     :data="availableActors"
     :allow-autocomplete="true"
     :allow-new="false"
@@ -25,12 +26,27 @@ import { computed, ref } from "vue";
 import ActorInline from "./ActorInline.vue";
 import { useI18n } from "vue-i18n";
 
-const props = defineProps<{
-  modelValue: IActor[];
+// TODO It seems that '@update:modelValue="updateTags"' does not works anymore...
+// so temporarily call the function updateTags() at remove and add tag event
+// https://github.com/oruga-ui/oruga/issues/967
+function remove() {
+  updateTags(modelValueWithDisplayName.value);
+}
+
+function add() {
+  updateTags(modelValueWithDisplayName.value);
+}
+
+const emit = defineEmits<{
+  "update:modelValue": [value: IActor[]];
 }>();
 
-defineEmits<{
-  "update:modelValue": [value: IActor[]];
+const updateTags = (val: IActor[]) => {
+  emit("update:modelValue", val);
+};
+
+const props = defineProps<{
+  modelValue: IActor[];
 }>();
 
 const modelValue = computed(() => props.modelValue);
