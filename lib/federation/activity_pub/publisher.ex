@@ -7,6 +7,7 @@ defmodule Mobilizon.Federation.ActivityPub.Publisher do
   alias Mobilizon.Config
   alias Mobilizon.Federation.ActivityPub.{Activity, Federator, Relay, Transmogrifier, Visibility}
   alias Mobilizon.Federation.HTTPSignatures.Signature
+  alias Mobilizon.Service.HTTP.ActivityPub, as: ActivityPubClient
   require Logger
 
   import Mobilizon.Federation.ActivityPub.Utils,
@@ -95,16 +96,16 @@ defmodule Mobilizon.Federation.ActivityPub.Publisher do
         date: date
       })
 
-    Tesla.post(
-      inbox,
-      json,
-      headers: [
-        {"Content-Type", "application/activity+json"},
-        {"signature", signature},
-        {"digest", digest},
-        {"date", date}
-      ]
-    )
+    headers = [
+      {"Content-Type", "application/activity+json"},
+      {"signature", signature},
+      {"digest", digest},
+      {"date", date}
+    ]
+
+    client = ActivityPubClient.client(headers: headers)
+
+    ActivityPubClient.post(client, inbox, json)
   end
 
   @spec convert_followers_in_recipients(list(String.t())) :: {list(String.t()), list(String.t())}
