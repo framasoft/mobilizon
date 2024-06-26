@@ -15,7 +15,8 @@
     </template>
     <o-taginput
       :modelValue="tagsStrings"
-      @update:modelValue="updateTags"
+      @remove="remove"
+      @add="add"
       :data="filteredTags"
       :allow-autocomplete="true"
       :allow-new="true"
@@ -69,6 +70,8 @@ const id = computed((): string => {
 
 const { load: fetchTags } = useFetchTags();
 
+initTagsStringsValue();
+
 const getFilteredTags = async (newText: string): Promise<void> => {
   text.value = newText;
   const res = await fetchTags(
@@ -91,11 +94,16 @@ const filteredTags = computed((): ITag[] => {
   );
 });
 
-watch(props.modelValue, (newValue, oldValue) => {
-  if (newValue != oldValue) {
-    tagsStrings.value = propsValue.value.map((tag: ITag) => tag.title);
-  }
-});
+// TODO It seems that '@update:modelValue="updateTags"' does not works anymore...
+// so temporarily call the function updateTags() at remove and add tag event
+// https://github.com/oruga-ui/oruga/issues/967
+function remove() {
+  updateTags(tagsStrings.value);
+}
+
+function add() {
+  updateTags(tagsStrings.value);
+}
 
 const updateTags = (newTagsStrings: string[]) => {
   const tagEntities = newTagsStrings.map((tag: string | ITag) => {
@@ -106,4 +114,34 @@ const updateTags = (newTagsStrings: string[]) => {
   });
   emit("update:modelValue", tagEntities);
 };
+
+function isArraysEquals(array1: string[], array2: string[]) {
+  if (array1.length !== array2.length) {
+    return false;
+  }
+
+  for (let i = 0; i < array1.length; i++) {
+    if (array1[i] !== array2[i]) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+function initTagsStringsValue() {
+  // This is useful when tag data is already cached from the API during navigation inside the app
+  tagsStrings.value = propsValue.value.map((tag: ITag) => tag.title);
+
+  // This watch() function is useful when tag data loads directly from the API upon page load
+  watch(propsValue, () => {
+    const newTagsStrings = propsValue.value.map((tag: ITag) => tag.title);
+
+    // Changing tagsStrings.value triggers updateTags(), updateTags() triggers this watch() function again.
+    // To stop the loop, edit tagsStrings.value only if it has changed !
+    if (!isArraysEquals(tagsStrings.value, newTagsStrings)) {
+      tagsStrings.value = newTagsStrings;
+    }
+  });
+}
 </script>
