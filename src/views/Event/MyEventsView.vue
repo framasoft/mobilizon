@@ -23,10 +23,27 @@
       <div
         class="rounded p-3 flex-auto md:flex-none bg-zinc-300 dark:bg-zinc-700"
       >
-        <o-field>
-          <o-switch v-model="showUpcoming">{{
-            showUpcoming ? t("Upcoming events") : t("Past events")
-          }}</o-switch>
+        <o-field
+          class="date-filter"
+          expanded
+          :label="
+            showUpcoming
+              ? t('Showing events starting on')
+              : t('Showing events before')
+          "
+          labelFor="events-start-datepicker"
+        >
+          <o-datepicker
+            v-model="datePick"
+            :first-day-of-week="firstDayOfWeek"
+            id="events-start-datepicker"
+          />
+          <o-button
+            @click="datePick = new Date()"
+            class="reset-area !h-auto"
+            icon-left="close"
+            :title="t('Clear date filter field')"
+          />
         </o-field>
         <o-field v-if="showUpcoming">
           <o-checkbox v-model="showDrafts">{{ t("Drafts") }}</o-checkbox>
@@ -50,28 +67,6 @@
             )
           }}
         </p>
-        <o-field
-          class="date-filter"
-          expanded
-          :label="
-            showUpcoming
-              ? t('Showing events starting on')
-              : t('Showing events before')
-          "
-          labelFor="events-start-datepicker"
-        >
-          <o-datepicker
-            v-model="dateFilter"
-            :first-day-of-week="firstDayOfWeek"
-            id="events-start-datepicker"
-          />
-          <o-button
-            @click="dateFilter = new Date()"
-            class="reset-area !h-auto"
-            icon-left="close"
-            :title="t('Clear date filter field')"
-          />
-        </o-field>
       </div>
       <div class="flex-1 min-w-[300px]">
         <section
@@ -250,27 +245,43 @@ const futurePage = ref(1);
 const pastPage = ref(1);
 const limit = ref(10);
 
+function startOfDay(d: Date): string {
+  const pad = (n: int): string => {
+    return (n > 9 ? "" : "0") + n.toString();
+  };
+  return (
+    d.getFullYear() +
+    "-" +
+    pad(d.getMonth() + 1) +
+    "-" +
+    pad(d.getDate()) +
+    "T00:00:00Z"
+  );
+}
+
 const showUpcoming = useRouteQuery("showUpcoming", true, booleanTransformer);
 const showDrafts = useRouteQuery("showDrafts", true, booleanTransformer);
 const showAttending = useRouteQuery("showAttending", true, booleanTransformer);
 const showMyGroups = useRouteQuery("showMyGroups", false, booleanTransformer);
-const dateFilter = useRouteQuery("dateFilter", new Date(), {
+const dateFilter = useRouteQuery("dateFilter", startOfDay(new Date()), {
   fromQuery(query) {
     if (query && /(\d{4}-\d{2}-\d{2})/.test(query)) {
-      return new Date(`${query}T00:00:00Z`);
+      return `${query}T00:00:00Z`;
     }
-    return new Date();
+    return startOfDay(new Date());
   },
-  toQuery(value: Date) {
-    const pad = (number: number) => {
-      if (number < 10) {
-        return "0" + number;
-      }
-      return number;
-    };
-    return `${value.getFullYear()}-${pad(value.getMonth() + 1)}-${pad(
-      value.getDate()
-    )}`;
+  toQuery(value: string) {
+    return value.slice(0, 10);
+  },
+});
+
+// bridge between datepicker expecting a Date object and dateFilter being a string
+const datePick = computed({
+  get: () => {
+    return new Date(dateFilter.value);
+  },
+  set: (d: Date) => {
+    dateFilter.value = startOfDay(d);
   },
 });
 
@@ -323,10 +334,7 @@ const pastParticipations = computed(
     }
 );
 
-const monthlyEvents = (
-  elements: Eventable[],
-  revertSort = false
-): Map<string, Eventable[]> => {
+const monthlyEvents = (elements: Eventable[]): Map<string, Eventable[]> => {
   const res = elements.filter((element: Eventable) => {
     if ("role" in element) {
       return (
@@ -336,19 +344,12 @@ const monthlyEvents = (
     }
     return element.beginsOn != null;
   });
-  if (revertSort) {
-    res.sort((a: Eventable, b: Eventable) => {
-      const aTime = "role" in a ? a.event.beginsOn : a.beginsOn;
-      const bTime = "role" in b ? b.event.beginsOn : b.beginsOn;
-      return new Date(bTime).getTime() - new Date(aTime).getTime();
-    });
-  } else {
-    res.sort((a: Eventable, b: Eventable) => {
-      const aTime = "role" in a ? a.event.beginsOn : a.beginsOn;
-      const bTime = "role" in b ? b.event.beginsOn : b.beginsOn;
-      return new Date(aTime).getTime() - new Date(bTime).getTime();
-    });
-  }
+  // sort by start date, ascending
+  res.sort((a: Eventable, b: Eventable) => {
+    const aTime = "role" in a ? a.event.beginsOn : a.beginsOn;
+    const bTime = "role" in b ? b.event.beginsOn : b.beginsOn;
+    return new Date(aTime).getTime() - new Date(bTime).getTime();
+  });
   return res.reduce((acc: Map<string, Eventable[]>, element: Eventable) => {
     const month = new Date(
       "role" in element ? element.event.beginsOn : element.beginsOn
