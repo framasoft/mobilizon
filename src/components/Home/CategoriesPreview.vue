@@ -1,5 +1,6 @@
 <template>
   <section
+    v-if="promotedCategories.length > 1"
     class="mx-auto container flex flex-wrap items-center justify-center gap-3 md:gap-5 my-3"
   >
     <CategoryCard
@@ -10,7 +11,6 @@
       :imageLazy="false"
     />
     <router-link
-      v-if="promotedCategories.length > 0"
       :to="{ name: RouteName.CATEGORIES }"
       class="flex items-end brightness-85 h-36 w-36 md:h-52 md:w-52 rounded-lg font-semibold text-lg md:text-xl p-4 text-white bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 hover:text-slate-200"
     >
@@ -47,13 +47,17 @@ const eventCategoryLabel = (categoryId: string): string | undefined => {
   return eventCategories.value?.find(({ id }) => categoryId == id)?.label;
 };
 
-const promotedCategories = computed((): CategoryStatsModel[] => {
-  return shuffle(
-    categoryStats.value.filter(
-      ({ key, number }) =>
-        key !== "MEETING" && number >= 1 && categoriesWithPictures.includes(key)
-    )
-  )
+const promotedCategories = computed((): CategoryStatsModel[] | null => {
+  const relevant_categories = categoryStats.value.filter(
+    ({ key, number }) =>
+      key !== "MEETING" && number >= 1 && categoriesWithPictures.includes(key)
+  );
+
+  if (relevant_categories.length <= 1) {
+    return [];
+  }
+
+  return shuffle(relevant_categories)
     .map(({ key, number }) => ({
       key,
       number,
