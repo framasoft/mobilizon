@@ -9,12 +9,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Media do
   alias Mobilizon.Federation.ActivityStream
   alias Mobilizon.Medias
   alias Mobilizon.Medias.Media, as: MediaModel
-
+  alias Mobilizon.Service.HTTP.RemoteMediaDownloaderClient
   alias Mobilizon.Web.Upload
-
-  @http_options [
-    ssl: [{:versions, [:"tlsv1.2"]}]
-  ]
 
   @doc """
   Convert a media struct to an ActivityStream representation.
@@ -65,7 +61,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Media do
   defp upload_media(media_url, ""), do: upload_media(media_url, "unknown")
 
   defp upload_media(media_url, name) do
-    case Tesla.get(media_url, opts: @http_options) do
+    case RemoteMediaDownloaderClient.get(media_url) do
       {:ok, %{body: body}} ->
         case Upload.store(%{body: body, name: name}) do
           {:ok, %{url: _url} = uploaded} ->
