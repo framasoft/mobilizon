@@ -1,8 +1,7 @@
 <template>
   <o-taginput
     :modelValue="modelValueWithDisplayName"
-    @remove="remove"
-    @add="add"
+    @update:modelValue="updateTags"
     :data="availableActors"
     :allow-autocomplete="true"
     :allow-new="false"
@@ -25,17 +24,6 @@ import { useLazyQuery } from "@vue/apollo-composable";
 import { computed, ref } from "vue";
 import ActorInline from "./ActorInline.vue";
 import { useI18n } from "vue-i18n";
-
-// TODO It seems that '@update:modelValue="updateTags"' does not works anymore...
-// so temporarily call the function updateTags() at remove and add tag event
-// https://github.com/oruga-ui/oruga/issues/967
-function remove() {
-  updateTags(modelValueWithDisplayName.value);
-}
-
-function add() {
-  updateTags(modelValueWithDisplayName.value);
-}
 
 const emit = defineEmits<{
   "update:modelValue": [value: IActor[]];
