@@ -2,7 +2,6 @@
   <div class="">
     <div class="text-end">
       <button @click="emit('close')">
-        <Close />
         <span class="sr-only">{{ t("Close map") }}</span>
       </button>
     </div>
@@ -165,7 +164,8 @@ const addressLinkToRouteByTransit = computed((): undefined | string => {
 </script>
 <style lang="scss" scoped>
 section.map {
-  height: 75vh;
+  height: 60vh;
   width: 100%;
+  margin-top: 10px;
 }
 </style>

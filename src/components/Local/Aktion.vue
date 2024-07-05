@@ -1,14 +1,11 @@
 <template>
-  <close-content
-    class="container mx-auto px-2"
-    v-show="loading || (events && events.total > 0)"
-    :suggestGeoloc="suggestGeoloc"
-    v-on="attrs"
-    @doGeoLoc="emit('doGeoLoc')"
-    :doingGeoloc="doingGeoloc"
-  >
+<close-content
+  class="container mx-auto px-2"
+  v-show="loading || (events && events.total > 0)"
+  v-on="attrs"
+>
 	<template #title>
-		{{ t("Events close to you") }}
+		{{ t("Aktionen & Demonstrationen") }}
 	</template>
     <template #content>
       <skeleton-event-result
@@ -31,9 +28,9 @@
 		lon: $route.query.lon,
 		contentType: 'EVENTS',
 		distance: `${$route.query.distance}_km`,
+		categoryOneOf: 'AKTION_DEMO'
 	},
         }"
-        :picture="userLocation?.picture"
       >
         {{
           t("View more events")
@@ -97,6 +94,7 @@ const {
   SEARCH_EVENTS_AND_GROUPS,
   () => ({
     location: geoHash.value,
+    categoryOneOf: ["AKTION_DEMO"], 
     beginsOn: now.value,
     endsOn: undefined,
     radius: distance.value,

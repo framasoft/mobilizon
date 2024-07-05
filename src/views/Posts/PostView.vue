@@ -17,9 +17,6 @@
       ]"
     />
     <header>
-      <div class="flex justify-center">
-        <lazy-image-wrapper :picture="post.picture" />
-      </div>
       <div class="relative flex flex-col">
         <div
           class="px-2 py-3 flex flex-wrap gap-4 justify-center items-center"
@@ -216,6 +213,9 @@
         <tag>{{ tag.title }}</tag>
       </router-link>
     </section>
+    <div class="flex justify-center">
+        <lazy-image-wrapper :picture="post.picture" />
+      </div>
     <o-modal
       :close-button-aria-label="t('Close')"
       v-model:active="isReportModalActive"
