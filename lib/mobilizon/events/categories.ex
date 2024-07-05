@@ -32,6 +32,22 @@ defp build_in_categories do
       label: gettext("Bildung")
     },
     %{
+      id: :bildungsurlaub,
+      label: gettext("Bildungsurlaub")
+    },
+    %{
+      id: :streik,
+      label: gettext("Streik")
+    },
+    %{
+      id: :vorbereitungstreffen,
+      label: gettext("Vorbereitungstreffen")
+    },
+    %{
+      id: :musik,
+      label: gettext("Musik")
+    },
+    %{
       id: :kreativ,
       label: gettext("Kreativ")
     },
