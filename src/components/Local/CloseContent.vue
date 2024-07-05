@@ -7,14 +7,14 @@
         >
           <slot name="title" />
         </h2>
-
       </div>
       <slot name="subtitle" />
     </div>
     <div class="" v-show="showScrollLeftButton">
       <button
         @click="scrollLeft"
-        class="arrow absolute inset-y-0 my-auto z-50 rounded-full bg-white dark:bg-violet-2 w-10 h-10 border border-shadowColor -left-5 ml-2"      >
+        class="arrow absolute inset-y-0 my-auto z-30 rounded-full bg-white dark:bg-violet-2 w-10 h-10 border border-shadowColor -left-5 ml-2"
+      >
         <span class="">&lt;</span>
       </button>
     </div>
@@ -30,7 +30,8 @@
     <div class="" v-show="showScrollRightButton">
       <button
         @click="scrollRight"
-        class="arrow absolute inset-y-0 my-auto z-50 rounded-full bg-white dark:bg-violet-2 w-10 h-10 border border-shadowColor -right-5 mr-2"      >
+        class="arrow absolute inset-y-0 my-auto z-30 rounded-full bg-white dark:bg-violet-2 w-10 h-10 border border-shadowColor -right-5 mr-2"
+      >
         <span class="">&gt;</span>
       </button>
     </div>
@@ -39,7 +40,6 @@
 
 <script lang="ts" setup>
 import { onMounted, onUnmounted, ref } from "vue";
-import { useI18n } from "vue-i18n";
 
 withDefaults(
   defineProps<{
@@ -48,10 +48,6 @@ withDefaults(
   }>(),
   { suggestGeoloc: true, doingGeoloc: false }
 );
-
-const emit = defineEmits(["doGeoLoc"]);
-
-const { t } = useI18n({ useScope: "global" });
 
 const showScrollRightButton = ref(false);
 const showScrollLeftButton = ref(false);
