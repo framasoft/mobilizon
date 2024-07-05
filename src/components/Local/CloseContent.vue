@@ -8,22 +8,13 @@
           <slot name="title" />
         </h2>
 
-        <o-button
-          :disabled="doingGeoloc"
-          v-if="suggestGeoloc"
-          class="inline-flex bg-primary rounded text-white flex-initial px-4 py-2 justify-center w-full md:w-min whitespace-nowrap"
-          @click="emit('doGeoLoc')"
-        >
-          {{ t("Geolocate me") }}
-        </o-button>
       </div>
       <slot name="subtitle" />
     </div>
     <div class="" v-show="showScrollLeftButton">
       <button
         @click="scrollLeft"
-        class="absolute inset-y-0 my-auto z-10 rounded-full bg-white dark:bg-transparent w-10 h-10 border border-shadowColor -left-5 ml-2"
-      >
+        class="arrow absolute inset-y-0 my-auto z-50 rounded-full bg-white dark:bg-violet-2 w-10 h-10 border border-shadowColor -left-5 ml-2"      >
         <span class="">&lt;</span>
       </button>
     </div>
@@ -39,8 +30,7 @@
     <div class="" v-show="showScrollRightButton">
       <button
         @click="scrollRight"
-        class="absolute inset-y-0 my-auto z-10 rounded-full bg-white dark:bg-transparent w-10 h-10 border border-shadowColor -right-5 mr-2"
-      >
+        class="arrow absolute inset-y-0 my-auto z-50 rounded-full bg-white dark:bg-violet-2 w-10 h-10 border border-shadowColor -right-5 mr-2"      >
         <span class="">&gt;</span>
       </button>
     </div>
@@ -116,3 +106,9 @@ onUnmounted(() => {
   }
 });
 </script>
+<style scoped>
+.arrow {
+  border-width: 2.5px;
+  scale: 1.2;
+}
+</style>

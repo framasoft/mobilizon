@@ -1,14 +1,11 @@
 <template>
-  <close-content
-    class="container mx-auto px-2"
-    v-show="loading || (events && events.total > 0)"
-    :suggestGeoloc="suggestGeoloc"
-    v-on="attrs"
-    @doGeoLoc="emit('doGeoLoc')"
-    :doingGeoloc="doingGeoloc"
-  >
+<close-content
+  class="container mx-auto px-2"
+  v-show="loading || (events && events.total > 0)"
+  v-on="attrs"
+>
 	<template #title>
-		{{ t("Events close to you") }}
+		{{ t("Politische Bildung") }}
 	</template>
     <template #content>
       <skeleton-event-result
@@ -31,9 +28,9 @@
 		lon: $route.query.lon,
 		contentType: 'EVENTS',
 		distance: `${$route.query.distance}_km`,
+                categoryOneOf: 'BILDUNG'
 	},
         }"
-        :picture="userLocation?.picture"
       >
         {{
           t("View more events")
@@ -48,7 +45,7 @@ import { LocationType } from "../../types/user-location.model";
 import MoreContent from "./MoreContent.vue";
 import CloseContent from "./CloseContent.vue";
 import { computed, onMounted, useAttrs } from "vue";
-import { SEARCH_EVENTS_AND_GROUPS } from "@/graphql/search";
+import { SEARCH_EVENTS } from "@/graphql/search";
 import { IEvent } from "@/types/event.model";
 import { useLazyQuery } from "@vue/apollo-composable";
 import EventCard from "../Event/EventCard.vue";
@@ -94,15 +91,17 @@ const {
 } = useLazyQuery<{
   searchEvents: Paginate<IEvent>;
 }>(
-  SEARCH_EVENTS_AND_GROUPS,
+  SEARCH_EVENTS,
   () => ({
     location: geoHash.value,
+    category: "BILDUNG", 
     beginsOn: now.value,
     endsOn: undefined,
     radius: distance.value,
     eventPage: 1,
     limit: EVENT_PAGE_LIMIT,
     sortByEvents: "START_TIME_ASC",
+    groupPreferredUsername: "verdi_hamburg"
   }),
   () => ({
     enabled: searchEnabled.value,

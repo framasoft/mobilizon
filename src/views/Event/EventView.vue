@@ -272,7 +272,7 @@
         <template #default>
           <event-map
             v-if="showMap"
-            :routingType="routingType ?? RoutingType.OPENSTREETMAP"
+            :routingType="RoutingType.GOOGLE_MAPS"
             :address="event.physicalAddress"
             @close="showMap = false"
           />

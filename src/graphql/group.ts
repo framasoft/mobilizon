@@ -43,6 +43,7 @@ export const LIST_GROUPS = gql`
             title
             status
             beginsOn
+	    endsOn
           }
           total
         }
@@ -148,7 +149,9 @@ export const GROUP_BASIC_FIELDS_FRAGMENTS = gql`
         uuid
         title
         beginsOn
-        status
+	endsOn
+        category
+	status
         draft
         language
         options {
