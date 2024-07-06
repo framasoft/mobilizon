@@ -22,7 +22,12 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { computed } from "vue";
+import { computed, watch } from "vue";
+import { useI18n } from "vue-i18n";
+
+const { locale } = useI18n({ useScope: "global" });
+
+const localeConverted = locale.replace("_", "-");
 
 const props = withDefaults(
   defineProps<{
@@ -35,15 +40,15 @@ const props = withDefaults(
 const dateObj = computed<Date>(() => new Date(props.date));
 
 const month = computed<string>(() =>
-  dateObj.value.toLocaleString(undefined, { month: "short" })
+  dateObj.value.toLocaleString(localeConverted, { month: "short" })
 );
 
 const day = computed<string>(() =>
-  dateObj.value.toLocaleString(undefined, { day: "numeric" })
+  dateObj.value.toLocaleString(localeConverted, { day: "numeric" })
 );
 
 const weekday = computed<string>(() =>
-  dateObj.value.toLocaleString(undefined, { weekday: "short" })
+  dateObj.value.toLocaleString(localeConverted, { weekday: "short" })
 );
 
 const smallStyle = computed<string>(() => (props.small ? "1.2" : "2"));

@@ -195,6 +195,10 @@ onMounted(async () => {
   pictureFile.value = await buildFileFromIMedia(post.value?.picture);
 });
 
+// This is useful when post data is already cached from the API during navigation inside the app
+editablePost.value = { ...editablePost.value, ...post.value };
+
+// This watch() function is useful when post data loads directly from the API upon page load
 watch(post, async (newPost: IPost | undefined, oldPost: IPost | undefined) => {
   if (oldPost?.picture !== newPost?.picture) {
     pictureFile.value = await buildFileFromIMedia(post.value?.picture);

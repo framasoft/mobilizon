@@ -32,7 +32,7 @@
         <div class="flex-1" v-else>
           {{ `@${selectedActor.preferredUsername}` }}
         </div>
-        <o-button type="text" @click="isComponentModalActive = true">
+        <o-button @click="isComponentModalActive = true">
           {{ $t("Change") }}
         </o-button>
       </div>

@@ -271,6 +271,7 @@
       >
         <template #default>
           <event-map
+            v-if="showMap"
             :routingType="routingType ?? RoutingType.OPENSTREETMAP"
             :address="event.physicalAddress"
             @close="showMap = false"

@@ -34,7 +34,7 @@
     "@apollo/client": "^3.3.16",
     "@framasoft/socket": "^1.0.0",
     "@framasoft/socket-apollo-link": "^1.0.0",
-    "@oruga-ui/oruga-next": "0.8.12",
+    "@oruga-ui/oruga-next": "^0.8.10",
     "@oruga-ui/theme-oruga": "^0.2.0",
     "@fullcalendar/core": "^6.1.10",
     "@fullcalendar/daygrid": "^6.1.10",
