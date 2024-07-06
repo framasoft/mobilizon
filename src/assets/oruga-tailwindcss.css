@@ -45,7 +45,7 @@ body {
   @apply border-2 border-mbz-success bg-transparent text-mbz-success hover:bg-mbz-success hover:text-white;
 }
 .btn-outlined-warning {
-  @apply bg-transparent border dark:text-white hover:dark:text-slate-900 hover:bg-mbz-warning border-mbz-warning;
+  @apply border-2 bg-transparent dark:text-white hover:dark:text-slate-900 hover:bg-mbz-warning border-mbz-warning;
 }
 .btn-outlined-danger {
   @apply border-2 bg-transparent border-mbz-danger text-mbz-danger hover:bg-mbz-danger hover:text-white;
