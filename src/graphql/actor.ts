@@ -16,12 +16,15 @@ export const ACTOR_FRAGMENT = gql`
   }
 `;
 
+// Do not request mediaSize here because mediaSize can only be accessed
+// by user_himself/moderator/administrator (can_get_actor_size? in media.ex)
+// - FETCH_PERSON is used by <NewConversation> and can be used by simple users here
+// - FETCH_PERSON is also used in <EditIdentity> but mediaSize is not used there
 export const FETCH_PERSON = gql`
   query FetchPerson($username: String!) {
     fetchPerson(preferredUsername: $username) {
       ...ActorFragment
       suspended
-      mediaSize
       avatar {
         id
         name

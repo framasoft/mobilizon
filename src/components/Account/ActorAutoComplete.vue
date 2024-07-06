@@ -1,7 +1,7 @@
 <template>
   <o-taginput
     :modelValue="modelValueWithDisplayName"
-    @update:modelValue="(val: IActor[]) => $emit('update:modelValue', val)"
+    @update:modelValue="updateTags"
     :data="availableActors"
     :allow-autocomplete="true"
     :allow-new="false"
@@ -25,12 +25,16 @@ import { computed, ref } from "vue";
 import ActorInline from "./ActorInline.vue";
 import { useI18n } from "vue-i18n";
 
-const props = defineProps<{
-  modelValue: IActor[];
+const emit = defineEmits<{
+  "update:modelValue": [value: IActor[]];
 }>();
 
-defineEmits<{
-  "update:modelValue": [value: IActor[]];
+const updateTags = (val: IActor[]) => {
+  emit("update:modelValue", val);
+};
+
+const props = defineProps<{
+  modelValue: IActor[];
 }>();
 
 const modelValue = computed(() => props.modelValue);
