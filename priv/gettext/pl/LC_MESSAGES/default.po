@@ -3,17 +3,17 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:40+0000\n"
-"PO-Revision-Date: 2023-10-22 04:28+0000\n"
-"Last-Translator: Jakub Urbanowicz <tex@przeklad.pl>\n"
+"PO-Revision-Date: 2024-07-04 23:35+0000\n"
+"Last-Translator: ewm <gnu.ewm@protonmail.com>\n"
 "Language-Team: Polish <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/pl/>\n"
 "Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
-"|| n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 5.0.1\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
+"|| n%100>=20) ? 1 : 2);\n"
+"X-Generator: Weblate 5.6.2\n"
 
 #: lib/web/templates/email/password_reset.html.heex:66
 #, elixir-autogen, elixir-format
@@ -2373,30 +2373,32 @@ msgstr "Data rejestracji uczestnika"
 #: lib/web/templates/email/event_participation_confirmed.html.heex:122
 #, elixir-autogen, elixir-format
 msgid "Cancel my attendance"
-msgstr ""
+msgstr "Anuluj moją obecność"
 
 #: lib/web/templates/email/anonymous_participation_confirmation.html.heex:90
 #: lib/web/templates/email/event_participation_confirmed.html.heex:99
 #, elixir-autogen, elixir-format
 msgid "If you wish to cancel your participation, simply click on the link below."
-msgstr ""
+msgstr "Jeśli chcesz anulować swój udział, kliknij poniższy link."
 
 #: lib/web/email/admin.ex:142
 #, elixir-autogen, elixir-format
 msgid "Email configuration test for %{instance}"
-msgstr ""
+msgstr "Test konfiguracji poczty e-mail dla %{instance}"
 
 #: lib/web/templates/email/email_configuration_test.html.heex:47
 #: lib/web/templates/email/email_configuration_test.text.eex:3
 #, elixir-autogen, elixir-format
 msgid "If you received this email, the email configuration seems to be correct."
 msgstr ""
+"Jeśli otrzymano tę wiadomość e-mail, konfiguracja poczty wydaje się być "
+"poprawna."
 
 #: lib/web/templates/email/email_configuration_test.html.heex:18
 #: lib/web/templates/email/email_configuration_test.text.eex:1
 #, elixir-autogen, elixir-format
 msgid "Well done!"
-msgstr ""
+msgstr "Dobra robota!"
 
 #: lib/web/templates/api/terms.html.heex:55
 #, elixir-autogen, elixir-format, fuzzy

@@ -8,16 +8,16 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2023-10-22 23:11+0000\n"
-"Last-Translator: Jakub Urbanowicz <tex@przeklad.pl>\n"
+"PO-Revision-Date: 2024-07-04 23:35+0000\n"
+"Last-Translator: ewm <gnu.ewm@protonmail.com>\n"
 "Language-Team: Polish <https://weblate.framasoft.org/projects/mobilizon/"
 "backend-errors/pl/>\n"
 "Language: pl\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
-"|| n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 5.0.1\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
+"|| n%100>=20) ? 1 : 2);\n"
+"X-Generator: Weblate 5.6.2\n"
 
 #: lib/mobilizon/discussions/discussion.ex:68
 #, elixir-autogen
@@ -1457,9 +1457,9 @@ msgstr ""
 #: lib/graphql/resolvers/conversation.ex:164
 #, elixir-autogen, elixir-format
 msgid "Conversation needs to mention at least one participant that's not yourself"
-msgstr ""
+msgstr "Konwersacja musi zawierać co najmniej jedną wzmiankę o innym uczestniku"
 
 #: lib/graphql/resolvers/participant.ex:401
 #, elixir-autogen, elixir-format
 msgid "There are no participants matching the audience you've selected."
-msgstr ""
+msgstr "Nie ma uczestników pasujących do wybranej grupy odbiorców."
