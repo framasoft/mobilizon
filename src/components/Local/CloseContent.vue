@@ -90,7 +90,6 @@ onMounted(async () => {
   setTimeout(() => {
     scrollHandler();
   }, 1500);
-  scrollContainer.value.addEventListener("wheel", scrollHorizontalToVertical);
 });
 
 onUnmounted(() => {
