@@ -111,7 +111,7 @@ defmodule Mobilizon.Service.Geospatial.Nominatim do
           ""
       end
 
-    Map.get(body, "housenumber", "") <> " " <> road
+    road <> " " <> Map.get(body, "housenumber", "")
   end
 
   @address29_classes ["amenity", "shop", "tourism", "leisure"]

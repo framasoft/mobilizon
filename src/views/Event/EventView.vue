@@ -260,6 +260,7 @@
         </h2>
         <multi-card :events="event?.relatedEvents ?? []" />
       </section>
+    <div class="main-modal">
       <o-modal
         v-model:active="showMap"
         :close-button-aria-label="t('Close')"
@@ -278,6 +279,7 @@
           />
         </template>
       </o-modal>
+      </div>
     </div>
   </div>
 </template>

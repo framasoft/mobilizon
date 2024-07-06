@@ -512,8 +512,9 @@
         </aside>
         <div class="main-content min-w-min flex-auto py-0 px-2">
           <section>
+            <div v-if="organizedEvents.elements.length < 1">
+            <h2 class="text-xl font-bold">{{ t("Upcoming events") }}</h2>
             <empty-content
-              v-if="organizedEvents.elements.length = 0"
               icon="calendar"
               :inline="true"
               description-classes="flex flex-col items-stretch"
@@ -544,6 +545,7 @@
                 >
               </template>
             </empty-content>
+          </div>
             <!-- <o-skeleton animated v-else-if="$apollo.loading"></o-skeleton> -->
 
         <div v-if="group && EventsStreik.elements.length > 0">
@@ -652,7 +654,8 @@
             <h2 class="text-xl font-bold">{{ t("Upcoming events") }}</h2>
             <div class="main-event-list">
             <div
-              class="event-list flex flex-col gap-3 w-[960px]" >
+              class="event-list flex flex-col gap-3 w-[960px]"
+              v-if="group && EventsMeeting.elements.length > 0" >
               <close-content
                 class="container mx-auto px-2"
                 v-show="groupLoading || (group && EventsMeeting.elements.length > 0)"

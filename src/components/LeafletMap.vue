@@ -1,75 +1,22 @@
 <template>
   <div class="map-container">
-    <l-map
-      :zoom="mergedOptions.zoom"
+    <div
+      ref="mapContainer"
       :style="{ height: mergedOptions.height, width: mergedOptions.width }"
-      class="leaflet-map"
-      :center="[lat, lon]"
-      @click="clickMap"
-      @update:zoom="updateZoom"
-      :options="{ zoomControl: false }"
-      ref="mapComponent"
-      @ready="onMapReady"
-    >
-      <l-tile-layer :url="tiles?.endpoint" :attribution="attribution">
-      </l-tile-layer>
-      <l-control-zoom
-        position="topleft"
-        :zoomInTitle="$t('Zoom in')"
-        :zoomOutTitle="$t('Zoom out')"
-      ></l-control-zoom>
-      <l-marker
-        v-if="lat && lon"
-        :lat-lng="[lat, lon]"
-        @add="openPopup"
-        @update:latLng="updateDraggableMarkerPositionDebounced"
-        :draggable="!readOnly"
-      >
-        <l-icon
-          :icon-size="[48, 48]"
-          :shadow-size="[30, 30]"
-          :icon-anchor="[24, 48]"
-          :popup-anchor="[-24, -40]"
-        >
-          <MapMarker :size="48" class="text-mbz-purple" />
-        </l-icon>
-        <l-popup v-if="popupMultiLine" :options="{ offset: new Point(22, 8) }">
-          <span v-for="line in popupMultiLine" :key="line"
-            >{{ line }}<br
-          /></span>
-        </l-popup>
-      </l-marker>
-    </l-map>
+      class="maplibre-map"
+    ></div>
     <CrosshairsGps ref="locationIcon" class="hidden" />
   </div>
 </template>
 
 <script lang="ts" setup>
-import {
-  LatLng,
-  LeafletMouseEvent,
-  LeafletEvent,
-  Control,
-  DomUtil,
-  Map,
-  Point,
-} from "leaflet";
-import "leaflet/dist/leaflet.css";
-import {
-  LMap,
-  LTileLayer,
-  LMarker,
-  LPopup,
-  LIcon,
-  LControlZoom,
-} from "@vue-leaflet/vue-leaflet";
-import { computed, nextTick, ref } from "vue";
+import { computed, nextTick, ref, onMounted } from "vue";
 import { useMapTiles } from "@/composition/apollo/config";
 import { useI18n } from "vue-i18n";
-import Locatecontrol from "leaflet.locatecontrol";
 import CrosshairsGps from "vue-material-design-icons/CrosshairsGps.vue";
-import MapMarker from "vue-material-design-icons/MapMarker.vue";
 import { useDebounceFn } from "@vueuse/core";
+import maplibregl from 'maplibre-gl';
+import 'maplibre-gl/dist/maplibre-gl.css';
 
 const props = withDefaults(
   defineProps<{
@@ -96,56 +43,37 @@ const defaultOptions: {
 
 const zoom = ref(defaultOptions.zoom);
 
-const mapComponent = ref();
-const mapObject = ref<Map>();
-const locateControl = ref<Control.Locate>();
+const mapContainer = ref<HTMLElement | null>(null);
+const mapObject = ref<maplibregl.Map | null>(null);
 const locationIcon = ref();
 
 const locationIconHTML = computed(() => locationIcon.value?.$el.innerHTML);
 
 const onMapReady = async () => {
-  mapObject.value = mapComponent.value.leafletObject;
-  mountLocateControl();
+  if (mapObject.value) {
+    mountLocateControl();
+  }
 };
 
 const mountLocateControl = () => {
   if (canDoGeoLocation.value && mapObject.value) {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    locateControl.value = new Locatecontrol({
-      strings: { title: t("Show me where I am") as string },
-      position: "topleft",
-      drawCircle: false,
-      drawMarker: false,
-      createButtonCallback(container: HTMLElement | undefined, options: any) {
-        const link = DomUtil.create(
-          "a",
-          "leaflet-bar-part leaflet-bar-part-single",
-          container
-        );
-        link.title = options.strings.title;
-        link.href = "#";
-        link.setAttribute("role", "button");
-
-        const icon = DomUtil.create(
-          "span",
-          "material-design-icon rss-icon",
-          link
-        );
-        icon.setAttribute("aria-hidden", "true");
-        icon.setAttribute("role", "img");
-        icon.insertAdjacentHTML("beforeend", locationIconHTML.value);
-        return { link, icon };
+    const locateControl = new maplibregl.GeolocateControl({
+      positionOptions: {
+        enableHighAccuracy: true,
       },
-      ...props.options,
-    }) as Control.Locate;
-    locateControl.value?.addTo(mapObject.value);
-  }
-};
+      trackUserLocation: true,
+      showAccuracyCircle: true,
+      showUserLocation: true,
+    });
 
-const openPopup = async (event: LeafletEvent): Promise<void> => {
-  await nextTick();
-  event.target.openPopup();
+    mapObject.value.addControl(locateControl, 'top-left');
+
+    const icon = document.createElement('div');
+    icon.innerHTML = locationIconHTML.value || '';
+    icon.className = 'material-design-icon rss-icon';
+
+    locateControl._geolocateButton.appendChild(icon);
+  }
 };
 
 const mergedOptions = computed((): Record<string, unknown> => {
@@ -170,18 +98,18 @@ const popupMultiLine = computed((): Array<string> | undefined => {
   return undefined;
 });
 
-const clickMap = (event: LeafletMouseEvent): void => {
-  updateDraggableMarkerPositionDebounced(event.latlng);
+const clickMap = (event: maplibregl.MapMouseEvent): void => {
+  updateDraggableMarkerPositionDebounced([event.lngLat.lat, event.lngLat.lng]);
 };
 
-const updateDraggableMarkerPosition = (e: LatLng): void => {
+const updateDraggableMarkerPosition = (coords: [number, number]): void => {
   if (props.updateDraggableMarkerCallback) {
-    props.updateDraggableMarkerCallback(e, zoom.value);
+    props.updateDraggableMarkerCallback(coords, zoom.value);
   }
 };
 
-const updateDraggableMarkerPositionDebounced = useDebounceFn((e: LatLng) => {
-  updateDraggableMarkerPosition(e);
+const updateDraggableMarkerPositionDebounced = useDebounceFn((coords: [number, number]) => {
+  updateDraggableMarkerPosition(coords);
 }, 1000);
 
 const updateZoom = (newZoom: number): void => {
@@ -192,29 +120,85 @@ const { tiles } = useMapTiles();
 
 const { t } = useI18n({ useScope: "global" });
 
-const attribution = computed((): string => {
-  return tiles.value?.attribution ?? t("© The OpenStreetMap Contributors");
-});
-
 const canDoGeoLocation = computed((): boolean => {
   return window.isSecureContext;
 });
+
+// URLs für die Kartenstile
+const styleUrlLight = "https://api.maptiler.com/maps/streets-v2/style.json?key=HXt3vGyjL1Z3Eo8HjFVa";
+const styleUrlDark = "https://api.maptiler.com/maps/streets-v2-dark/style.json?key=HXt3vGyjL1Z3Eo8HjFVa"; // Beispiel für eine Dark Mode Karte
+
+onMounted(() => {
+  // Prüfen, ob der Dark Mode aktiv ist
+  const isDarkMode = document.documentElement.classList.contains('dark');
+  const styleUrl = isDarkMode ? styleUrlDark : styleUrlLight;
+
+  if (mapContainer.value) {
+    mapObject.value = new maplibregl.Map({
+      container: mapContainer.value,
+      style: styleUrl,
+      center: [lon.value, lat.value],
+      zoom: mergedOptions.value.zoom as number,
+    });
+
+    mapObject.value.on('load', onMapReady);
+
+    // Add NavigationControl (zoom buttons)
+    mapObject.value.addControl(new maplibregl.NavigationControl(), 'top-right');
+
+    if (lat.value && lon.value) {
+      const marker = new maplibregl.Marker({
+        draggable: !props.readOnly,
+      })
+        .setLngLat([lon.value, lat.value])
+        .addTo(mapObject.value);
+
+      marker.on('dragend', () => {
+        const lngLat = marker.getLngLat();
+        updateDraggableMarkerPositionDebounced([lngLat.lat, lngLat.lng]);
+      });
+
+      if (popupMultiLine.value) {
+        // Hier wird das Popup automatisch geöffnet, wenn es Daten gibt
+        const popup = new maplibregl.Popup({ offset: 25 }).setHTML(
+          popupMultiLine.value.map(line => `<span>${line}</span><br />`).join('')
+        );
+        marker.setPopup(popup).togglePopup(); // Popup automatisch öffnen
+      }
+    }
+
+    mapObject.value.on('click', clickMap);
+    mapObject.value.on('zoom', () => {
+      updateZoom(mapObject.value?.getZoom() || 0);
+    });
+  }
+});
 </script>
+
 <style lang="scss" scoped>
 div.map-container {
   height: 100%;
   width: 100%;
 
-  .leaflet-map {
+  .maplibre-map {
     z-index: 20;
   }
 }
+
+.material-design-icon.rss-icon {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+}
 </style>
 <style>
-@import "leaflet.locatecontrol/dist/L.Control.Locate.css";
+@import 'maplibre-gl/dist/maplibre-gl.css';
 
-.leaflet-div-icon {
+.maplibre-div-icon {
   background: unset !important;
   border: unset !important;
+}
+.maplibregl-popup-content {
+  color: black;
 }
 </style>
