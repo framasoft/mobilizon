@@ -127,15 +127,17 @@
 <script setup lang="ts">
 import { LOGIN } from "@/graphql/auth";
 import { LOGIN_CONFIG } from "@/graphql/config";
+import { LOGGED_USER_LOCATION } from "@/graphql/user";
 import { UPDATE_CURRENT_USER_CLIENT } from "@/graphql/user";
 import { IConfig } from "@/types/config.model";
-import { ILogin } from "@/types/login.model";
+import { IUser } from "@/types/current-user.model";
 import { saveUserData, SELECTED_PROVIDERS } from "@/utils/auth";
+import { storeUserLocationAndRadiusFromUserSettings } from "@/utils/location";
 import {
   initializeCurrentActor,
   NoIdentitiesException,
 } from "@/utils/identity";
-import { useMutation, useQuery } from "@vue/apollo-composable";
+import { useMutation, useLazyQuery, useQuery } from "@vue/apollo-composable";
 import { computed, reactive, ref, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
@@ -153,14 +155,14 @@ const route = useRoute();
 
 const { currentUser } = useCurrentUserClient();
 
-const { result: configResult } = useQuery<{
+const configQuery = useQuery<{
   config: Pick<
     IConfig,
     "auth" | "registrationsOpen" | "registrationsAllowlist"
   >;
 }>(LOGIN_CONFIG);
 
-const config = computed(() => configResult.value?.config);
+const config = computed(() => configQuery.result.value?.config);
 
 const canRegister = computed(() => {
   return (
@@ -181,85 +183,90 @@ const credentials = reactive({
 const redirect = useRouteQuery("redirect", "");
 const errorCode = useRouteQuery("code", null, enumTransformer(LoginErrorCode));
 
-const {
-  onDone: onLoginMutationDone,
-  onError: onLoginMutationError,
-  mutate: loginMutation,
-} = useMutation(LOGIN);
+// Login
+const loginMutation = useMutation(LOGIN);
+// Load user identities
+const currentUserIdentitiesQuery = useLazyCurrentUserIdentities();
+// Update user in cache
+const currentUserMutation = useMutation(UPDATE_CURRENT_USER_CLIENT);
+// Retrieve preferred location
+const loggedUserLocationQuery = useLazyQuery<{
+  loggedUser: IUser;
+}>(LOGGED_USER_LOCATION);
 
-onLoginMutationDone(async (result) => {
-  const data = result.data;
-  submitted.value = false;
-  if (data == null) {
-    throw new Error("Data is undefined");
-  }
-
-  saveUserData(data.login);
-  await setupClientUserAndActors(data.login);
-
-  if (redirect.value) {
-    console.debug("We have a redirect", redirect.value);
-    router.push(redirect.value);
-    return;
-  }
-  console.debug("No redirect, going to homepage");
-  if (window.localStorage) {
-    console.debug("Has localstorage, setting welcome back");
-    window.localStorage.setItem("welcome-back", "yes");
-  }
-  router.replace({ name: RouteName.HOME });
-  return;
-});
-
-onLoginMutationError((err) => {
-  console.error(err);
-  submitted.value = false;
-  if (err.graphQLErrors) {
-    err.graphQLErrors.forEach(({ message }: { message: string }) => {
-      errors.value.push(message);
-    });
-  } else if (err.networkError) {
-    errors.value.push(err.networkError.message);
-  }
-});
-
-const loginAction = (e: Event) => {
+// form submit action
+const loginAction = async (e: Event) => {
   e.preventDefault();
   if (submitted.value) {
     return;
   }
-
   submitted.value = true;
   errors.value = [];
 
-  loginMutation({
-    email: credentials.email,
-    password: credentials.password,
-  });
-};
-
-const { load: loadIdentities } = useLazyCurrentUserIdentities();
-
-const { onDone: onCurrentUserMutationDone, mutate: updateCurrentUserMutation } =
-  useMutation(UPDATE_CURRENT_USER_CLIENT);
-
-onCurrentUserMutationDone(async () => {
-  console.debug("Current user mutation done, now setuping actors…");
-  // since we fail to refresh the navbar properly, we force a page reload.
-  // see the explanation of the bug bellow
-  window.location = redirect.value || "/";
   try {
-    /* FIXME this promise never resolved the first time
-      no idea why !
-      this appends even with the last version of apollo-composable (4.0.2)
-      may be related to that : https://github.com/vuejs/apollo/issues/1543
-    */
-    const result = await loadIdentities();
-    console.debug("login, loadIdentities resolved");
-    if (!result) return;
-    await initializeCurrentActor(result.loggedUser.actors);
+    // Step 1: login the user
+    const { data: loginData } = await loginMutation.mutate({
+      email: credentials.email,
+      password: credentials.password,
+    });
+    submitted.value = false;
+    if (loginData == null) {
+      throw new Error("Login: user's data is undefined");
+    }
+
+    // Login saved to local storage
+    saveUserData(loginData.login);
+
+    // Step 2: save login in apollo cache
+    await currentUserMutation.mutate({
+      id: loginData.login.user.id,
+      email: credentials.email,
+      isLoggedIn: true,
+      role: loginData.login.user.role,
+    });
+
+    // Step 3a: Retrieving user location
+    const loggedUserLocationPromise = loggedUserLocationQuery.load();
+
+    // Step 3b: Setuping user's identities
+    // FIXME this promise never resolved the first time
+    // no idea why !
+    // this appends even with the last version of apollo-composable (4.0.2)
+    // may be related to that : https://github.com/vuejs/apollo/issues/1543
+    // EDIT: now it works :shrug:
+    const currentUserIdentitiesResult = await currentUserIdentitiesQuery.load();
+    if (!currentUserIdentitiesResult) {
+      throw new Error("Loading user's identities failed");
+    }
+
+    await initializeCurrentActor(currentUserIdentitiesResult.loggedUser.actors);
+
+    // Step 3a following
+    const loggedUserLocationResult = await loggedUserLocationPromise;
+    storeUserLocationAndRadiusFromUserSettings(
+      loggedUserLocationResult?.loggedUser?.settings?.location
+    );
+
+    // Soft redirect
+    if (redirect.value) {
+      console.debug("We have a redirect", redirect.value);
+      router.push(redirect.value);
+      return;
+    }
+    console.debug("No redirect, going to homepage");
+    if (window.localStorage) {
+      console.debug("Has localstorage, setting welcome back");
+      window.localStorage.setItem("welcome-back", "yes");
+    }
+    router.replace({ name: RouteName.HOME });
+
+    // Hard redirect
+    // since we fail to refresh the navbar properly, we force a page reload.
+    // see the explanation of the bug bellow
+    // window.location = redirect.value || "/";
   } catch (err: any) {
     if (err instanceof NoIdentitiesException && currentUser.value) {
+      console.debug("No identities, redirecting to profile registration");
       await router.push({
         name: RouteName.REGISTER_PROFILE,
         params: {
@@ -268,19 +275,17 @@ onCurrentUserMutationDone(async () => {
         },
       });
     } else {
-      throw err;
+      console.error(err);
+      submitted.value = false;
+      if (err.graphQLErrors) {
+        err.graphQLErrors.forEach(({ message }: { message: string }) => {
+          errors.value.push(message);
+        });
+      } else if (err.networkError) {
+        errors.value.push(err.networkError.message);
+      }
     }
   }
-});
-
-const setupClientUserAndActors = async (login: ILogin): Promise<void> => {
-  console.debug("Setuping client user and actors");
-  updateCurrentUserMutation({
-    id: login.user.id,
-    email: credentials.email,
-    isLoggedIn: true,
-    role: login.user.role,
-  });
 };
 
 const hasCaseWarning = computed<boolean>(() => {
