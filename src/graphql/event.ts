@@ -103,16 +103,22 @@ export const FETCH_EVENT_BASIC = gql`
 
 export const FETCH_EVENTS = gql`
   query FetchEvents(
+    $location: String
+    $radius: Float
     $orderBy: EventOrderBy
     $direction: SortDirection
     $page: Int
     $limit: Int
+    $longevents: Boolean
   ) {
     events(
+      location: $location
+      radius: $radius
       orderBy: $orderBy
       direction: $direction
       page: $page
       limit: $limit
+      longevents: $longevents
     ) {
       total
       elements {

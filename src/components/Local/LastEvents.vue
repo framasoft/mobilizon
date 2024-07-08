@@ -60,6 +60,7 @@ const { result: resultEvents, loading: loadingEvents } = useQuery<{
 }>(FETCH_EVENTS, {
   orderBy: EventSortField.BEGINS_ON,
   direction: SortDirection.ASC,
+  longevents: false,
 });
 const events = computed(
   () => resultEvents.value?.events ?? { total: 0, elements: [] }

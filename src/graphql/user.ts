@@ -138,6 +138,20 @@ export const USER_SETTINGS = gql`
   ${USER_SETTINGS_FRAGMENT}
 `;
 
+export const LOGGED_USER_LOCATION = gql`
+  query LoggedUserLocation {
+    loggedUser {
+      settings {
+        location {
+          range
+          geohash
+          name
+        }
+      }
+    }
+  }
+`;
+
 export const LOGGED_USER_TIMEZONE = gql`
   query LoggedUserTimezone {
     loggedUser {

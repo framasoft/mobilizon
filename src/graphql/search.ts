@@ -218,6 +218,7 @@ export const SEARCH_CALENDAR_EVENTS = gql`
       endsOn: $endsOn
       page: $eventPage
       limit: $limit
+      longevents: false
     ) {
       total
       elements {
