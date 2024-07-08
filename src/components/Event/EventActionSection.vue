@@ -28,7 +28,32 @@
           !event.options.hideNumberOfParticipants
         "
       >
-        <TicketConfirmationOutline />
+        <!-- We retire one because of the event creator who is a
+                participant -->
+        <span v-if="maximumAttendeeCapacity">
+          {{
+            t(
+              "{available}/{capacity} available places",
+              {
+                available:
+                  maximumAttendeeCapacity - event.participantStats.participant,
+                capacity: maximumAttendeeCapacity,
+              },
+              maximumAttendeeCapacity - event.participantStats.participant
+            )
+          }}
+        </span>
+        <span v-else>
+          {{
+            t(
+              "No one is participating|One person participating|{going} people participating",
+              {
+                going: event.participantStats.participant,
+              },
+              event.participantStats.participant
+            )
+          }}
+        </span>
         <router-link
           class="participations-link"
           v-if="canManageEvent && event?.draft === false"
@@ -37,33 +62,6 @@
             params: { eventId: event.uuid },
           }"
         >
-          <!-- We retire one because of the event creator who is a
-                    participant -->
-          <span v-if="maximumAttendeeCapacity">
-            {{
-              t(
-                "{available}/{capacity} available places",
-                {
-                  available:
-                    maximumAttendeeCapacity -
-                    event.participantStats.participant,
-                  capacity: maximumAttendeeCapacity,
-                },
-                maximumAttendeeCapacity - event.participantStats.participant
-              )
-            }}
-          </span>
-          <span v-else>
-            {{
-              t(
-                "No one is participating|One person participating|{going} people participating",
-                {
-                  going: event.participantStats.participant,
-                },
-                event.participantStats.participant
-              )
-            }}
-          </span>
         </router-link>
         <span v-else>
           <span v-if="maximumAttendeeCapacity">
@@ -354,7 +352,6 @@ import ContentDuplicate from "vue-material-design-icons/ContentDuplicate.vue";
 import Delete from "vue-material-design-icons/Delete.vue";
 import Pencil from "vue-material-design-icons/Pencil.vue";
 import HelpCircleOutline from "vue-material-design-icons/HelpCircleOutline.vue";
-import TicketConfirmationOutline from "vue-material-design-icons/TicketConfirmationOutline.vue";
 import Share from "vue-material-design-icons/Share.vue";
 import {
   EVENT_PERSON_PARTICIPATION,
