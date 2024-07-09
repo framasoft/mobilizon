@@ -8,7 +8,7 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2024-07-09 10:47+0000\n"
+"PO-Revision-Date: 2024-07-09 11:17+0000\n"
 "Last-Translator: omar lazzari <olazzari@gmail.com>\n"
 "Language-Team: Italian <https://weblate.framasoft.org/projects/mobilizon/"
 "activity/it/>\n"
@@ -537,26 +537,31 @@ msgstr "%{profile} ti ha risposto in una conversazione"
 #: lib/service/activity/renderer/conversation.ex:49
 #, elixir-autogen, elixir-format
 msgid "%{profile} sent a private message about event %{event}"
-msgstr ""
+msgstr "%{profile} ha inviato un messaggio privato riguardo l'evento %{event}"
 
 #: lib/service/activity/renderer/conversation.ex:23
 #, elixir-autogen, elixir-format
 msgid "%{profile} sent you a message"
-msgstr ""
+msgstr "%{profile} ti ha inviato un messaggio"
 
 #: lib/web/email/activity.ex:52
 #, elixir-autogen, elixir-format
 msgid "Informations about your event %{event}"
-msgstr ""
+msgstr "Informazioni sul tuo evento %{event}"
 
 #: lib/web/templates/email/email_anonymous_activity.html.heex:118
 #: lib/web/templates/email/email_anonymous_activity.text.eex:20
 #, elixir-autogen, elixir-format
 msgid "It might give details on how to join the event, so make sure to read it appropriately."
 msgstr ""
+"Potrebbe fornire dettagli su come partecipare all'evento, quindi assicurati "
+"di leggerlo con attenzione."
 
 #: lib/web/templates/email/email_anonymous_activity.html.heex:156
 #: lib/web/templates/email/email_anonymous_activity.text.eex:28
 #, elixir-autogen, elixir-format
 msgid "This information is sent privately to you as a person who registered for this event. Share the informations above with other people with caution."
 msgstr ""
+"Queste informazioni ti vengono inviate privatamente in quanto registrato "
+"all'evento. Condividi le informazioni di cui sopra con altre persone con "
+"cautela."
