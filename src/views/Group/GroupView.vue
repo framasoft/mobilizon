@@ -436,9 +436,9 @@
               >
             </o-notification>
             <event-metadata-block>
-              <section class="flex flex-col items-stretch">
+              <section class="test flex flex-col items-stretch">
                 <h2 class="text-xl font-bold">{{ t("Latest posts") }}</h2>
-                <div class="post-list">
+                <div class="post-list ml-[12px]">
               <group-page
                 v-if="isMobile"
                 :posts="posts.elements
@@ -508,6 +508,9 @@
                 </div>
               </div>
             </event-metadata-block>
+            <div class="ml-[12px] banner" v-if="!isMobile" >
+          <lazy-image-wrapper :picture="group.banner" />
+        </div>
           </div>
         </aside>
         <div class="main-content min-w-min flex-auto py-0 px-2">
@@ -798,6 +801,9 @@
                 >{{ t("View all events") }}</o-button
               >
             </div>
+        <div class="banner-mobile" v-if="isMobile" >
+          <lazy-image-wrapper :picture="group.banner" />
+        </div>
           </section>
         </div>
         <o-modal
@@ -838,7 +844,8 @@
   </template>
   
   <script lang="ts" setup>
-  import EventCard from "@/components/Event/EventCard.vue";
+import LazyImageWrapper from "@/components/Image/LazyImageWrapper.vue";
+import EventCard from "@/components/Event/EventCard.vue";
   import CloseContent from "@/components/Local/CloseContent.vue";
   import {
     displayName,

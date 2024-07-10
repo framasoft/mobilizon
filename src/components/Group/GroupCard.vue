@@ -27,7 +27,7 @@
       <div class="flex gap-1 mb-2">
         <div class="overflow-hidden flex-auto">
           <h3
-            class="text-2xl leading-5 line-clamp-3 font-bold text-violet-3 dark:text-white"
+            class="overflow-visibletext-2xl leading-5 line-clamp-3 font-bold text-violet-3 dark:text-white"
             dir="auto"
           >
             {{ displayName(group) }}

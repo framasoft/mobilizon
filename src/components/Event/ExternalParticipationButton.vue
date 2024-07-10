@@ -11,7 +11,7 @@
     :disabled="!event.externalParticipationUrl"
     icon-right="OpenInNew"
   >
-    {{ t("Go to booking") }}
+    {{ t("Participate") }}
   </o-button>
 </template>
 

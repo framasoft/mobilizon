@@ -28,32 +28,6 @@
           !event.options.hideNumberOfParticipants
         "
       >
-        <!-- We retire one because of the event creator who is a
-                participant -->
-        <span v-if="maximumAttendeeCapacity">
-          {{
-            t(
-              "{available}/{capacity} available places",
-              {
-                available:
-                  maximumAttendeeCapacity - event.participantStats.participant,
-                capacity: maximumAttendeeCapacity,
-              },
-              maximumAttendeeCapacity - event.participantStats.participant
-            )
-          }}
-        </span>
-        <span v-else>
-          {{
-            t(
-              "No one is participating|One person participating|{going} people participating",
-              {
-                going: event.participantStats.participant,
-              },
-              event.participantStats.participant
-            )
-          }}
-        </span>
         <router-link
           class="participations-link"
           v-if="canManageEvent && event?.draft === false"
@@ -62,6 +36,33 @@
             params: { eventId: event.uuid },
           }"
         >
+          <!-- We retire one because of the event creator who is a
+                    participant -->
+          <span v-if="maximumAttendeeCapacity">
+            {{
+              t(
+                "{available}/{capacity} available places",
+                {
+                  available:
+                    maximumAttendeeCapacity -
+                    event.participantStats.participant,
+                  capacity: maximumAttendeeCapacity,
+                },
+                maximumAttendeeCapacity - event.participantStats.participant
+              )
+            }}
+          </span>
+          <span v-else>
+            {{
+              t(
+                "No one is participating|One person participating|{going} people participating",
+                {
+                  going: event.participantStats.participant,
+                },
+                event.participantStats.participant
+              )
+            }}
+          </span>
         </router-link>
         <span v-else>
           <span v-if="maximumAttendeeCapacity">
