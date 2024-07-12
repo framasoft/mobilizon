@@ -1,5 +1,25 @@
 <template>
   <div>
+    <div
+        v-if="eventLoading"
+        class="animate-pulse mb-2 h-6 space-y-6 bg-slate-200 w-64"
+      />
+      <p v-else class="flex flex-wrap gap-1 items-center" dir="auto">
+        <tag v-if="eventCategory" class="category" capitalize>{{
+          eventCategory
+        }}</tag>
+        <router-link
+          class="rounded-md truncate text-sm text-violet-title py-1 bg-purple-3 dark:text-violet-3 category"
+          v-for="tag in event?.tags ?? []"
+          :key="tag.title"
+          :to="{ name: RouteName.TAG, params: { tag: tag.title } }"
+        >
+          <tag>{{ tag.title }}</tag>
+        </router-link>
+      </p>
+      <tag variant="warning" size="medium" v-if="event?.draft"
+        >{{ t("Draft") }}
+      </tag>
     <event-metadata-block
       v-if="!event.options.isOnline"
       :title="t('Location')"

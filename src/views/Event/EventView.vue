@@ -1,5 +1,5 @@
 <template>
-  <div class="container mx-auto">
+  <div class="container container-event mx-auto">
     <o-loading v-model:active="eventLoading" />
     <div class="flex flex-col mb-3">
       <event-banner :picture="event?.picture" />
@@ -154,9 +154,9 @@
         class="rounded-lg dark:border-violet-title flex flex-wrap flex-col md:flex-row-reverse gap-4"
       >
         <aside
-          class="rounded bg-white dark:bg-zinc-700 shadow-md h-min max-w-screen-sm"
+          class="sticky rounded bg-white dark:bg-zinc-700 shadow-md h-min max-w-screen-sm"
         >
-          <div class="sticky p-4">
+          <div class="p-4">
             <aside
               v-if="eventLoading"
               class="animate-pulse rounded bg-white dark:bg-zinc-700 h-min max-w-screen-sm"
@@ -184,27 +184,6 @@
           <section
             class="event-description bg-white dark:bg-zinc-700 px-3 pt-1 pb-3 rounded mb-4"
           >
-            <h2 class="text-2xl">{{ t("About this event") }}</h2>
-            <div
-                  v-if="eventLoading"
-                  class="animate-pulse mb-2 h-6 space-y-6 bg-slate-200 w-64"
-                />
-                <p v-else class="flex flex-wrap gap-1 items-center" dir="auto">
-                  <tag v-if="eventCategory" class="category" capitalize>{{
-                    eventCategory
-                  }}</tag>
-                  <router-link
-                    class="rounded-md truncate text-sm text-violet-title py-1 bg-purple-3 dark:text-violet-3 category"
-                    v-for="tag in event?.tags ?? []"
-                    :key="tag.title"
-                    :to="{ name: RouteName.TAG, params: { tag: tag.title } }"
-                  >
-                    <tag>{{ tag.title }}</tag>
-                  </router-link>
-                </p>
-                <tag variant="warning" size="medium" v-if="event?.draft"
-                  >{{ t("Draft") }}
-                </tag>
             <div
               v-if="eventLoading"
               class="animate-pulse mb-2 h-6 space-y-6 bg-slate-200 w-3/4"
@@ -239,18 +218,17 @@
               class="my-2"
             />
           </section>
-          <section
-            class="bg-white dark:bg-zinc-700 px-3 pt-1 pb-3 rounded my-4"
-            ref="commentsObserver"
-          >
-            <a href="#comments">
-              <h2 class="text-2xl" id="comments">{{ t("Comments") }}</h2>
-            </a>
-            <comment-tree v-if="event && loadComments" :event="event" />
-          </section>
         </div>
       </div>
-
+      <section
+          class="bg-white dark:bg-zinc-700 px-3 pt-1 pb-3 rounded my-4"
+          ref="commentsObserver"
+        >
+          <a href="#comments">
+            <h2 class="text-2xl" id="comments">{{ t("Comments") }}</h2>
+          </a>
+          <comment-tree v-if="event && loadComments" :event="event" />
+      </section>
       <section
         class="bg-white dark:bg-zinc-700 px-3 pt-1 pb-3 rounded my-4"
         v-if="(event?.relatedEvents ?? []).length > 0"
@@ -637,5 +615,12 @@ useHead({
 
 .event-description .mention.h-card {
   @apply inline-block border border-zinc-600 dark:border-zinc-300 rounded py-0.5 px-1;
+}
+.container-event {
+  max-width: 1240px;
+}
+.sticky  {
+	position: sticky;
+	top: 50px;
 }
 </style>

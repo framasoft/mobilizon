@@ -37,6 +37,15 @@
         <a
           rel="external"
           hreflang="en"
+          href="https://arbeit.wiki/Impressum"
+        >
+          {{ t("Impressum") }}
+        </a>
+      </li>
+      <li>
+        <a
+          rel="external"
+          hreflang="en"
           href="https://framagit.org/framasoft/mobilizon/blob/main/LICENSE"
         >
           {{ t("License") }}
