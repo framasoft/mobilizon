@@ -1,5 +1,86 @@
 <template>
   <div class="">
+    <p
+      class="inline-flex gap-2 ml-auto"
+      v-if="
+        event.joinOptions !== EventJoinOptions.EXTERNAL &&
+        !event.options.hideNumberOfParticipants
+      "
+    >
+      <router-link
+        class="participations-link"
+        v-if="canManageEvent && event?.draft === false"
+        :to="{
+          name: RouteName.PARTICIPATIONS,
+          params: { eventId: event.uuid },
+        }"
+      >
+        <!-- We retire one because of the event creator who is a
+                    participant -->
+        <span v-if="maximumAttendeeCapacity">
+          {{
+            t(
+              "{available}/{capacity} available places",
+              {
+                available:
+                  maximumAttendeeCapacity - event.participantStats.participant,
+                capacity: maximumAttendeeCapacity,
+              },
+              maximumAttendeeCapacity - event.participantStats.participant
+            )
+          }}
+        </span>
+        <span v-else>
+          {{
+            t(
+              "No one is participating|One person participating|{going} people participating",
+              {
+                going: event.participantStats.participant,
+              },
+              event.participantStats.participant
+            )
+          }}
+        </span>
+      </router-link>
+      <span v-else>
+        <span v-if="maximumAttendeeCapacity">
+          {{
+            t(
+              "{available}/{capacity} available places",
+              {
+                available:
+                  maximumAttendeeCapacity -
+                  (event?.participantStats.participant ?? 0),
+                capacity: maximumAttendeeCapacity,
+              },
+              maximumAttendeeCapacity -
+                (event?.participantStats.participant ?? 0)
+            )
+          }}
+        </span>
+        <span v-else>
+          {{
+            t(
+              "No one is participating|One person participating|{going} people participating",
+              {
+                going: event?.participantStats.participant,
+              },
+              event?.participantStats.participant ?? 0
+            )
+          }}
+        </span>
+      </span>
+      <VTooltip v-if="event?.local === false">
+        <HelpCircleOutline :size="16" />
+        <template #popper>
+          {{
+            t(
+              "The actual number of participants may differ, as this event is hosted on another instance."
+            )
+          }}
+        </template>
+      </VTooltip>
+    </p>
     <external-participation-button
       v-if="event && event.joinOptions === EventJoinOptions.EXTERNAL"
       :event="event"
@@ -21,88 +102,6 @@
       @cancel-anonymous-participation="cancelAnonymousParticipation"
     />
     <div class="flex flex-col gap-1 mt-1">
-      <p
-        class="inline-flex gap-2 ml-auto"
-        v-if="
-          event.joinOptions !== EventJoinOptions.EXTERNAL &&
-          !event.options.hideNumberOfParticipants
-        "
-      >
-        <router-link
-          class="participations-link"
-          v-if="canManageEvent && event?.draft === false"
-          :to="{
-            name: RouteName.PARTICIPATIONS,
-            params: { eventId: event.uuid },
-          }"
-        >
-          <!-- We retire one because of the event creator who is a
-                    participant -->
-          <span v-if="maximumAttendeeCapacity">
-            {{
-              t(
-                "{available}/{capacity} available places",
-                {
-                  available:
-                    maximumAttendeeCapacity -
-                    event.participantStats.participant,
-                  capacity: maximumAttendeeCapacity,
-                },
-                maximumAttendeeCapacity - event.participantStats.participant
-              )
-            }}
-          </span>
-          <span v-else>
-            {{
-              t(
-                "No one is participating|One person participating|{going} people participating",
-                {
-                  going: event.participantStats.participant,
-                },
-                event.participantStats.participant
-              )
-            }}
-          </span>
-        </router-link>
-        <span v-else>
-          <span v-if="maximumAttendeeCapacity">
-            {{
-              t(
-                "{available}/{capacity} available places",
-                {
-                  available:
-                    maximumAttendeeCapacity -
-                    (event?.participantStats.participant ?? 0),
-                  capacity: maximumAttendeeCapacity,
-                },
-                maximumAttendeeCapacity -
-                  (event?.participantStats.participant ?? 0)
-              )
-            }}
-          </span>
-          <span v-else>
-            {{
-              t(
-                "No one is participating|One person participating|{going} people participating",
-                {
-                  going: event?.participantStats.participant,
-                },
-                event?.participantStats.participant ?? 0
-              )
-            }}
-          </span>
-        </span>
-        <VTooltip v-if="event?.local === false">
-          <HelpCircleOutline :size="16" />
-          <template #popper>
-            {{
-              t(
-                "The actual number of participants may differ, as this event is hosted on another instance."
-              )
-            }}
-          </template>
-        </VTooltip>
-      </p>
       <o-dropdown class="ml-auto">
         <template #trigger>
           <o-button icon-right="dots-horizontal">
