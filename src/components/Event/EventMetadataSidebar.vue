@@ -1,29 +1,21 @@
 <template>
   <div>
-    <div
-        v-if="eventLoading"
-        class="animate-pulse mb-2 h-6 space-y-6 bg-slate-200 w-64"
+    <event-metadata-block :title="t('Wann?')">
+      <template #icon>
+        <Calendar :size="36" />
+      </template>
+      <event-full-date
+        :beginsOn="event.beginsOn.toString()"
+        :show-start-time="event.options.showStartTime"
+        :show-end-time="event.options.showEndTime"
+        :timezone="event.options.timezone ?? undefined"
+        :userTimezone="userTimezone"
+        :endsOn="event.endsOn?.toString()"
       />
-      <p v-else class="flex flex-wrap gap-1 items-center" dir="auto" style="justify-content: center;">
-        <tag v-if="eventCategory" class="category" capitalize>{{
-          eventCategory
-        }}</tag>
-        <router-link
-          class="rounded-md truncate text-sm text-violet-title py-1 bg-purple-3 dark:text-violet-3 category"
-          style="padding: 6px;"
-          v-for="tag in event?.tags ?? []"
-          :key="tag.title"
-          :to="{ name: RouteName.TAG, params: { tag: tag.title } }"
-        >
-          <tag>{{ tag.title }}</tag>
-        </router-link>
-      </p>
-      <tag variant="warning" size="medium" v-if="event?.draft"
-        >{{ t("Draft") }}
-      </tag>
+    </event-metadata-block>
     <event-metadata-block
       v-if="!event.options.isOnline"
-      :title="t('Location')"
+      :title="t('Wo?')"
       :icon="addressPOIInfos?.poiIcon?.icon ?? 'earth'"
     >
       <div class="address-wrapper">
@@ -49,23 +41,11 @@
         <Earth v-else :size="36" />
       </template>
     </event-metadata-block>
-    <event-metadata-block :title="t('Date and time')">
-      <template #icon>
-        <Calendar :size="36" />
-      </template>
-      <event-full-date
-        :beginsOn="event.beginsOn.toString()"
-        :show-start-time="event.options.showStartTime"
-        :show-end-time="event.options.showEndTime"
-        :timezone="event.options.timezone ?? undefined"
-        :userTimezone="userTimezone"
-        :endsOn="event.endsOn?.toString()"
-      />
-    </event-metadata-block>
     <event-metadata-block
       class="metadata-organized-by"
-      :title="t('Organized by')"
+      :title="t('Von:')"
     >
+    <div class="from" style="margin-left: -40px;scale: 0.83;">
       <router-link
         v-if="event.attributedTo"
         class="hover:underline"
@@ -95,6 +75,7 @@
         v-for="contact in event.contacts"
         :key="contact.id"
       />
+    </div>
     </event-metadata-block>
     <event-metadata-block
       v-if="event.onlineAddress && urlToHostname(event.onlineAddress)"

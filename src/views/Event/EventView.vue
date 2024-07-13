@@ -154,12 +154,12 @@
         class="main-content rounded-lg dark:border-violet-title flex flex-wrap flex-col md:flex-row-reverse gap-4"
       >
         <aside
-          class="sticky rounded bg-white dark:bg-zinc-700 shadow-md h-min max-w-screen-sm"
+          class="sticky rounded bg-white dark:bg-zinc-700 shadow-md h-min"
         >
           <div class="p-4">
             <aside
               v-if="eventLoading"
-              class="animate-pulse rounded bg-white dark:bg-zinc-700 h-min max-w-screen-sm"
+              class="sticky animate-pulse rounded bg-white dark:bg-zinc-700 h-min"
             >
               <div class="mb-6 p-2" v-for="i in 3" :key="i">
                 <div class="mb-2 h-6 bg-slate-200 w-64" />
@@ -621,7 +621,9 @@ useHead({
     .sticky  {
         position: sticky;
         top: 50px;
+        max-width: 435px;
     }
+
 }
 @media (max-width: 952px) {
     .main-content  {

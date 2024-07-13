@@ -1,5 +1,5 @@
 <template>
-  <div class="" style="display: flex; gap: 0.5rem; justify-content: center">
+  <div class="" style="display: flex;gap: 0.5rem;justify-content: center;">
     <external-participation-button
       v-if="event && event.joinOptions === EventJoinOptions.EXTERNAL"
       :event="event"
@@ -22,23 +22,22 @@
     />
 
     <o-button
-      outlined
-      icon-right="share"
-      @click="triggerShare()"
-      @keyup.enter="triggerShare()"
-    >
-      {{ t("Share") }}
-    </o-button>
+outlined
+icon-right="share"
+@click="triggerShare()"
+@keyup.enter="triggerShare()"
+>
+{{ t("Share") }}
+</o-button>
 
-    <o-button
-      icon-right="CalendarPlus"
-      outlined
-      @click="downloadIcsEvent()"
-      @keyup.enter="downloadIcsEvent()"
-    >
-      {{ t("Speichern") }}
-    </o-button>
-  </div>
+<o-button
+outlined
+@click="downloadIcsEvent()"
+@keyup.enter="downloadIcsEvent()"
+>
+{{ t("Speichern") }}
+</o-button>
+</div>
 
   <o-modal
     v-model:active="isReportModalActive"
@@ -642,11 +641,4 @@ onMounted(async () => {
   }
 });
 
-onDeleteEventDone(() => {
-  router.push({ name: RouteName.MY_EVENTS });
-});
-
-onDeleteEventError((error) => {
-  console.error(error);
-});
 </script>

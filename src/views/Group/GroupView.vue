@@ -562,7 +562,7 @@
               v-on="attrs"
             >
               <template #content>
-                  <event-card
+                  <event-group-card
                     v-for="event in EventsStreik.elements"
                     :event="event"
                     :key="event.uuid"
@@ -585,7 +585,7 @@
                 v-on="attrs"
               >
                 <template #content>
-                    <event-card
+                    <event-group-card
                       v-for="event in EventsAktionDemo.elements"
                       :event="event"
                       :key="event.uuid"
@@ -610,7 +610,7 @@
                 v-on="attrs"
               >
                 <template #content>
-                    <event-card
+                    <event-group-card
                       v-for="event in EventsVorbereitungstreffen.elements"
                       :event="event"
                       :key="event.uuid"
@@ -635,7 +635,7 @@
                 v-on="attrs"
               >
                 <template #content>
-                    <event-card
+                    <event-group-card
                       v-for="event in EventsBildungsurlaub.elements"
                       :event="event"
                       :key="event.uuid"
@@ -665,7 +665,7 @@
                 v-on="attrs"
               >
                 <template #content>
-                    <event-card
+                    <event-group-card
                       v-for="event in EventsMeeting.elements"
                       :event="event"
                       :key="event.uuid"
@@ -689,7 +689,7 @@
                 v-on="attrs"
               >
                 <template #content>
-                    <event-card
+                    <event-group-card
                       v-for="event in EventsBildung.elements"
                       :event="event"
                       :key="event.uuid"
@@ -713,7 +713,7 @@
                 v-on="attrs"
               >
                 <template #content>
-                    <event-card
+                    <event-group-card
                       v-for="event in EventsMusik.elements"
                       :event="event"
                       :key="event.uuid"
@@ -739,7 +739,7 @@
                 v-on="attrs"
               >
                 <template #content>
-                    <event-card
+                    <event-group-card
                       v-for="event in EventsKreativ.elements"
                       :event="event"
                       :key="event.uuid"
@@ -769,7 +769,7 @@
                 v-on="attrs"
               >
                 <template #content>
-                    <event-card
+                    <event-group-card
                       v-for="event in EventsOffenesPlenum.elements"
                       :event="event"
                       :key="event.uuid"
@@ -845,7 +845,7 @@
   
   <script lang="ts" setup>
 import LazyImageWrapper from "@/components/Image/LazyImageWrapper.vue";
-import EventCard from "@/components/Event/EventCard.vue";
+import EventGroupCard from "@/components/Event/EventGroupCard.vue";
   import CloseContent from "@/components/Local/CloseContent.vue";
   import {
     displayName,

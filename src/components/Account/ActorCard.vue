@@ -1,12 +1,12 @@
 <template>
   <div
-    class="bg-white dark:bg-mbz-purple rounded-lg flex space-x-4 items-center"
+    class="bg-white dark:bg-mbz-purple flex space-x-4 items-center"
     :class="{ 'flex-col p-4 shadow-md sm:p-8 pb-10 w-80': !inline }"
   >
     <div class="flex pl-2">
       <figure class="w-12 h-12" v-if="actor.avatar">
         <img
-          class="rounded-full object-cover h-full"
+          class="object-cover h-full"
           :src="actor.avatar.url"
           alt=""
           width="48"
