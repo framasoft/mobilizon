@@ -151,7 +151,7 @@
       </div>
 
       <div
-        class="rounded-lg dark:border-violet-title flex flex-wrap flex-col md:flex-row-reverse gap-4"
+        class="main-content rounded-lg dark:border-violet-title flex flex-wrap flex-col md:flex-row-reverse gap-4"
       >
         <aside
           class="sticky rounded bg-white dark:bg-zinc-700 shadow-md h-min max-w-screen-sm"
@@ -619,8 +619,15 @@ useHead({
 .container-event {
   max-width: 1240px;
 }
-.sticky  {
-	position: sticky;
-	top: 50px;
+@media (min-width: 953px) {
+    .sticky  {
+        position: sticky;
+        top: 50px;
+    }
+}
+@media (max-width: 952px) {
+    .main-content  {
+        flex-direction: column-reverse;
+    }
 }
 </style>
