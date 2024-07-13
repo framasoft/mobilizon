@@ -143,7 +143,6 @@
   <Plenum />
   <CloseGroups :userLocation="userLocation" @doGeoLoc="performGeoLocation()" />
   <OnlineEvents />
-  <LastEvents v-if="instanceName" :instanceName="instanceName" />
 </template>
 
 <script lang="ts" setup>
@@ -157,7 +156,6 @@ import { CURRENT_USER_CLIENT } from "../graphql/user";
 import { HOME_USER_QUERIES } from "../graphql/home";
 import RouteName from "../router/name";
 import { IEvent } from "../types/event.model";
-import { IFollowedGroupEvent } from "../types/followedGroupEvent.model";
 import ListViewMain from "@/views/Posts/ListViewMain.vue";
 import Veranstaltungen from "@/components/Local/Veranstaltungen.vue";
 import Aktion from "@/components/Local/Aktion.vue";
@@ -165,7 +163,6 @@ import Bildung from "@/components/Local/Bildung.vue";
 import Kreativ from "@/components/Local/Kreativ.vue";
 import Plenum from "@/components/Local/Plenum.vue";
 import CloseGroups from "@/components/Local/CloseGroups.vue";
-import LastEvents from "@/components/Local/LastEvents.vue";
 import OnlineEvents from "@/components/Local/OnlineEvents.vue";
 import {
   computed,
@@ -184,14 +181,11 @@ import {
   UPDATE_CURRENT_USER_LOCATION_CLIENT,
 } from "@/graphql/location";
 import { LocationType } from "@/types/user-location.model";
-import CategoriesPreview from "@/components/Home/CategoriesPreview.vue";
 import UnloggedIntroduction from "@/components/Home/UnloggedIntroduction.vue";
 import SearchFields from "@/components/Home/SearchFields.vue";
 import { useHead } from "@unhead/vue";
 import { geoHashToCoords } from "@/utils/location";
 import { useServerProvidedLocation } from "@/composition/apollo/config";
-import Resources from "@/components/Group/Sections/ResourcesSection.vue";
-import Posts from "@/components/Group/Sections/PostsSection.vue";
 import { ABOUT } from "@/graphql/config";
 import { IConfig } from "@/types/config.model";
 import { useI18n } from "vue-i18n";
