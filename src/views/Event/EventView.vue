@@ -178,6 +178,17 @@
               :user="loggedUser"
               @showMapModal="showMap = true"
             />
+            <div v-if="eventLoading">
+              <div class="animate-pulse mb-2 h-6 bg-slate-200 w-64" />
+              <div class="animate-pulse mb-2 h-6 bg-slate-200 w-64" />
+            </div>
+            <EventActionButtons
+              v-else-if="event"
+              :event="event"
+              :currentActor="currentActor"
+              :participations="participations"
+              :person="person"
+            />
           </div>
         </aside>
         <div class="flex-1 w-full">
@@ -292,6 +303,7 @@ import Tag from "@/components/TagElement.vue";
 import EventMetadataSidebar from "@/components/Event/EventMetadataSidebar.vue";
 import EventBanner from "@/components/Event/EventBanner.vue";
 import EventActionSection from "@/components/Event/EventActionSection.vue";
+import EventActionButtons from "@/components/Event/EventActionButtons.vue";
 import PopoverActorCard from "@/components/Account/PopoverActorCard.vue";
 import { IEventMetadataDescription } from "@/types/event-metadata";
 import { eventMetaDataList } from "@/services/EventMetadata";
@@ -313,7 +325,6 @@ import { useLoggedUser } from "@/composition/apollo/user";
 import { useQuery } from "@vue/apollo-composable";
 import {
   useEventCategories,
-  useRoutingType,
 } from "@/composition/apollo/config";
 import { useI18n } from "vue-i18n";
 import { Notifier } from "@/plugins/notifier";
@@ -396,8 +407,6 @@ const groupFederatedUsername = computed(() =>
 );
 
 const { person } = usePersonStatusGroup(groupFederatedUsername);
-
-const { eventCategories } = useEventCategories();
 
 // metaInfo() {
 //   return {
@@ -577,17 +586,6 @@ const integrations = computed((): Record<string, IEventMetadataDescription> => {
 });
 
 const showMap = ref(false);
-
-const { routingType } = useRoutingType();
-
-const eventCategory = computed((): string | undefined => {
-  if (event.value?.category === "MEETING") {
-    return undefined;
-  }
-  return (eventCategories.value ?? []).find((eventCategoryToFind) => {
-    return eventCategoryToFind.id === event.value?.category;
-  })?.label as string;
-});
 
 const organizer = computed((): IActor | null => {
   if (event.value?.attributedTo?.id) {
