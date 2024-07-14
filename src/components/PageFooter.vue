@@ -37,7 +37,7 @@
         <a
           rel="external"
           hreflang="en"
-          href="https://arbeit.wiki/Impressum"
+          href="https://arbeit.wiki/ArbeitWiki:Impressum"
         >
           {{ t("Impressum") }}
         </a>

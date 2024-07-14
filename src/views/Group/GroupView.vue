@@ -16,7 +16,7 @@
       <header class="block-container presentation" v-if="group">
         <div class="header flex flex-col">
           <div class="flex self-center h-0 mt-4 items-end">
-            <figure class="" v-if="group.avatar">
+            <figure class="logo" v-if="group.avatar">
               <img
                 :src="group.avatar.url"
                 alt=""
@@ -418,7 +418,7 @@
       </o-notification>
       <div v-else-if="group" class="public-container flex flex-col">
         <aside class="group-metadata">
-          <div class="sticky">
+          <div class="sticky" style="max-width: 100%;">
             <o-notification v-if="group.domain && !isCurrentActorAGroupMember">
               <p>
                 {{
@@ -1633,6 +1633,12 @@ div.container {
   .main-content {
         margin-top: -35px;
       }
+  .logo {
+        scale: 0.6;
+      }
+  .title-container {
+        margin-top: -18px;
+      }
 }
 .pt-10 {
 	padding-top: 0;
@@ -1705,4 +1711,15 @@ div.container {
   justify-content: center;
   display: flex;
 }
+div.summary a {
+      color: #fff;
+      font-weight: bold;
+      border: 1px solid;
+      border-radius: 4px;
+      padding-left: 5px;
+      padding-right: 5px;
+    }
+div.summary a:hover {
+      text-decoration: underline;
+        }
     </style>

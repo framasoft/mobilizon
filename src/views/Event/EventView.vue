@@ -629,5 +629,8 @@ useHead({
     .main-content  {
         flex-direction: column-reverse;
     }
+    .sticky {
+        max-width: 100%;
+    }
 }
 </style>
