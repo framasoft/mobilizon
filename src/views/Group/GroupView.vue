@@ -440,13 +440,6 @@
                 <h2 class="text-xl font-bold">{{ t("Latest posts") }}</h2>
                 <div class="post-list ml-[12px]">
               <group-page
-                v-if="isMobile"
-                :posts="posts.elements
-                          .filter(post => !post.draft && post.visibility === PostVisibility.PUBLIC)
-                          .slice(0, 1)"
-              />
-              <group-page
-                v-else
                 :posts="posts.elements
                           .filter(post => !post.draft && post.visibility === PostVisibility.PUBLIC)
                           .slice(0, 3)"
@@ -508,7 +501,7 @@
                 </div>
               </div>
             </event-metadata-block>
-            <div class="ml-[12px] banner" v-if="!isMobile" >
+            <div class="ml-[12px] banner" >
           <lazy-image-wrapper :picture="group.banner" />
         </div>
           </div>
@@ -801,9 +794,6 @@
                 >{{ t("View all events") }}</o-button
               >
             </div>
-        <div class="banner-mobile" v-if="isMobile" >
-          <lazy-image-wrapper :picture="group.banner" />
-        </div>
           </section>
         </div>
         <o-modal
@@ -906,8 +896,6 @@ import EventGroupCard from "@/components/Event/EventGroupCard.vue";
   import { useGroupResourcesList } from "@/composition/apollo/resources";
   import { useGroupMembers } from "@/composition/apollo/members";
  
-  const isMobile = window.innerWidth < 1280;
-
   const props = defineProps<{
     preferredUsername: string;
   }>();
@@ -1426,15 +1414,6 @@ const EventsOffenesPlenum = computed((): Paginate<IEvent> => {
   };
 });
 
-
-
-
-
-
-
-
-
-
   const posts = computed((): Paginate<IPost> => {
     return {
       total: group.value?.posts.total ?? 0,
@@ -1539,6 +1518,46 @@ const EventsOffenesPlenum = computed((): Paginate<IEvent> => {
   </script>
 <style lang="scss" scoped>
 @use "@/styles/_mixins" as *;
+@media (max-width: 1552px) {
+  .post-list {
+    justify-content: center;
+    display: grid;
+    margin-top: 0.68rem;
+  }
+  .posts-wrapper {
+    max-width: 500px;
+  }
+  .public-container {
+    flex-direction: column-reverse!important;
+    margin-top: 15px;
+  }
+}
+@media (max-width: 1024px) {
+  .event-list {
+    max-width: 350px;
+  }
+}
+@media (max-width: 768px) { /* Adjust breakpoint as needed */
+  .pt-10 {
+    /* Mobile styles */
+    max-width: 90vw; /* Set maximum width to 90% of viewport width */
+  }
+  .main-content {
+        margin-top: -35px;
+      }
+  .logo {
+        scale: 0.6;
+      }
+  .title-container {
+        margin-top: -18px;
+      }
+  .block-container {
+        margin-top: 80px;
+      }
+  .header {
+        margin-top: -15px!important;
+      }
+}
 div.container {
   .block-container {
     display: flex;
@@ -1625,21 +1644,7 @@ div.container {
       }
     }
   }
-@media (max-width: 768px) { /* Adjust breakpoint as needed */
-  .pt-10 {
-    /* Mobile styles */
-    max-width: 90vw; /* Set maximum width to 90% of viewport width */
-  }
-  .main-content {
-        margin-top: -35px;
-      }
-  .logo {
-        scale: 0.6;
-      }
-  .title-container {
-        margin-top: -18px;
-      }
-}
+
 .pt-10 {
 	padding-top: 0;
 }
@@ -1688,25 +1693,10 @@ div.container {
 .title-container br {
     display: none;
 }
-@media (max-width: 1552px) {
-  .post-list {
-    justify-content: center;
-    display: grid;
-    margin-top: 0.68rem;
-  }
-  .posts-wrapper {
-    max-width: 500px;
-  }
-}
 .post-list {
     margin-top: 0.68rem;
   }
 
-  @media (max-width: 1024px) {
-  .event-list {
-    max-width: 350px;
-  }
-}
 .main-event-list {
   justify-content: center;
   display: flex;
