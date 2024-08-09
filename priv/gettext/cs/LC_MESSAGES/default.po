@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:39+0000\n"
-"PO-Revision-Date: 2022-11-25 00:54+0000\n"
+"PO-Revision-Date: 2024-08-10 20:38+0000\n"
 "Last-Translator: Jiri Podhorecky <j.podhorecky@gmail.com>\n"
 "Language-Team: Czech <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/cs/>\n"
@@ -11,8 +11,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
-"X-Generator: Weblate 4.14.1\n"
+"Plural-Forms: nplurals=3; plural=((n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2);\n"
+"X-Generator: Weblate 5.6.2\n"
 
 #: lib/web/templates/email/password_reset.html.heex:66
 #, elixir-autogen, elixir-format
@@ -2313,66 +2313,66 @@ msgstr "Do příště!"
 
 #: lib/web/templates/email/group_suspension.html.heex:67
 #: lib/web/templates/email/group_suspension.text.eex:5
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "As this group was located on this instance, all of its data has been irretrievably deleted."
 msgstr ""
 "Protože se tato skupina nacházela v této instanci, byla všechna její data "
 "nenávratně odstraněna."
 
 #: lib/web/templates/email/report.text.eex:11
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Events"
-msgstr "Událost"
+msgstr "Události"
 
 #: lib/web/templates/email/report.html.heex:115
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Flagged events"
-msgstr "Označené komentáře"
+msgstr "Označené události"
 
 #: lib/service/export/participants/common.ex:65
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Participant registration date"
-msgstr "Status účastníka"
+msgstr "Datum registrace účastníka"
 
 #: lib/web/templates/email/anonymous_participation_confirmation.html.heex:113
 #: lib/web/templates/email/event_participation_confirmed.html.heex:122
 #, elixir-autogen, elixir-format
 msgid "Cancel my attendance"
-msgstr ""
+msgstr "Zrušit mou účast"
 
 #: lib/web/templates/email/anonymous_participation_confirmation.html.heex:90
 #: lib/web/templates/email/event_participation_confirmed.html.heex:99
 #, elixir-autogen, elixir-format
 msgid "If you wish to cancel your participation, simply click on the link below."
 msgstr ""
+"Pokud si přejete zrušit svou účast, stačí kliknout na níže uvedený odkaz."
 
 #: lib/web/email/admin.ex:142
 #, elixir-autogen, elixir-format
 msgid "Email configuration test for %{instance}"
-msgstr ""
+msgstr "Test konfigurace e-mailu pro %{instance}"
 
 #: lib/web/templates/email/email_configuration_test.html.heex:47
 #: lib/web/templates/email/email_configuration_test.text.eex:3
 #, elixir-autogen, elixir-format
 msgid "If you received this email, the email configuration seems to be correct."
 msgstr ""
+"Pokud jste tento e-mail obdrželi, zdá se, že konfigurace e-mailu je správná."
 
 #: lib/web/templates/email/email_configuration_test.html.heex:18
 #: lib/web/templates/email/email_configuration_test.text.eex:1
 #, elixir-autogen, elixir-format
 msgid "Well done!"
-msgstr ""
+msgstr "Výborně!"
 
 #: lib/web/templates/api/terms.html.heex:55
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "When we say “we”, “our”, or “us” in this document, we are referring to the owners, operators and administrators of this Mobilizon instance. The Mobilizon software is provided by the team of Mobilizon contributors. Unless explicitly stated, this Mobilizon instance is an independent service using Mobilizon's source code. You may find more information about this instance on the <a href=\"/about/instance\">\"About this instance\"</a> page."
 msgstr ""
-"Když v tomto dokumentu říkáme \"my\", \"naše\" nebo \"nás\", máme na mysli "
-"vlastníky, provozovatele a správce této instance Mobilizon. Software "
-"Mobilizon je poskytován týmem přispěvatelů Mobilizonu, který je podporován "
-"<a href=\"https://framasoft.org\">Framasoft</a>, francouzskou neziskovou "
-"organizací prosazující svobodný software. Pokud to není výslovně uvedeno, je "
-"tato instance Mobilizonu nezávislou službou využívající zdrojový kód "
-"Mobilizonu. Více informací o této instanci najdete na stránce <a href=\"/"
-"about/instance\">\"O této instanci\"</a>."
+"Když v tomto dokumentu říkáme „my“, „naše“ nebo „nás“, máme na mysli "
+"vlastníky, operátory a správce této instance Mobilizon. Software Mobilizon "
+"poskytuje tým přispěvatelů Mobilizonu. Pokud není výslovně uvedeno, je tato "
+"instance Mobilizon nezávislou službou využívající zdrojový kód společnosti "
+"Mobilizon. Další informace o této instanci můžete najít na stránce <a href=\""
+"/about/instance\">\"O této instanci\"</a>."
