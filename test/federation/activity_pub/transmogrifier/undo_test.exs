@@ -62,9 +62,12 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.UndoTest do
         |> Map.put("id", "https://social.tcit.fr/users/tcit")
 
       Mock
-      |> expect(:call, fn
+      |> expect(:call, 2, fn
         %{method: :get, url: "https://social.tcit.fr/users/tcit"}, _opts ->
           {:ok, %Tesla.Env{status: 200, body: actor_data}}
+
+        %{method: :post, url: "https://framapiaf.org/inbox"} = args, _opts ->
+          {:ok, args}
       end)
 
       {:ok, %Activity{data: _, local: false}, _} = Transmogrifier.handle_incoming(follow_data)
