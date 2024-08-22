@@ -1137,7 +1137,7 @@
   "This instance, <b>{instanceName} ({domain})</b>, hosts your profile, so remember its name.": "Deze instantie, <b>{instanceName} ({domain})</b>, host uw profiel, dus onthoud de naam.",
   "This instance, {instanceName}, hosts your profile, so remember its name.": "Deze instance, {instanceName}, host je profiel, dus onthoud de naam.",
   "This is a demonstration site to test Mobilizon.": "Dit is een demosite om Mobilizon te testen.",
-  "This is like your federated username (<code>{username}</code>) for groups. It will allow the group to be found on the federation, and is guaranteed to be unique.": "Dit is vergelijkbaar met uw federatieve gebruikersnaam (<code>{gebruikersnaam}</code>) voor groepen. Het zorgt ervoor dat de groep terug te vinden is op de federatie en is gegarandeerd uniek.",
+  "This is like your federated username (<code>{username}</code>) for groups. It will allow the group to be found on the federation, and is guaranteed to be unique.": "Dit is vergelijkbaar met uw federatieve gebruikersnaam (<code>{username}</code>) voor groepen. Het zorgt ervoor dat de groep terug te vinden is op de federatie en is gegarandeerd uniek.",
   "This is like your federated username ({username}) for groups. It will allow the group to be found on the federation, and is guaranteed to be unique.": "Dit is zoals je federatieve gebruikersnaam ({username}) voor groepen. Hiermee kan de groep gevonden worden in de federatie en het is gegarandeerd uniek.",
   "This month": "Deze maand",
   "This post is accessible only for members. You have access to it for moderation purposes only because you are an instance moderator.": "Dit bericht is alleen toegankelijk voor leden. Omdat u een instance-moderator bent heeft u alleen toegang i.v.m. moderatiedoeleinden.",
