@@ -8,7 +8,7 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2024-08-23 02:37+0000\n"
+"PO-Revision-Date: 2024-08-23 23:19+0000\n"
 "Last-Translator: Jiri Podhorecky <j.podhorecky@gmail.com>\n"
 "Language-Team: Czech <https://weblate.framasoft.org/projects/mobilizon/"
 "backend-errors/cs/>\n"
@@ -1402,29 +1402,35 @@ msgstr "ID časového pásma %{timezone} je neplatné"
 #: lib/graphql/resolvers/admin.ex:557
 #, elixir-autogen, elixir-format
 msgid "You are already following this instance"
-msgstr "Tuto skupinu již sledujete"
+msgstr "Tuto instanci již sledujete"
 
 #: lib/graphql/resolvers/user.ex:310
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "You requested again a confirmation email too soon. Please try again in a few minutes"
-msgstr "Znovu jste si vyžádali potvrzovací e-mail příliš brzy"
+msgstr ""
+"Znovu jste požádali o potvrzovací e-mail příliš brzy. Zkuste to prosím znovu "
+"za několik minut"
 
 #: lib/graphql/resolvers/user.ex:341
 #, elixir-autogen, elixir-format
 msgid "You requested again a password reset email too soon. Please try again in a few minutes"
 msgstr ""
+"Znovu jste si vyžádali e-mail s žádostí o obnovení hesla příliš brzy. Zkuste "
+"to prosím znovu za několik minut"
 
 #: lib/graphql/resolvers/user.ex:368
 #, elixir-autogen, elixir-format
 msgid "The token you provided is invalid. Make sure that the URL is exactly the one provided inside the email you got."
 msgstr ""
+"Zadaný token je neplatný. Ujistěte se, že adresa URL je přesně taková, jaká "
+"byla uvedena v e-mailu, který jste obdrželi."
 
 #: lib/graphql/resolvers/conversation.ex:164
 #, elixir-autogen, elixir-format
 msgid "Conversation needs to mention at least one participant that's not yourself"
-msgstr ""
+msgstr "V rozhovoru musí být uveden alespoň jeden účastník, který nejste vy"
 
 #: lib/graphql/resolvers/participant.ex:401
 #, elixir-autogen, elixir-format
 msgid "There are no participants matching the audience you've selected."
-msgstr ""
+msgstr "Vámi zvolenému publiku neodpovídají žádní účastníci."
