@@ -81,31 +81,10 @@
         </template>
       </VTooltip>
     </p>
-    <external-participation-button
-      v-if="event && event.joinOptions === EventJoinOptions.EXTERNAL"
-      :event="event"
-      :current-actor="currentActor"
-    />
-
-    <participation-section
-      v-else-if="event && anonymousParticipationConfig"
-      :participation="participations[0]"
-      :event="event"
-      :anonymousParticipation="anonymousParticipation"
-      :currentActor="currentActor"
-      :identities="identities"
-      :anonymousParticipationConfig="anonymousParticipationConfig"
-      @join-event="joinEvent"
-      @join-modal="isJoinModalActive = true"
-      @join-event-with-confirmation="joinEventWithConfirmation"
-      @confirm-leave="confirmLeave"
-      @cancel-anonymous-participation="cancelAnonymousParticipation"
-    />
     <div class="flex flex-col gap-1 mt-1">
       <o-dropdown class="ml-auto">
         <template #trigger>
           <o-button icon-right="dots-horizontal">
-            {{ t("Actions") }}
           </o-button>
         </template>
         <o-dropdown-item aria-role="listitem" has-link v-if="canManageEvent">
@@ -218,6 +197,27 @@
         </o-dropdown-item>
       </o-dropdown>
     </div>
+    <external-participation-button
+      v-if="event && event.joinOptions === EventJoinOptions.EXTERNAL"
+      class="mt-2"
+      :event="event"
+      :current-actor="currentActor"
+    />
+    <participation-section
+      v-else-if="event && anonymousParticipationConfig"
+      class="mt-2"
+      :participation="participations[0]"
+      :event="event"
+      :anonymousParticipation="anonymousParticipation"
+      :currentActor="currentActor"
+      :identities="identities"
+      :anonymousParticipationConfig="anonymousParticipationConfig"
+      @join-event="joinEvent"
+      @join-modal="isJoinModalActive = true"
+      @join-event-with-confirmation="joinEventWithConfirmation"
+      @confirm-leave="confirmLeave"
+      @cancel-anonymous-participation="cancelAnonymousParticipation"
+    />
   </div>
   <o-modal
     v-model:active="isReportModalActive"

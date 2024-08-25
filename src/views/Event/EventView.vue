@@ -1,8 +1,7 @@
 <template>
-  <div class="container container-event mx-auto">
+  <div class="container container-event mx-auto mt-20">
     <o-loading v-model:active="eventLoading" />
     <div class="flex flex-col mb-3">
-      <event-banner :picture="event?.picture" />
       <div
         class="flex flex-col relative pb-2 bg-white dark:bg-zinc-700 my-4 rounded"
       >
@@ -16,18 +15,12 @@
             :date="event.beginsOn.toString()"
             class="absolute left-3 -top-16"
           />
-        </div>
-
-        <div
-          class="start-time-icon-wrapper relative"
-          v-if="event?.beginsOn && event?.options.showStartTime"
-        >
-          <start-time-icon
+            <start-time-icon
             :date="event.beginsOn.toString()"
-            class="absolute right-3 -top-16"
+            class="absolute -top-16"
+            style="top: -3rem; left: 6.5rem;"
           />
         </div>
-
         <section class="intro px-2 pt-4" dir="auto">
           <div class="flex flex-wrap gap-2 justify-end">
             <div class="flex-1">
