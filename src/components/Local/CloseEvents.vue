@@ -1,15 +1,36 @@
 <template>
   <close-content
     class="container mx-auto px-2"
-    v-show="loading || (events && events.total > 0)"
-    :suggestGeoloc="suggestGeoloc"
+    :suggestGeoloc="false"
     v-on="attrs"
-    @doGeoLoc="emit('doGeoLoc')"
-    :doingGeoloc="doingGeoloc"
   >
-	<template #title>
-		{{ t("Events close to you") }}
-	</template>
+    <template #title>
+      <template v-if="userLocation?.name">
+        {{
+          t("Incoming events and activities nearby {position}", {
+            position: userLocation?.name,
+          })
+        }}
+      </template>
+      <template v-else>
+        {{ t("Incoming events and activities") }}
+      </template>
+    </template>
+    <template #subtitle>
+      <div v-if="!loading && events.total == 0">
+        <template v-if="userLocation?.name">
+          {{
+            t(
+              "No events found nearby {position}. Try removing your position to see all events!",
+              { position: userLocation?.name }
+            )
+          }}
+        </template>
+        <template v-else>
+          {{ t("No events found") }}
+        </template>
+      </div>
+    </template>
     <template #content>
       <skeleton-event-result
         v-for="i in 6"
@@ -23,21 +44,35 @@
         :key="event.uuid"
       />
       <more-content
-        v-if="$route.query.lat && $route.query.lon"
+        v-if="userLocation?.name && userLocation?.lat && userLocation?.lon"
         :to="{
           name: RouteName.SEARCH,
-	query: {
-		lat: $route.query.lat,
-		lon: $route.query.lon,
-		contentType: 'EVENTS',
-		distance: `${$route.query.distance}_km`,
-	},
+          query: {
+            locationName: userLocation?.name,
+            lat: userLocation.lat?.toString(),
+            lon: userLocation.lon?.toString(),
+            contentType: 'ALL',
+            distance: `${distance}_km`,
+          },
         }"
         :picture="userLocation?.picture"
       >
         {{
-          t("View more events")
+          t("View more events and activities around {position}", {
+            position: userLocation?.name,
+          })
         }}
+      </more-content>
+      <more-content
+        v-else
+        :to="{
+          name: RouteName.SEARCH,
+          query: {
+            contentType: 'ALL',
+          },
+        }"
+      >
+        {{ t("View more events and activities") }}
       </more-content>
     </template>
   </close-content>
@@ -47,76 +82,55 @@
 import { LocationType } from "../../types/user-location.model";
 import MoreContent from "./MoreContent.vue";
 import CloseContent from "./CloseContent.vue";
-import { computed, onMounted, useAttrs } from "vue";
-import { SEARCH_EVENTS_AND_GROUPS } from "@/graphql/search";
+import { watch, computed, useAttrs } from "vue";
+import { FETCH_EVENTS } from "@/graphql/event";
 import { IEvent } from "@/types/event.model";
-import { useLazyQuery } from "@vue/apollo-composable";
+import { useQuery } from "@vue/apollo-composable";
 import EventCard from "../Event/EventCard.vue";
 import { Paginate } from "@/types/paginate";
 import SkeletonEventResult from "../Event/SkeletonEventResult.vue";
 import { useI18n } from "vue-i18n";
 import { coordsToGeoHash } from "@/utils/location";
-import { roundToNearestMinute } from "@/utils/datetime";
 import RouteName from "@/router/name";
-import { useRoute } from 'vue-router';
-
-const route = useRoute();
-
-// Lesen Sie die URL-Parameter und wandeln Sie sie in Zahlen um
-const lat = parseFloat(route.query.lat);
-const lon = parseFloat(route.query.lon);
-const distance = parseFloat(route.query.distance);
+import { EventSortField, SortDirection } from "@/types/enums";
 
 const props = defineProps<{
   userLocation: LocationType;
   doingGeoloc?: boolean;
 }>();
-const emit = defineEmits(["doGeoLoc"]);
-
-const EVENT_PAGE_LIMIT = 12;
+defineEmits(["doGeoLoc"]);
 
 const { t } = useI18n({ useScope: "global" });
 const attrs = useAttrs();
 
-const geoHash = computed(() => coordsToGeoHash(lat, lon));
-const userLocationName = computed(() => {
-  return props.userLocation?.name;
+const userLocation = computed(() => props.userLocation);
+
+const geoHash = computed(() => {
+  console.debug("userLocation updated", userLocation.value);
+  const geo = coordsToGeoHash(userLocation.value.lat, userLocation.value.lon);
+  console.debug("geohash:", geo);
+  return geo;
 });
 
-const now = computed(() => roundToNearestMinute(new Date()));
-
-const searchEnabled = computed(() => geoHash.value != undefined);
-
-const {
-  result: eventsResult,
-  loading: loadingEvents,
-  load: load,
-} = useLazyQuery<{
-  searchEvents: Paginate<IEvent>;
-}>(
-  SEARCH_EVENTS_AND_GROUPS,
-  () => ({
-    location: geoHash.value,
-    beginsOn: now.value,
-    endsOn: undefined,
-    radius: distance.value,
-    eventPage: 1,
-    limit: EVENT_PAGE_LIMIT,
-    sortByEvents: "START_TIME_ASC",
-  }),
-  () => ({
-    enabled: searchEnabled.value,
-    fetchPolicy: "cache-first",
-  })
+const distance = computed<number>(() =>
+  userLocation.value?.isIPLocation ? 150 : 25
 );
+
+const eventsQuery = useQuery<{
+  searchEvents: Paginate<IEvent>;
+}>(FETCH_EVENTS, () => ({
+  orderBy: EventSortField.BEGINS_ON,
+  direction: SortDirection.ASC,
+  longevents: false,
+  location: geoHash.value,
+  radius: distance.value,
+}));
 
 const events = computed(
-  () => eventsResult.value?.searchEvents ?? { elements: [], total: 0 }
+  () => eventsQuery.result.value?.events ?? { elements: [], total: 0 }
 );
+watch(events, (e) => console.debug("events: ", e));
 
-onMounted(async () => {
-  await load();
-});
-
-const loading = computed(() => props.doingGeoloc || loadingEvents.value);
+const loading = computed(() => props.doingGeoloc || eventsQuery.loading.value);
+watch(loading, (l) => console.debug("loading: ", l));
 </script>

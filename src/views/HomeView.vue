@@ -26,7 +26,12 @@
   <!-- Unlogged introduction -->
   <unlogged-introduction :config="config" v-if="config && !isLoggedIn" />
   <!-- Search fields -->
-  <search-fields v-model:search="search" v-model:location="location" />
+  <search-fields
+    v-model:search="search"
+    v-model:location="location"
+    :locationDefaultText="location?.description"
+    :fromLocalStorage="true"
+  />
   <!-- Categories preview -->
   <!-- Welcome back -->
   <section
@@ -184,7 +189,7 @@ import { LocationType } from "@/types/user-location.model";
 import UnloggedIntroduction from "@/components/Home/UnloggedIntroduction.vue";
 import SearchFields from "@/components/Home/SearchFields.vue";
 import { useHead } from "@unhead/vue";
-import { geoHashToCoords } from "@/utils/location";
+import { addressToLocation, geoHashToCoords } from "@/utils/location";
 import { useServerProvidedLocation } from "@/composition/apollo/config";
 import { ABOUT } from "@/graphql/config";
 import { IConfig } from "@/types/config.model";
@@ -239,6 +244,10 @@ const currentUserParticipations = computed(
 
 const location = ref(null);
 const search = ref("");
+
+watch(location, (newLoc, oldLoc) =>
+  console.debug("LOCATION UPDATED from", { ...oldLoc }, " to ", { ...newLoc })
+);
 
 const isToday = (date: string): boolean => {
   return new Date(date).toDateString() === new Date().toDateString();
@@ -384,11 +393,7 @@ const coords = computed(() => {
     userSettingsLocationGeoHash.value ?? undefined
   );
 
-  if (userSettingsCoords) {
-    return { ...userSettingsCoords, isIPLocation: false };
-  }
-
-  return { ...serverLocation.value, isIPLocation: true };
+  return { ...serverLocation.value, isIPLocation: !userSettingsCoords };
 });
 
 const { result: reverseGeocodeResult } = useQuery<{
@@ -429,6 +434,11 @@ const currentUserLocation = computed(() => {
 });
 
 const userLocation = computed(() => {
+  console.debug("new userLocation");
+  if (location.value) {
+    console.debug("userLocation is typed location");
+    return addressToLocation(location.value);
+  }
   if (
     !userSettingsLocation.value ||
     (userSettingsLocation.value?.isIPLocation &&

@@ -375,6 +375,13 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
   object :event_queries do
     @desc "Get all events"
     field :events, :paginated_event_list do
+      arg(:location, :string, default_value: nil, description: "A geohash for coordinates")
+
+      arg(:radius, :float,
+        default_value: nil,
+        description: "Radius around the location to search in"
+      )
+
       arg(:page, :integer, default_value: 1, description: "The page in the paginated event list")
       arg(:limit, :integer, default_value: 10, description: "The limit of events per page")
 
@@ -386,6 +393,11 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
       arg(:direction, :sort_direction,
         default_value: :asc,
         description: "Direction for the sort"
+      )
+
+      arg(:longevents, :boolean,
+        default_value: nil,
+        description: "if mention filter in or out long events"
       )
 
       middleware(Rajska.QueryAuthorization, permit: :all)

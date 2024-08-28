@@ -359,19 +359,34 @@ defmodule Mobilizon.Events do
   @doc """
   Returns the list of events.
   """
-  @spec list_events(integer | nil, integer | nil, atom, atom, boolean) :: Page.t(Event.t())
+  @spec list_events(
+          integer | nil,
+          integer | nil,
+          atom,
+          atom,
+          boolean,
+          boolean | nil,
+          string | nil,
+          float | nil
+        ) :: Page.t(Event.t())
   def list_events(
         page \\ nil,
         limit \\ nil,
         sort \\ :begins_on,
         direction \\ :asc,
-        is_future \\ true
+        is_future \\ true,
+        longevents \\ nil,
+        location \\ nil,
+        radius \\ nil
       ) do
     Event
     |> distinct([e], [{^direction, ^sort}, asc: e.id])
     |> preload([:organizer_actor, :participants])
     |> sort(sort, direction)
+    |> maybe_join_address(%{location: location, radius: radius})
+    |> events_for_location(%{location: location, radius: radius})
     |> filter_future_events(is_future)
+    |> events_for_longevents(longevents)
     |> filter_public_visibility()
     |> filter_draft()
     |> filter_cancelled_events()
@@ -572,7 +587,7 @@ defmodule Mobilizon.Events do
     |> events_for_search_query()
     |> events_for_begins_on(Map.get(args, :begins_on, DateTime.utc_now()))
     |> events_for_ends_on(Map.get(args, :ends_on))
-    |> events_for_longevents(args)
+    |> events_for_longevents(Map.get(args, :longevents))
     |> events_for_category(args)
     |> events_for_categories(args)
     |> events_for_languages(args)
@@ -1379,15 +1394,13 @@ defmodule Mobilizon.Events do
     end
   end
 
-  @spec events_for_longevents(Ecto.Queryable.t(), map()) :: Ecto.Query.t()
-  defp events_for_longevents(query, args) do
+  @spec events_for_longevents(Ecto.Queryable.t(), Boolean.t() | nil) :: Ecto.Query.t()
+  defp events_for_longevents(query, longevents) do
     duration = Config.get([:instance, :duration_of_long_event], 0)
 
     if duration <= 0 do
       query
     else
-      longevents = Map.get(args, :longevents)
-
       case longevents do
         nil ->
           query

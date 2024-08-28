@@ -1,7 +1,7 @@
 <template>
   <form
     id="search-anchor"
-    class="container mx-auto my-3 px-2 flex flex-wrap flex-col sm:flex-row items-stretch gap-2 text-center items-center justify-center dark:text-slate-100"
+    class="container mx-auto my-3 px-2 flex flex-wrap flex-col sm:flex-row items-stretch gap-2 text-center justify-center dark:text-slate-100"
     role="search"
     @submit.prevent="submit"
   >
@@ -38,6 +38,11 @@
 <script lang="ts" setup>
 import { IAddress } from "@/types/address.model";
 import { AddressSearchType } from "@/types/enums";
+import {
+  addressToLocation,
+  getLocationFromLocal,
+  storeLocationInLocal,
+} from "@/utils/location";
 import { computed, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter, useRoute } from "vue-router";
@@ -51,6 +56,7 @@ const props = defineProps<{
   location: IAddress | null;
   locationDefaultText?: string | null;
   search: string;
+  fromLocalStorage?: boolean | false;
 }>();
 
 const router = useRouter();
@@ -64,10 +70,19 @@ const emit = defineEmits<{
 
 const location = computed({
   get(): IAddress | null {
-    return props.location;
+    if (props.location) {
+      return props.location;
+    }
+    if (props.fromLocalStorage) {
+      return getLocationFromLocal();
+    }
+    return null;
   },
   set(newLocation: IAddress | null) {
     emit("update:location", newLocation);
+    if (props.fromLocalStorage) {
+      storeLocationInLocal(newLocation);
+    }
   },
 });
 
@@ -82,12 +97,7 @@ const search = computed({
 
 const submit = () => {
   emit("submit");
-  const lat = location.value?.geom
-    ? parseFloat(location.value?.geom?.split(";")?.[1])
-    : undefined;
-  const lon = location.value?.geom
-    ? parseFloat(location.value?.geom?.split(";")?.[0])
-    : undefined;
+  const { lat, lon } = addressToLocation(location.value);
   router.push({
     name: RouteName.SEARCH,
     query: {

@@ -2,6 +2,7 @@ import { IDENTITIES, REGISTER_PERSON } from "@/graphql/actor";
 import {
   CURRENT_USER_CLIENT,
   LOGGED_USER,
+  LOGGED_USER_LOCATION,
   SET_USER_SETTINGS,
   UPDATE_USER_LOCALE,
   USER_SETTINGS,
@@ -49,6 +50,20 @@ export function useUserSettings() {
 
   const loggedUser = computed(() => userSettingsResult.value?.loggedUser);
   return { loggedUser, error, loading };
+}
+
+export function useUserLocation() {
+  const {
+    result: userSettingsResult,
+    error,
+    loading,
+    onResult,
+  } = useQuery<{ loggedUser: IUser }>(LOGGED_USER_LOCATION);
+
+  const location = computed(
+    () => userSettingsResult.value?.loggedUser.settings.location
+  );
+  return { location, error, loading, onResult };
 }
 
 export async function doUpdateSetting(

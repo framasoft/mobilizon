@@ -50,13 +50,16 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.FollowTest do
         |> Jason.decode!()
 
       Mock
-      |> expect(:call, fn
+      |> expect(:call, 2, fn
         %{method: :get, url: "https://social.tcit.fr/users/tcit"}, _opts ->
           {:ok,
            %Tesla.Env{
              status: 200,
              body: Map.put(actor_data, "id", "https://social.tcit.fr/users/tcit")
            }}
+
+        %{method: :post, url: "https://framapiaf.org/inbox"} = args, _opts ->
+          {:ok, args}
       end)
 
       data =

@@ -194,6 +194,10 @@ defmodule Mobilizon.GraphQL.Resolvers.MemberTest do
       group = insert(:group)
       target_actor = insert(:actor, user: user)
 
+      Mox.expect(Mobilizon.Service.HTTP.ActivityPub.Mock, :call, fn _req, _opts ->
+        {:ok, %Tesla.Env{status: 200, body: %{"role" => "INVITED"}}}
+      end)
+
       {:ok, conn: conn, actor: actor, user: user, group: group, target_actor: target_actor}
     end
 

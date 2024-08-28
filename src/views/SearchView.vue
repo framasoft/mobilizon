@@ -1,10 +1,11 @@
 <template>
   <div class="max-w-4xl mx-auto">
-    <SearchFields
+    <search-fields
       class="md:ml-10 mr-2"
       v-model:search="search"
       v-model:location="location"
       :locationDefaultText="locationName"
+      :fromLocalStorage="true"
     />
   </div>
   <div
@@ -917,6 +918,9 @@ const groupPage = useRouteQuery("groupPage", 1, integerTransformer);
 const latitude = useRouteQuery("lat", undefined, floatTransformer);
 const longitude = useRouteQuery("lon", undefined, floatTransformer);
 
+// TODO
+// This should be updated with getRadiusFromLocal if we want to use user's
+// preferences
 const distance = useRouteQuery("distance", "10_km");
 const when = useRouteQuery("when", "any");
 const contentType = useRouteQuery(

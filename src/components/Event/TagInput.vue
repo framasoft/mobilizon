@@ -15,8 +15,7 @@
     </template>
     <o-taginput
       :modelValue="tagsStrings"
-      @remove="remove"
-      @add="add"
+      @update:modelValue="updateTags"
       :data="filteredTags"
       :allow-autocomplete="true"
       :allow-new="true"
@@ -93,17 +92,6 @@ const filteredTags = computed((): ITag[] => {
         0
   );
 });
-
-// TODO It seems that '@update:modelValue="updateTags"' does not works anymore...
-// so temporarily call the function updateTags() at remove and add tag event
-// https://github.com/oruga-ui/oruga/issues/967
-function remove() {
-  updateTags(tagsStrings.value);
-}
-
-function add() {
-  updateTags(tagsStrings.value);
-}
 
 const updateTags = (newTagsStrings: string[]) => {
   const tagEntities = newTagsStrings.map((tag: string | ITag) => {

@@ -185,6 +185,12 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.UpdateTest do
         |> Map.put("actor", remote_actor_url)
         |> Map.put("object", object)
 
+      Mock
+      |> expect(:call, 2, fn
+        %{method: :post, url: "http://mobilizon.test/inbox"}, _opts ->
+          {:ok, %Tesla.Env{status: 200, body: update_data}}
+      end)
+
       {:ok, %Activity{data: data, local: false}, _} = Transmogrifier.handle_incoming(update_data)
 
       %Post{id: updated_post_id, title: updated_post_title} =
