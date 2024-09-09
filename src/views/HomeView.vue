@@ -334,7 +334,7 @@ const filteredFollowedGroupsEvents = computed<IEvent[]>(() => {
           .map(({ event: { id: event_id } }) => event_id)
           .includes(id)
     )
-    .slice(0, 4);
+    .slice(0, 93);
 });
 
 const welcomeBack = ref(false);
