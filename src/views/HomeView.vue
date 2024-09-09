@@ -146,8 +146,6 @@
     :userLocation="userLocation"
     :doingGeoloc="doingGeoloc"
   />
-  <CloseGroups :userLocation="userLocation" @doGeoLoc="performGeoLocation()" />
-  <OnlineEvents />
 </template>
 
 <script lang="ts" setup>
@@ -163,9 +161,6 @@ import RouteName from "../router/name";
 import { IEvent } from "../types/event.model";
 // import { IFollowedGroupEvent } from "../types/followedGroupEvent.model";
 import CloseEvents from "@/components/Local/CloseEvents.vue";
-import CloseGroups from "@/components/Local/CloseGroups.vue";
-// import LastEvents from "@/components/Local/LastEvents.vue";
-import OnlineEvents from "@/components/Local/OnlineEvents.vue";
 import {
   computed,
   onMounted,
