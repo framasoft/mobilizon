@@ -7,7 +7,11 @@
       :aria-label="t('Message body')"
       v-if="currentActor"
       :currentActor="currentActor"
-      :placeholder="t('ACHTUNG: Diese Funktion steht derzeit nicht zur Verfügung! Bitte nutze die Kommentarfunktion, um Kontakt aufzunehmen oder suche in der Gruppenbeschreibung nach direkten Kontaktdaten.')"
+      :placeholder="
+        t(
+          'ACHTUNG: Diese Funktion steht derzeit nicht zur Verfügung! Bitte nutze die Kommentarfunktion, um Kontakt aufzunehmen oder suche in der Gruppenbeschreibung nach direkten Kontaktdaten.'
+        )
+      "
     />
     <o-notification
       class="my-2"
