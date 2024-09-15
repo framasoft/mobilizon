@@ -33,6 +33,7 @@
     :fromLocalStorage="true"
   />
   <!-- Categories preview -->
+  <categories-preview />
   <!-- Welcome back -->
   <section
     class="container mx-auto"
@@ -140,14 +141,11 @@
     </span>
   </section>
   <!-- Recent events -->
-  <ListViewMain />
-  <Veranstaltungen />
-  <Aktion />
-  <Bildung />
-  <Kreativ />
-  <Plenum />
-  <CloseGroups :userLocation="userLocation" @doGeoLoc="performGeoLocation()" />
-  <OnlineEvents />
+  <CloseEvents
+    @doGeoLoc="performGeoLocation()"
+    :userLocation="userLocation"
+    :doingGeoloc="doingGeoloc"
+  />
 </template>
 
 <script lang="ts" setup>
@@ -161,14 +159,8 @@ import { CURRENT_USER_CLIENT } from "../graphql/user";
 import { HOME_USER_QUERIES } from "../graphql/home";
 import RouteName from "../router/name";
 import { IEvent } from "../types/event.model";
-import ListViewMain from "@/views/Posts/ListViewMain.vue";
-import Veranstaltungen from "@/components/Local/Veranstaltungen.vue";
-import Aktion from "@/components/Local/Aktion.vue";
-import Bildung from "@/components/Local/Bildung.vue";
-import Kreativ from "@/components/Local/Kreativ.vue";
-import Plenum from "@/components/Local/Plenum.vue";
-import CloseGroups from "@/components/Local/CloseGroups.vue";
-import OnlineEvents from "@/components/Local/OnlineEvents.vue";
+// import { IFollowedGroupEvent } from "../types/followedGroupEvent.model";
+import CloseEvents from "@/components/Local/CloseEvents.vue";
 import {
   computed,
   onMounted,
@@ -186,6 +178,7 @@ import {
   UPDATE_CURRENT_USER_LOCATION_CLIENT,
 } from "@/graphql/location";
 import { LocationType } from "@/types/user-location.model";
+import CategoriesPreview from "@/components/Home/CategoriesPreview.vue";
 import UnloggedIntroduction from "@/components/Home/UnloggedIntroduction.vue";
 import SearchFields from "@/components/Home/SearchFields.vue";
 import { useHead } from "@unhead/vue";
@@ -341,7 +334,7 @@ const filteredFollowedGroupsEvents = computed<IEvent[]>(() => {
           .map(({ event: { id: event_id } }) => event_id)
           .includes(id)
     )
-    .slice(0, 4);
+    .slice(0, 93);
 });
 
 const welcomeBack = ref(false);
