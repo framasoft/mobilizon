@@ -7,13 +7,13 @@
     <template #title>
       <template v-if="userLocation?.name">
         {{
-          t("Incoming events and activities nearby {position}", {
+          t("Incoming events nearby {position}", {
             position: userLocation?.name,
           })
         }}
       </template>
       <template v-else>
-        {{ t("Incoming events and activities") }}
+        {{ t("Incoming events") }}
       </template>
     </template>
     <template #subtitle>
@@ -124,6 +124,7 @@ const eventsQuery = useQuery<{
   longevents: false,
   location: geoHash.value,
   radius: distance.value,
+  limit: 93,
 }));
 
 const events = computed(
