@@ -4,7 +4,6 @@ stages:
   - install
   - check
   - build-js
-  - sentry
   - test
   - build
   - upload
@@ -93,21 +92,6 @@ build-frontend:
   needs:
     - lint-front
 
-sentry-commit:
-  stage: sentry
-  image: getsentry/sentry-cli
-  script:
-    - echo "Create a new release $CI_COMMIT_TAG"
-    - sentry-cli releases new $CI_COMMIT_TAG
-    - sentry-cli releases set-commits $CI_COMMIT_TAG --auto
-    - sentry-cli releases files $CI_COMMIT_TAG upload-sourcemaps priv/static/assets/
-    - sentry-cli releases finalize $CI_COMMIT_TAG
-    - echo "Finalized release for $CI_COMMIT_TAG"
-  needs:
-    - build-frontend
-  only:
-    - tags@framasoft/mobilizon
-
 deps:
   stage: check
   before_script:
@@ -162,6 +146,8 @@ vitest:
 
 e2e:
   stage: test
+  except:
+    - tags@framasoft/mobilizon
   services:
     - name: postgis/postgis:16-3.4
       alias: postgres
