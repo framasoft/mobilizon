@@ -14,14 +14,10 @@
       />
       <!-- <o-loading v-model:active="$apollo.loading"></o-loading> -->
       <header class="block-container presentation" v-if="group">
-        <div class="banner-container">
-          <lazy-image-wrapper :picture="group.banner" />
-        </div>
         <div class="header flex flex-col">
           <div class="flex self-center h-0 mt-4 items-end">
-            <figure class="" v-if="group.avatar">
+            <figure class="logo" v-if="group.avatar">
               <img
-                class="rounded-full border h-32 w-32"
                 :src="group.avatar.url"
                 alt=""
                 width="128"
@@ -30,1199 +26,1552 @@
             </figure>
             <AccountGroup v-else :size="128" />
           </div>
-          <div class="title-container flex flex-1 flex-col text-center">
-            <h1 class="m-0" v-if="group.name">
-              {{ group.name }}
-            </h1>
-            <!-- <o-skeleton v-else :animated="true" /> -->
-            <span dir="ltr" class="" v-if="group.preferredUsername"
-              >@{{ usernameWithDomain(group) }}</span
-            >
-            <!-- <o-skeleton v-else :animated="true" /> -->
-            <br />
-          </div>
-          <div class="flex flex-wrap justify-center flex-col md:flex-row">
-            <div
-              class="flex flex-col items-center flex-1 m-0"
-              v-if="isCurrentActorAGroupMember && !previewPublic && members"
-            >
-              <div class="flex">
-                <figure
-                  :title="
-                    t(`{'@'}{username} ({role})`, {
-                      username: usernameWithDomain(member.actor),
-                      role: member.role,
-                    })
-                  "
-                  v-for="member in members.elements"
-                  :key="member.actor.id"
-                  class="-mr-3"
-                >
-                  <img
-                    class="rounded-full h-8"
-                    :src="member.actor.avatar.url"
-                    v-if="member.actor.avatar"
-                    alt=""
-                    width="32"
-                    height="32"
-                  />
-                  <AccountCircle v-else :size="32" />
-                </figure>
+            <div class="title-container flex flex-1 flex-col text-center">
+              <h1 class="m-0" v-if="group.name">
+                {{ group.name }}
+              </h1>
+              <!-- <o-skeleton v-else :animated="true" /> -->
+              <br />
+            </div>
+            <div class="flex flex-wrap justify-center flex-col md:flex-row">
+              <div
+                class="flex flex-col items-center flex-1 m-0"
+                v-if="isCurrentActorAGroupMember && !previewPublic && members"
+              >
+                <div class="flex">
+                  <figure
+                    :title="
+                      t(`{'@'}{username} ({role})`, {
+                        username: usernameWithDomain(member.actor),
+                        role: member.role,
+                      })
+                    "
+                    v-for="member in members.elements"
+                    :key="member.actor.id"
+                    class="-mr-3"
+                  >
+                    <img
+                      class="rounded-full h-8"
+                      :src="member.actor.avatar.url"
+                      v-if="member.actor.avatar"
+                      alt=""
+                      width="32"
+                      height="32"
+                    />
+                    <AccountCircle v-else :size="32" />
+                  </figure>
+                </div>
+                <p>
+                  {{
+                    t(
+                      "{count} members",
+                      {
+                        count: group.members?.total,
+                      },
+                      group.members?.total
+                    )
+                  }}
+                  <router-link
+                    v-if="isCurrentActorAGroupAdmin"
+                    :to="{
+                      name: RouteName.GROUP_MEMBERS_SETTINGS,
+                      params: { preferredUsername: usernameWithDomain(group) },
+                    }"
+                    >{{ t("Add / Remove…") }}</router-link
+                  >
+                </p>
               </div>
-              <p>
-                {{
-                  t(
-                    "{count} members",
-                    {
-                      count: group.members?.total,
-                    },
-                    group.members?.total
-                  )
-                }}
-                <router-link
-                  v-if="isCurrentActorAGroupAdmin"
+              <div class="flex flex-wrap gap-3 justify-center">
+                <o-button
+                  outlined
+                  icon-left="timeline-text"
+                  v-if="isCurrentActorAGroupMember && !previewPublic"
+                  tag="router-link"
                   :to="{
-                    name: RouteName.GROUP_MEMBERS_SETTINGS,
+                    name: RouteName.TIMELINE,
                     params: { preferredUsername: usernameWithDomain(group) },
                   }"
-                  >{{ t("Add / Remove…") }}</router-link
+                  >{{ t("Activity") }}</o-button
                 >
-              </p>
-            </div>
-            <div class="flex flex-wrap gap-3 justify-center">
-              <o-button
-                outlined
-                icon-left="timeline-text"
-                v-if="isCurrentActorAGroupMember && !previewPublic"
-                tag="router-link"
-                :to="{
-                  name: RouteName.TIMELINE,
-                  params: { preferredUsername: usernameWithDomain(group) },
-                }"
-                >{{ t("Activity") }}</o-button
-              >
-              <o-button
-                outlined
-                icon-left="cog"
-                v-if="isCurrentActorAGroupAdmin && !previewPublic"
-                tag="router-link"
-                :to="{
-                  name: RouteName.GROUP_PUBLIC_SETTINGS,
-                  params: { preferredUsername: usernameWithDomain(group) },
-                }"
-                >{{ t("Group settings") }}</o-button
-              >
-              <o-dropdown
-                aria-role="list"
-                v-if="showJoinButton && showFollowButton"
-              >
-                <template #trigger>
-                  <o-button
-                    variant="primary"
-                    icon-left="rss"
-                    icon-right="menu-down"
-                  >
-                    {{ t("Follow") }}
-                  </o-button>
-                </template>
-
-                <o-dropdown-item
-                  aria-role="listitem"
-                  class="p-0"
-                  custom
-                  :focusable="false"
-                  :disabled="
-                    isCurrentActorPendingFollow &&
-                    currentActor?.id !== undefined
-                  "
+                <o-button
+                  outlined
+                  icon-left="cog"
+                  v-if="isCurrentActorAGroupAdmin && !previewPublic"
+                  tag="router-link"
+                  :to="{
+                    name: RouteName.GROUP_PUBLIC_SETTINGS,
+                    params: { preferredUsername: usernameWithDomain(group) },
+                  }"
+                  >{{ t("Group settings") }}</o-button
                 >
-                  <button
-                    class="flex gap-1 text-start py-4 px-2 w-full"
-                    @click="followGroup"
-                  >
-                    <RSS />
-                    <div class="pl-2">
-                      <h3 class="font-medium text-lg">{{ t("Follow") }}</h3>
-                      <p class="whitespace-normal md:whitespace-nowrap text-sm">
-                        {{ t("Get informed of the upcoming public events") }}
-                      </p>
-                      <p
-                        v-if="
-                          doesGroupManuallyApprovesFollowers &&
-                          !isCurrentActorPendingFollow
-                        "
-                        class="whitespace-normal md:whitespace-nowrap text-sm italic"
-                      >
-                        {{
-                          t(
-                            "Follow requests will be approved by a group moderator"
-                          )
-                        }}
-                      </p>
-                      <p
-                        v-if="isCurrentActorPendingFollow && currentActor?.id"
-                        class="whitespace-normal md:whitespace-nowrap text-sm italic"
-                      >
-                        {{ t("Follow request pending approval") }}
-                      </p>
-                    </div>
-                  </button>
-                </o-dropdown-item>
-
-                <o-dropdown-item
-                  aria-role="listitem"
-                  class="p-0 border-t border-solid"
-                  custom
-                  :focusable="false"
-                  :disabled="
-                    isGroupInviteOnly || isCurrentActorAPendingGroupMember
-                  "
+                <o-dropdown
+                  aria-role="list"
+                  v-if="showJoinButton && showFollowButton"
                 >
-                  <button
-                    class="flex gap-1 text-start py-4 px-2 w-full"
-                    @click="joinGroup"
+                  <template #trigger>
+                    <o-button
+                      variant="primary"
+                      icon-left="rss"
+                      icon-right="menu-down"
+                    >
+                      {{ t("Follow") }}
+                    </o-button>
+                  </template>
+  
+                  <o-dropdown-item
+                    aria-role="listitem"
+                    class="p-0"
+                    custom
+                    :focusable="false"
+                    :disabled="
+                      isCurrentActorPendingFollow &&
+                      currentActor?.id !== undefined
+                    "
                   >
-                    <AccountMultiplePlus />
-                    <div class="pl-2">
-                      <h3 class="font-medium text-lg">{{ t("Join") }}</h3>
-                      <div v-if="showJoinButton">
-                        <p
-                          class="whitespace-normal md:whitespace-nowrap text-sm"
-                        >
-                          {{
-                            t(
-                              "Become part of the community and start organizing events"
-                            )
-                          }}
-                        </p>
-                        <p
-                          v-if="isGroupInviteOnly"
-                          class="whitespace-normal md:whitespace-nowrap text-sm italic"
-                        >
-                          {{ t("This group is invite-only") }}
+                    <button
+                      class="flex gap-1 text-start py-4 px-2 w-full"
+                      @click="followGroup"
+                    >
+                      <RSS />
+                      <div class="pl-2">
+                        <h3 class="font-medium text-lg">{{ t("Follow") }}</h3>
+                        <p class="whitespace-normal md:whitespace-nowrap text-sm">
+                          {{ t("Get informed of the upcoming public events") }}
                         </p>
                         <p
                           v-if="
-                            areGroupMembershipsModerated &&
-                            !isCurrentActorAPendingGroupMember
+                            doesGroupManuallyApprovesFollowers &&
+                            !isCurrentActorPendingFollow
                           "
                           class="whitespace-normal md:whitespace-nowrap text-sm italic"
                         >
                           {{
                             t(
-                              "Membership requests will be approved by a group moderator"
+                              "Follow requests will be approved by a group moderator"
                             )
                           }}
                         </p>
                         <p
-                          v-if="isCurrentActorAPendingGroupMember"
+                          v-if="isCurrentActorPendingFollow && currentActor?.id"
                           class="whitespace-normal md:whitespace-nowrap text-sm italic"
                         >
-                          {{ t("Your membership is pending approval") }}
+                          {{ t("Follow request pending approval") }}
                         </p>
                       </div>
-                    </div>
-                  </button>
-                </o-dropdown-item>
-              </o-dropdown>
-              <o-button
-                outlined
-                v-if="isCurrentActorAPendingGroupMember"
-                @click="leaveGroup"
-                @keyup.enter="leaveGroup"
-                variant="primary"
-                >{{ t("Cancel membership request") }}</o-button
-              >
-              <o-button
-                outlined
-                v-if="isCurrentActorPendingFollow && currentActor?.id"
-                @click="unFollowGroup"
-                @keyup.enter="unFollowGroup"
-                variant="primary"
-                >{{ t("Cancel follow request") }}</o-button
-              ><o-button
-                v-if="
-                  isCurrentActorFollowing && !previewPublic && currentActor?.id
-                "
-                variant="primary"
-                @click="unFollowGroup"
-                >{{ t("Unfollow") }}</o-button
-              >
-              <o-button
-                v-if="isCurrentActorFollowing"
-                @click="toggleFollowNotify"
-                @keyup.enter="toggleFollowNotify"
-                class="notification-button p-1.5"
-                outlined
-                :icon-left="
-                  isCurrentActorFollowingNotify
-                    ? 'bell-outline'
-                    : 'bell-off-outline'
-                "
-              >
-                <span class="sr-only">{{
-                  isCurrentActorFollowingNotify
-                    ? t("Activate notifications")
-                    : t("Deactivate notifications")
-                }}</span>
-              </o-button>
-              <o-button
-                outlined
-                tag="router-link"
-                :to="{
-                  name: RouteName.CONVERSATION_LIST,
-                  query: {
-                    newMessage: 'true',
-                    groupMentions: usernameWithDomain(group),
-                  },
-                }"
-                icon-left="email"
-                v-if="!isCurrentActorAGroupMember || previewPublic"
-              >
-                {{ t("Contact") }}
-              </o-button>
-              <o-button
-                outlined
-                icon-left="share"
-                @click="triggerShare()"
-                @keyup.enter="triggerShare()"
-                v-if="!isCurrentActorAGroupMember || previewPublic"
-              >
-                {{ t("Share") }}
-              </o-button>
-              <o-dropdown aria-role="list">
-                <template #trigger>
-                  <o-button
-                    outlined
-                    icon-left="dots-horizontal"
-                    :aria-label="t('Other actions')"
-                  ></o-button>
-                </template>
-                <o-dropdown-item
-                  aria-role="menuitem"
-                  v-if="isCurrentActorAGroupMember || previewPublic"
+                    </button>
+                  </o-dropdown-item>
+  
+                  <o-dropdown-item
+                    aria-role="listitem"
+                    class="p-0 border-t border-solid"
+                    custom
+                    :focusable="false"
+                    :disabled="
+                      isGroupInviteOnly || isCurrentActorAPendingGroupMember
+                    "
+                  >
+                    <button
+                      class="flex gap-1 text-start py-4 px-2 w-full"
+                      @click="joinGroup"
+                    >
+                      <AccountMultiplePlus />
+                      <div class="pl-2">
+                        <h3 class="font-medium text-lg">{{ t("Join") }}</h3>
+                        <div v-if="showJoinButton">
+                          <p
+                            class="whitespace-normal md:whitespace-nowrap text-sm"
+                          >
+                            {{
+                              t(
+                                "Become part of the community and start organizing events"
+                              )
+                            }}
+                          </p>
+                          <p
+                            v-if="isGroupInviteOnly"
+                            class="whitespace-normal md:whitespace-nowrap text-sm italic"
+                          >
+                            {{ t("This group is invite-only") }}
+                          </p>
+                          <p
+                            v-if="
+                              areGroupMembershipsModerated &&
+                              !isCurrentActorAPendingGroupMember
+                            "
+                            class="whitespace-normal md:whitespace-nowrap text-sm italic"
+                          >
+                            {{
+                              t(
+                                "Membership requests will be approved by a group moderator"
+                              )
+                            }}
+                          </p>
+                          <p
+                            v-if="isCurrentActorAPendingGroupMember"
+                            class="whitespace-normal md:whitespace-nowrap text-sm italic"
+                          >
+                            {{ t("Your membership is pending approval") }}
+                          </p>
+                        </div>
+                      </div>
+                    </button>
+                  </o-dropdown-item>
+                </o-dropdown>
+                <o-button
+                  outlined
+                  v-if="isCurrentActorAPendingGroupMember"
+                  @click="leaveGroup"
+                  @keyup.enter="leaveGroup"
+                  variant="primary"
+                  >{{ t("Cancel membership request") }}</o-button
                 >
-                  <o-switch v-model="previewPublic">{{
-                    t("Public preview")
-                  }}</o-switch>
-                </o-dropdown-item>
-                <o-dropdown-item
-                  v-if="!previewPublic && isCurrentActorAGroupMember"
-                  aria-role="menuitem"
+                <o-button
+                  outlined
+                  v-if="isCurrentActorPendingFollow && currentActor?.id"
+                  @click="unFollowGroup"
+                  @keyup.enter="unFollowGroup"
+                  variant="primary"
+                  >{{ t("Cancel follow request") }}</o-button
+                ><o-button
+                  v-if="
+                    isCurrentActorFollowing && !previewPublic && currentActor?.id
+                  "
+                  variant="primary"
+                  @click="unFollowGroup"
+                  >{{ t("Unfollow") }}</o-button
+                >
+                <o-button
+                  v-if="isCurrentActorFollowing"
+                  @click="toggleFollowNotify"
+                  @keyup.enter="toggleFollowNotify"
+                  class="notification-button p-1.5"
+                  outlined
+                  :icon-left="
+                    isCurrentActorFollowingNotify
+                      ? 'bell-outline'
+                      : 'bell-off-outline'
+                  "
+                >
+                  <span class="sr-only">{{
+                    isCurrentActorFollowingNotify
+                      ? t("Activate notifications")
+                      : t("Deactivate notifications")
+                  }}</span>
+                </o-button>
+                <o-button
+                  outlined
+                  icon-left="share"
                   @click="triggerShare()"
                   @keyup.enter="triggerShare()"
+                  v-if="!isCurrentActorAGroupMember || previewPublic"
                 >
-                  <span class="inline-flex gap-1">
-                    <Share />
-                    {{ t("Share") }}
-                  </span>
-                </o-dropdown-item>
-                <hr
-                  role="presentation"
-                  class="dropdown-divider"
-                  v-if="isCurrentActorAGroupMember"
-                />
-                <o-dropdown-item has-link aria-role="menuitem">
-                  <a
-                    :href="`@${preferredUsername}/feed/atom`"
-                    :title="t('Atom feed for events and posts')"
-                    class="inline-flex gap-1"
+                  {{ t("Share") }}
+                </o-button>
+                <o-dropdown aria-role="list">
+                  <template #trigger>
+                    <o-button
+                      outlined
+                      icon-left="dots-horizontal"
+                      :aria-label="t('Other actions')"
+                    ></o-button>
+                  </template>
+                  <o-dropdown-item
+                    aria-role="menuitem"
+                    v-if="isCurrentActorAGroupMember || previewPublic"
                   >
-                    <RSS />
-                    {{ t("RSS/Atom Feed") }}
-                  </a>
-                </o-dropdown-item>
-                <o-dropdown-item has-link aria-role="menuitem">
-                  <a
-                    :href="`@${preferredUsername}/feed/ics`"
-                    :title="t('ICS feed for events')"
-                    class="inline-flex gap-1"
+                    <o-switch v-model="previewPublic">{{
+                      t("Public preview")
+                    }}</o-switch>
+                  </o-dropdown-item>
+                  <o-dropdown-item
+                    v-if="!previewPublic && isCurrentActorAGroupMember"
+                    aria-role="menuitem"
+                    @click="triggerShare()"
+                    @keyup.enter="triggerShare()"
                   >
-                    <CalendarSync />
-                    {{ t("ICS/WebCal Feed") }}
-                  </a>
-                </o-dropdown-item>
-                <hr role="presentation" class="dropdown-divider" />
-                <o-dropdown-item
-                  v-if="ableToReport"
-                  aria-role="menuitem"
-                  @click="isReportModalActive = true"
-                  @keyup.enter="isReportModalActive = true"
-                >
-                  <span class="inline-flex gap-1">
-                    <Flag />
-                    {{ t("Report") }}
-                  </span>
-                </o-dropdown-item>
-                <o-dropdown-item
-                  aria-role="menuitem"
-                  v-if="isCurrentActorAGroupMember && !previewPublic"
-                  @click="openLeaveGroupModal"
-                  @keyup.enter="openLeaveGroupModal"
-                >
-                  <span class="inline-flex gap-1">
-                    <ExitToApp />
-                    {{ t("Leave") }}
-                  </span>
-                </o-dropdown-item>
-              </o-dropdown>
+                    <span class="inline-flex gap-1">
+                      <Share />
+                      {{ t("Share") }}
+                    </span>
+                  </o-dropdown-item>
+                  <hr
+                    role="presentation"
+                    class="dropdown-divider"
+                    v-if="isCurrentActorAGroupMember"
+                  />
+                  <o-dropdown-item has-link aria-role="menuitem">
+                    <a
+                      :href="`@${preferredUsername}/feed/atom`"
+                      :title="t('Atom feed for events and posts')"
+                      class="inline-flex gap-1"
+                    >
+                      <RSS />
+                      {{ t("RSS/Atom Feed") }}
+                    </a>
+                  </o-dropdown-item>
+                  <o-dropdown-item has-link aria-role="menuitem">
+                    <a
+                      :href="`@${preferredUsername}/feed/ics`"
+                      :title="t('ICS feed for events')"
+                      class="inline-flex gap-1"
+                    >
+                      <CalendarSync />
+                      {{ t("ICS/WebCal Feed") }}
+                    </a>
+                  </o-dropdown-item>
+                  <hr role="presentation" class="dropdown-divider" />
+                  <o-dropdown-item
+                    v-if="ableToReport"
+                    aria-role="menuitem"
+                    @click="isReportModalActive = true"
+                    @keyup.enter="isReportModalActive = true"
+                  >
+                    <span class="inline-flex gap-1">
+                      <Flag />
+                      {{ t("Report") }}
+                    </span>
+                  </o-dropdown-item>
+                  <o-dropdown-item
+                    aria-role="menuitem"
+                    v-if="isCurrentActorAGroupMember && !previewPublic"
+                    @click="openLeaveGroupModal"
+                    @keyup.enter="openLeaveGroupModal"
+                  >
+                    <span class="inline-flex gap-1">
+                      <ExitToApp />
+                      {{ t("Leave") }}
+                    </span>
+                  </o-dropdown-item>
+                </o-dropdown>
+              </div>  
             </div>
-          </div>
-          <InvitationsList
-            v-if="
-              isCurrentActorAnInvitedGroupMember && groupMember !== undefined
-            "
-            :invitations="[groupMember]"
-          />
-          <o-notification
-            v-if="isCurrentActorARejectedGroupMember"
-            variant="danger"
-          >
-            {{ t("You have been removed from this group's members.") }}
-          </o-notification>
-          <o-notification
-            v-if="
-              isCurrentActorAGroupMember &&
-              isCurrentActorARecentMember &&
-              isCurrentActorOnADifferentDomainThanGroup
-            "
-            variant="info"
-          >
-            {{
-              t(
-                "Since you are a new member, private content can take a few minutes to appear."
-              )
-            }}
-          </o-notification>
-        </div>
-      </header>
-    </div>
-    <div
-      v-if="isCurrentActorAGroupMember && !previewPublic && group"
-      class="block-container flex gap-2 flex-wrap mt-3"
-    >
-      <!-- Private things -->
-      <div class="flex-1 m-0 flex flex-col flex-wrap gap-2">
-        <!-- Group discussions -->
-        <Discussions :group="discussionGroup ?? group" class="flex-1" />
-        <!-- Resources -->
-        <Resources :group="resourcesGroup ?? group" class="flex-1" />
-      </div>
-      <!-- Public things -->
-      <div class="flex-1 m-0 flex flex-col flex-wrap gap-2">
-        <!-- Events -->
-        <Events
-          :group="group"
-          :isModerator="isCurrentActorAGroupModerator"
-          class="flex-1"
-        />
-        <!-- Posts -->
-        <Posts
-          :group="group"
-          :isModerator="isCurrentActorAGroupModerator"
-          :isMember="isCurrentActorAGroupMember"
-          class="flex-1"
-        />
-      </div>
-    </div>
-    <o-notification
-      v-else-if="!group && groupLoading === false"
-      variant="danger"
-    >
-      {{ t("No group found") }}
-    </o-notification>
-    <div v-else-if="group" class="public-container flex flex-col">
-      <aside class="group-metadata">
-        <div class="sticky">
-          <o-notification v-if="group.domain && !isCurrentActorAGroupMember">
-            <p>
+            <event-metadata-block
+              v-if="group.summary && group.summary !== '<p></p>'" >
+              <div
+                  dir="auto"
+                  class="text-xl text-center summary"
+                  v-html="group.summary"
+                />
+                </event-metadata-block>
+            <InvitationsList
+              v-if="
+                isCurrentActorAnInvitedGroupMember && groupMember !== undefined
+              "
+              :invitations="[groupMember]"
+            />
+            <o-notification
+              v-if="isCurrentActorARejectedGroupMember"
+              variant="danger"
+            >
+              {{ t("You have been removed from this group's members.") }}
+            </o-notification>
+            <o-notification
+              v-if="
+                isCurrentActorAGroupMember &&
+                isCurrentActorARecentMember &&
+                isCurrentActorOnADifferentDomainThanGroup
+              "
+              variant="info"
+            >
               {{
                 t(
-                  "This profile is from another instance, the informations shown here may be incomplete."
+                  "Since you are a new member, private content can take a few minutes to appear."
                 )
               }}
-            </p>
-            <o-button
-              variant="text"
-              tag="a"
-              :href="group.url"
-              rel="noopener noreferrer external"
-              >{{ t("View full profile") }}</o-button
-            >
-          </o-notification>
-          <event-metadata-block
-            :title="t('About')"
-            v-if="group.summary && group.summary !== '<p></p>'"
-          >
-            <div
-              dir="auto"
-              class="prose lg:prose-xl dark:prose-invert"
-              v-html="group.summary"
-            />
-          </event-metadata-block>
-          <event-metadata-block :title="t('Members')">
-            <template #icon>
-              <AccountGroup :size="48" />
-            </template>
-            {{
-              t(
-                "{count} members",
-                {
-                  count: group.members?.total,
-                },
-                group.members?.total
-              )
-            }}
-          </event-metadata-block>
-          <event-metadata-block
-            v-if="physicalAddress && physicalAddress.url"
-            :title="t('Location')"
-          >
-            <template #icon>
-              <o-icon
-                v-if="physicalAddress.poiInfos.poiIcon.icon"
-                :icon="physicalAddress.poiInfos.poiIcon.icon"
-                customSize="48"
-              />
-              <Earth v-else :size="48" />
-            </template>
-            <div class="address-wrapper">
-              <span
-                v-if="!physicalAddress || !addressFullName(physicalAddress)"
-                >{{ t("No address defined") }}</span
+            </o-notification>
+          </div>
+        </header>
+      </div>
+      <div
+        v-if="isCurrentActorAGroupMember && !previewPublic && group"
+        class="block-container flex gap-2 flex-wrap mt-3"
+      >
+        <!-- Private things -->
+        <div class="flex-1 m-0 flex flex-col flex-wrap gap-2">
+          <!-- Group discussions -->
+          <Discussions :group="discussionGroup ?? group" class="flex-1" />
+          <!-- Resources -->
+          <Resources :group="resourcesGroup ?? group" class="flex-1" />
+        </div>
+        <!-- Public things -->
+        <div class="flex-1 m-0 flex flex-col flex-wrap gap-2">
+          <!-- Events -->
+          <Events
+            :group="group"
+            :isModerator="isCurrentActorAGroupModerator"
+            class="flex-1"
+          />
+          <!-- Posts -->
+          <Posts
+            :group="group"
+            :isModerator="isCurrentActorAGroupModerator"
+            :isMember="isCurrentActorAGroupMember"
+            class="flex-1"
+          />
+        </div>
+      </div>
+      <o-notification
+        v-else-if="!group && groupLoading === false"
+        variant="danger"
+      >
+        {{ t("No group found") }}
+      </o-notification>
+      <div v-else-if="group" class="public-container flex flex-col">
+        <aside class="group-metadata">
+          <div class="sticky" style="max-width: 100%;">
+            <o-notification v-if="group.domain && !isCurrentActorAGroupMember">
+              <p>
+                {{
+                  t(
+                    "This profile is from another instance, the informations shown here may be incomplete."
+                  )
+                }}
+              </p>
+              <o-button
+                variant="text"
+                tag="a"
+                :href="group.url"
+                rel="noopener noreferrer external"
+                >{{ t("View full profile") }}</o-button
               >
-              <div class="address" v-if="physicalAddress">
-                <div>
-                  <address dir="auto">
-                    <p
-                      class="addressDescription"
-                      :title="physicalAddress.poiInfos.name"
-                    >
-                      {{ physicalAddress.poiInfos.name }}
-                    </p>
-                    <p class="has-text-grey-dark">
-                      {{ physicalAddress.poiInfos.alternativeName }}
-                    </p>
-                  </address>
-                </div>
+            </o-notification>
+            <event-metadata-block>
+              <section class="test flex flex-col items-stretch">
+                <h2 class="text-xl font-bold">{{ t("Latest posts") }}</h2>
+                <div class="post-list ml-[12px]">
+              <group-page
+                :posts="posts.elements
+                          .filter(post => !post.draft && post.visibility === PostVisibility.PUBLIC)
+                          .slice(0, 3)"
+              />
+              <empty-content v-if="!posts.total > 0" icon="bullhorn" :inline="true">
+                {{ t("No posts yet") }}
+              </empty-content>
+                    </div>
+                    <o-loading v-model:active="loading"></o-loading>
                 <o-button
-                  class="map-show-button"
+                  class="self-center my-2"
+                  v-if="posts.total > 0"
+                  tag="router-link"
                   variant="text"
-                  @click="showMap = !showMap"
-                  @keyup.enter="showMap = !showMap"
-                  v-if="physicalAddress.geom"
+                  :to="{
+                    name: RouteName.POSTS,
+                    params: { preferredUsername: usernameWithDomain(group) },
+                  }"
+                  >{{ t("Weitere Beiträge") }}</o-button
                 >
-                  {{ t("Show map") }}
-                </o-button>
+              </section>
+            </event-metadata-block>
+            <event-metadata-block
+              v-if="physicalAddress && physicalAddress.url && addressFullName(physicalAddress)"
+              :title="t('Location')"
+            >
+              <template #icon>
+                <o-icon
+                  v-if="physicalAddress.poiInfos.poiIcon.icon"
+                  :icon="physicalAddress.poiInfos.poiIcon.icon"
+                  customSize="48"
+                />
+                <Earth v-else :size="48" />
+              </template>
+              <div class="address-wrapper">
+                <div class="address">
+                  <div>
+                    <address dir="auto">
+                      <p
+                        class="addressDescription"
+                        :title="physicalAddress.poiInfos.name"
+                      >
+                        {{ physicalAddress.poiInfos.name }}
+                      </p>
+                      <p class="has-text-grey-dark">
+                        {{ physicalAddress.poiInfos.alternativeName }}
+                      </p>
+                    </address>
+                  </div>
+                  <o-button
+                    class="map-show-button"
+                    variant="text"
+                    @click="showMap = !showMap"
+                    @keyup.enter="showMap = !showMap"
+                    v-if="physicalAddress.geom"
+                  >
+                    {{ t("Show map") }}
+                  </o-button>
+                </div>
+              </div>
+            </event-metadata-block>
+            <div class="ml-[12px] banner" >
+          <lazy-image-wrapper :picture="group.banner" />
+        </div>
+          </div>
+        </aside>
+        <div class="main-content min-w-min flex-auto py-0 px-2">
+          <section>
+            <div v-if="organizedEvents.elements.length < 1">
+            <h2 class="text-xl font-bold">{{ t("Upcoming events") }}</h2>
+            <empty-content
+              icon="calendar"
+              :inline="true"
+              description-classes="flex flex-col items-stretch"
+            >
+              {{ t("No public upcoming events") }}
+              <template #desc>
+                <template v-if="isCurrentActorFollowing">
+                  <i18n-t
+                    keypath="You will receive notifications about this group's public activity depending on %{notification_settings}."
+                  >
+                    <template #notification_settings>
+                      <router-link :to="{ name: RouteName.NOTIFICATIONS }">{{
+                        t("your notification settings")
+                      }}</router-link>
+                    </template>
+                  </i18n-t>
+                </template>
+                <o-button
+                  tag="router-link"
+                  class="my-2 self-center"
+                  variant="text"
+                  :to="{
+                    name: RouteName.GROUP_EVENTS,
+                    params: { preferredUsername: usernameWithDomain(group) },
+                    query: { showPassedEvents: true },
+                  }"
+                  >{{ t("View past events") }}</o-button
+                >
+              </template>
+            </empty-content>
+          </div>
+            <!-- <o-skeleton animated v-else-if="$apollo.loading"></o-skeleton> -->
+
+        <div v-if="group && EventsStreik.elements.length > 0">
+          <h2 class="text-xl font-bold">{{ t("Angekündigte Streiks") }}</h2>
+          <div class="main-event-list">
+          <div
+            class="event-list flex flex-col gap-3 w-[960px]" >
+            <close-content
+              class="container mx-auto px-2"
+              v-show="groupLoading || (group && EventsStreik.elements.length > 0)"
+              v-on="attrs"
+            >
+              <template #content>
+                  <event-group-card
+                    v-for="event in EventsStreik.elements"
+                    :event="event"
+                    :key="event.uuid"
+                    class="organized-event"
+                  />
+              </template>
+            </close-content>
+        </div>
+        </div>
+      </div>
+
+        <div v-if="group && EventsAktionDemo.elements.length > 0">
+            <h2 class="text-xl font-bold subheading">{{ t("Aktionen & Demos") }}</h2>
+            <div class="main-event-list ">
+            <div
+              class="event-list flex flex-col gap-3 w-[960px]" >
+              <close-content
+                class="container mx-auto px-2"
+                v-show="groupLoading || (group && EventsAktionDemo.elements.length > 0)"
+                v-on="attrs"
+              >
+                <template #content>
+                    <event-group-card
+                      v-for="event in EventsAktionDemo.elements"
+                      :event="event"
+                      :key="event.uuid"
+                      class="organized-event"
+                    />
+                </template>
+              </close-content>
+            </div>
+          </div>
+        </div>
+
+
+
+      <div v-if="group && EventsVorbereitungstreffen.elements.length > 0">
+          <h2 class="text-xl font-bold">{{ t("Vorbereitungstreffen") }}</h2>
+            <div class="main-event-list">
+            <div
+              class="event-list flex flex-col gap-3 w-[960px]">
+              <close-content
+                class="container mx-auto px-2"
+                v-show="groupLoading || (group && EventsVorbereitungstreffen.elements.length > 0)"
+                v-on="attrs"
+              >
+                <template #content>
+                    <event-group-card
+                      v-for="event in EventsVorbereitungstreffen.elements"
+                      :event="event"
+                      :key="event.uuid"
+                      class="organized-event"
+                    />
+                </template>
+              </close-content>
+            </div>
+          </div>
+      </div>
+
+
+
+      <div v-if="group && EventsBildungsurlaub.elements.length > 0">
+            <h2 class="text-xl font-bold">{{ t("Bildungsurlaub") }}</h2>
+            <div class="main-event-list">
+            <div
+              class="event-list flex flex-col gap-3 w-[960px]" >
+              <close-content
+                class="container mx-auto px-2"
+                v-show="groupLoading || (group && EventsBildungsurlaub.elements.length > 0)"
+                v-on="attrs"
+              >
+                <template #content>
+                    <event-group-card
+                      v-for="event in EventsBildungsurlaub.elements"
+                      :event="event"
+                      :key="event.uuid"
+                      class="organized-event"
+                    />
+                </template>
+              </close-content>
+            </div>
+          </div>
+        </div>
+
+
+
+
+
+
+
+        <div v-if="group && EventsMeeting.elements.length > 0">
+            <h2 class="text-xl font-bold">{{ t("Upcoming events") }}</h2>
+            <div class="main-event-list">
+            <div
+              class="event-list flex flex-col gap-3 w-[960px]"
+              v-if="group && EventsMeeting.elements.length > 0" >
+              <close-content
+                class="container mx-auto px-2"
+                v-show="groupLoading || (group && EventsMeeting.elements.length > 0)"
+                v-on="attrs"
+              >
+                <template #content>
+                    <event-group-card
+                      v-for="event in EventsMeeting.elements"
+                      :event="event"
+                      :key="event.uuid"
+                      class="organized-event"
+                    />
+                </template>
+              </close-content>
+            </div>
+          </div>
+        </div>
+
+
+        <div v-if="group && EventsBildung.elements.length > 0">
+          <h2 class="text-xl font-bold">{{ t("Bildung") }}</h2>
+            <div class="main-event-list">
+            <div
+              class="event-list flex flex-col gap-3 w-[960px]" >
+              <close-content
+                class="container mx-auto px-2"
+                v-show="groupLoading || (group && EventsBildung.elements.length > 0)"
+                v-on="attrs"
+              >
+                <template #content>
+                    <event-group-card
+                      v-for="event in EventsBildung.elements"
+                      :event="event"
+                      :key="event.uuid"
+                      class="organized-event"
+                    />
+                </template>
+              </close-content>
+            </div>
+          </div>
+        </div>
+
+
+        <div v-if="group && EventsMusik.elements.length > 0">
+            <h2 class="text-xl font-bold">{{ t("Musik") }}</h2>
+            <div class="main-event-list">
+            <div
+              class="event-list flex flex-col gap-3 w-[960px]" >
+              <close-content
+                class="container mx-auto px-2"
+                v-show="groupLoading || (group && EventsMusik.elements.length > 0)"
+                v-on="attrs"
+              >
+                <template #content>
+                    <event-group-card
+                      v-for="event in EventsMusik.elements"
+                      :event="event"
+                      :key="event.uuid"
+                      class="organized-event"
+                    />
+                </template>
+              </close-content>
+            </div>
+          </div>
+        </div>
+
+
+
+
+        <div v-if="group && EventsKreativ.elements.length > 0">
+            <h2 class="text-xl font-bold">{{ t("Kreativ") }}</h2>
+            <div class="main-event-list">
+            <div
+              class="event-list flex flex-col gap-3 w-[960px]" >
+              <close-content
+                class="container mx-auto px-2"
+                v-show="groupLoading || (group && EventsKreativ.elements.length > 0)"
+                v-on="attrs"
+              >
+                <template #content>
+                    <event-group-card
+                      v-for="event in EventsKreativ.elements"
+                      :event="event"
+                      :key="event.uuid"
+                      class="organized-event"
+                    />
+                </template>
+              </close-content>
+            </div>
+          </div>
+        </div>
+
+
+
+
+
+
+
+
+        <div v-if="group && EventsOffenesPlenum.elements.length > 0">
+            <h2 class="text-xl font-bold">{{ t("Offene Plena") }}</h2>
+            <div class="main-event-list">
+              <div
+              class="event-list flex flex-col gap-3 w-[960px]" >
+              <close-content
+                class="container mx-auto px-2"
+                v-show="groupLoading || (group && EventsOffenesPlenum.elements.length > 0)"
+                v-on="attrs"
+              >
+                <template #content>
+                    <event-group-card
+                      v-for="event in EventsOffenesPlenum.elements"
+                      :event="event"
+                      :key="event.uuid"
+                      class="organized-event"
+                    />
+                </template>
+              </close-content>
               </div>
             </div>
-          </event-metadata-block>
-        </div>
-      </aside>
-      <div class="main-content min-w-min flex-auto py-0 px-2">
-        <section>
-          <h2 class="text-2xl font-bold">{{ t("Upcoming events") }}</h2>
-          <div
-            class="flex flex-col gap-3"
-            v-if="group && organizedEvents.elements.length > 0"
-          >
-            <event-minimalist-card
-              v-for="event in organizedEvents.elements.slice(0, 3)"
-              :event="event"
-              :key="event.uuid"
-              class="organized-event"
-            />
           </div>
-          <empty-content
-            v-else-if="group"
-            icon="calendar"
-            :inline="true"
-            description-classes="flex flex-col items-stretch"
-          >
-            {{ t("No public upcoming events") }}
-            <template #desc>
-              <template v-if="isCurrentActorFollowing">
-                <i18n-t
-                  keypath="You will receive notifications about this group's public activity depending on %{notification_settings}."
-                >
-                  <template #notification_settings>
-                    <router-link :to="{ name: RouteName.NOTIFICATIONS }">{{
-                      t("your notification settings")
-                    }}</router-link>
-                  </template>
-                </i18n-t>
-              </template>
+
+
+
+
+
+            <div class="flex justify-center">
               <o-button
                 tag="router-link"
-                class="my-2 self-center"
+                class="my-4"
                 variant="text"
+                v-if="organizedEvents.total > 0"
                 :to="{
                   name: RouteName.GROUP_EVENTS,
                   params: { preferredUsername: usernameWithDomain(group) },
-                  query: { showPassedEvents: true },
+                  query: {
+                    showPassedEvents: organizedEvents.elements.length === 0,
+                  },
                 }"
-                >{{ t("View past events") }}</o-button
+                >{{ t("View all events") }}</o-button
               >
-            </template>
-          </empty-content>
-          <!-- <o-skeleton animated v-else-if="$apollo.loading"></o-skeleton> -->
-          <div class="flex justify-center">
-            <o-button
-              tag="router-link"
-              class="my-4"
-              variant="text"
-              v-if="organizedEvents.total > 0"
-              :to="{
-                name: RouteName.GROUP_EVENTS,
-                params: { preferredUsername: usernameWithDomain(group) },
-                query: {
-                  showPassedEvents: organizedEvents.elements.length === 0,
-                },
+            </div>
+          </section>
+        </div>
+        <o-modal
+          v-if="physicalAddress && physicalAddress.geom"
+          v-model:active="showMap"
+          :close-button-aria-label="t('Close')"
+        >
+          <div class="map">
+            <map-leaflet
+              v-if="showMap"
+              :coords="physicalAddress.geom"
+              :marker="{
+                text: physicalAddress.fullName,
+                icon: physicalAddress.poiInfos.poiIcon.icon,
               }"
-              >{{ t("View all events") }}</o-button
-            >
+            />
           </div>
-        </section>
-        <section class="flex flex-col items-stretch">
-          <h2 class="ml-0 text-2xl font-bold">{{ t("Latest posts") }}</h2>
-
-          <multi-post-list-item
-            v-if="
-              posts.elements.filter(
-                (post) =>
-                  !post.draft && post.visibility === PostVisibility.PUBLIC
-              ).length > 0
-            "
-            :posts="
-              posts.elements.filter(
-                (post) =>
-                  !post.draft && post.visibility === PostVisibility.PUBLIC
-              )
-            "
-          />
-          <empty-content v-else-if="group" icon="bullhorn" :inline="true">
-            {{ t("No posts yet") }}
-          </empty-content>
-          <!-- <o-skeleton animated v-else-if="$apollo.loading"></o-skeleton> -->
-          <o-button
-            class="self-center my-2"
-            v-if="posts.total > 0"
-            tag="router-link"
-            variant="text"
-            :to="{
-              name: RouteName.POSTS,
-              params: { preferredUsername: usernameWithDomain(group) },
-            }"
-            >{{ t("View all posts") }}</o-button
-          >
-        </section>
+        </o-modal>
       </div>
       <o-modal
-        v-if="physicalAddress && physicalAddress.geom"
-        v-model:active="showMap"
-        :close-button-aria-label="t('Close')"
+        v-if="group"
+        v-model:active="isReportModalActive"
+        :autoFocus="false"
+        :trapFocus="false"
       >
-        <div class="map">
-          <map-leaflet
-            :coords="physicalAddress.geom"
-            :marker="{
-              text: physicalAddress.fullName,
-              icon: physicalAddress.poiInfos.poiIcon.icon,
-            }"
-          />
-        </div>
+        <report-modal
+          ref="reportModalRef"
+          :on-confirm="reportGroup"
+          :title="t('Report this group')"
+          :outside-domain="group.domain"
+          @close="isReportModalActive = false"
+        />
+      </o-modal>
+      <o-modal v-model:active="isShareModalActive" v-if="group">
+        <ShareGroupModal :group="group" />
       </o-modal>
     </div>
-    <o-modal
-      v-if="group"
-      v-model:active="isReportModalActive"
-      :autoFocus="false"
-      :trapFocus="false"
-    >
-      <report-modal
-        ref="reportModalRef"
-        :on-confirm="reportGroup"
-        :title="t('Report this group')"
-        :outside-domain="group.domain"
-        @close="isReportModalActive = false"
-      />
-    </o-modal>
-    <o-modal v-model:active="isShareModalActive" v-if="group">
-      <ShareGroupModal :group="group" />
-    </o-modal>
-  </div>
-</template>
-
-<script lang="ts" setup>
-// import EventCard from "@/components/Event/EventCard.vue";
-import {
-  displayName,
-  IActor,
-  IFollower,
-  IPerson,
-  usernameWithDomain,
-} from "@/types/actor";
-// import CompactTodo from "@/components/Todo/CompactTodo.vue";
-import EventMinimalistCard from "@/components/Event/EventMinimalistCard.vue";
-import MultiPostListItem from "@/components/Post/MultiPostListItem.vue";
-import { Address, addressFullName } from "@/types/address.model";
-import InvitationsList from "@/components/Group/InvitationsList.vue";
-import { addMinutes } from "date-fns";
-import { JOIN_GROUP } from "@/graphql/member";
-import { MemberRole, Openness, PostVisibility } from "@/types/enums";
-import { IMember } from "@/types/actor/member.model";
-import RouteName from "../../router/name";
-import ReportModal from "@/components/Report/ReportModal.vue";
-import {
-  GROUP_MEMBERSHIP_SUBSCRIPTION_CHANGED,
-  PERSON_STATUS_GROUP,
-} from "@/graphql/actor";
-import LazyImageWrapper from "../../components/Image/LazyImageWrapper.vue";
-import EventMetadataBlock from "../../components/Event/EventMetadataBlock.vue";
-import EmptyContent from "../../components/Utils/EmptyContent.vue";
-import { Paginate } from "@/types/paginate";
-import { IEvent } from "@/types/event.model";
-import { IPost } from "@/types/post.model";
-import {
-  FOLLOW_GROUP,
-  UNFOLLOW_GROUP,
-  UPDATE_GROUP_FOLLOW,
-} from "@/graphql/followers";
-import { useAnonymousReportsConfig } from "../../composition/apollo/config";
-import { computed, defineAsyncComponent, inject, ref, watch } from "vue";
-import { useCurrentActorClient } from "@/composition/apollo/actor";
-import { useGroup, useLeaveGroup } from "@/composition/apollo/group";
-import { useGroupDiscussionsList } from "@/composition/apollo/discussions";
-import { useRouter } from "vue-router";
-import { useMutation, useQuery } from "@vue/apollo-composable";
-import AccountGroup from "vue-material-design-icons/AccountGroup.vue";
-import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
-import RSS from "vue-material-design-icons/Rss.vue";
-import Share from "vue-material-design-icons/Share.vue";
-import CalendarSync from "vue-material-design-icons/CalendarSync.vue";
-import Flag from "vue-material-design-icons/Flag.vue";
-import ExitToApp from "vue-material-design-icons/ExitToApp.vue";
-import AccountMultiplePlus from "vue-material-design-icons/AccountMultiplePlus.vue";
-import Earth from "vue-material-design-icons/Earth.vue";
-import { useI18n } from "vue-i18n";
-import { useCreateReport } from "@/composition/apollo/report";
-import { useHead } from "@/utils/head";
-import Discussions from "@/components/Group/Sections/DiscussionsSection.vue";
-import Resources from "@/components/Group/Sections/ResourcesSection.vue";
-import Posts from "@/components/Group/Sections/PostsSection.vue";
-import Events from "@/components/Group/Sections/EventsSection.vue";
-import { Dialog } from "@/plugins/dialog";
-import { Notifier } from "@/plugins/notifier";
-import { useGroupResourcesList } from "@/composition/apollo/resources";
-import { useGroupMembers } from "@/composition/apollo/members";
-
-const props = defineProps<{
-  preferredUsername: string;
-}>();
-
-const preferredUsername = computed(() => props.preferredUsername);
-
-const { anonymousReportsConfig } = useAnonymousReportsConfig();
-const { currentActor } = useCurrentActorClient();
-const {
-  group,
-  loading: groupLoading,
-  refetch: refetchGroup,
-} = useGroup(preferredUsername, { afterDateTime: new Date() });
-const router = useRouter();
-
-const { group: discussionGroup } = useGroupDiscussionsList(preferredUsername);
-const { group: resourcesGroup } = useGroupResourcesList(preferredUsername, {
-  resourcesPage: 1,
-  resourcesLimit: 3,
-});
-
-const { t } = useI18n({ useScope: "global" });
-
-// const { person } = usePersonStatusGroup(group);
-
-const { result, subscribeToMore } = useQuery<{
-  person: IPerson;
-}>(
-  PERSON_STATUS_GROUP,
-  () => ({
-    id: currentActor.value?.id,
-    group: usernameWithDomain(group.value),
-  }),
-  () => ({
-    enabled:
-      currentActor.value?.id !== undefined &&
-      currentActor.value?.id !== null &&
-      group.value?.preferredUsername !== undefined &&
-      usernameWithDomain(group.value) !== "",
-  })
-);
-subscribeToMore<{ actorId: string; group: string }>({
-  document: GROUP_MEMBERSHIP_SUBSCRIPTION_CHANGED,
-  variables: {
-    actorId: currentActor.value?.id as string,
-    group: usernameWithDomain(group.value),
-  },
-});
-const person = computed(() => result.value?.person);
-
-const MapLeaflet = defineAsyncComponent(
-  () => import("@/components/LeafletMap.vue")
-);
-const ShareGroupModal = defineAsyncComponent(
-  () => import("@/components/Group/ShareGroupModal.vue")
-);
-
-const showMap = ref(false);
-const isReportModalActive = ref(false);
-const reportModalRef = ref();
-const isShareModalActive = ref(false);
-const previewPublic = ref(false);
-
-const notifier = inject<Notifier>("notifier");
-
-watch(
-  currentActor,
-  (watchedCurrentActor: IActor | undefined, oldActor: IActor | undefined) => {
-    if (
-      watchedCurrentActor?.id &&
-      oldActor &&
-      watchedCurrentActor?.id !== oldActor.id
-    ) {
-      refetchGroup();
-    }
-  }
-);
-
-const { mutate: joinGroupMutation, onError: onJoinGroupError } =
-  useMutation(JOIN_GROUP);
-
-const joinGroup = async (): Promise<void> => {
-  if (!currentActor.value?.id) {
-    router.push({
-      name: RouteName.GROUP_JOIN,
-      params: { preferredUsername: usernameWithDomain(group.value) },
-    });
-    return;
-  }
-  const [groupUsername, currentActorId] = [
-    usernameWithDomain(group.value),
-    currentActor.value?.id,
-  ];
-
-  joinGroupMutation(
-    {
-      groupId: group.value?.id,
+  </template>
+  
+  <script lang="ts" setup>
+import LazyImageWrapper from "@/components/Image/LazyImageWrapper.vue";
+import EventGroupCard from "@/components/Event/EventGroupCard.vue";
+  import CloseContent from "@/components/Local/CloseContent.vue";
+  import {
+    displayName,
+    IActor,
+    IFollower,
+    IPerson,
+    usernameWithDomain,
+  } from "@/types/actor";
+  // import CompactTodo from "@/components/Todo/CompactTodo.vue";
+  import GroupPage from "@/components/Post/GroupPage.vue";
+  import { Address, addressFullName } from "@/types/address.model";
+  import InvitationsList from "@/components/Group/InvitationsList.vue";
+  import { addMinutes } from "date-fns";
+  import { JOIN_GROUP } from "@/graphql/member";
+  import { MemberRole, Openness, PostVisibility } from "@/types/enums";
+  import { IMember } from "@/types/actor/member.model";
+  import RouteName from "../../router/name";
+  import ReportModal from "@/components/Report/ReportModal.vue";
+  import {
+    GROUP_MEMBERSHIP_SUBSCRIPTION_CHANGED,
+    PERSON_STATUS_GROUP,
+  } from "@/graphql/actor";
+  import EventMetadataBlock from "../../components/Event/EventMetadataBlock.vue";
+  import EmptyContent from "../../components/Utils/EmptyContent.vue";
+  import { Paginate } from "@/types/paginate";
+  import { IEvent } from "@/types/event.model";
+  import { IPost } from "@/types/post.model";
+  import {
+    FOLLOW_GROUP,
+    UNFOLLOW_GROUP,
+    UPDATE_GROUP_FOLLOW,
+  } from "@/graphql/followers";
+  import { useAnonymousReportsConfig } from "../../composition/apollo/config";
+  import { computed, defineAsyncComponent, inject, ref, watch } from "vue";
+  import { useCurrentActorClient } from "@/composition/apollo/actor";
+  import { useGroup, useLeaveGroup } from "@/composition/apollo/group";
+  import { useGroupDiscussionsList } from "@/composition/apollo/discussions";
+  import { useRouter } from "vue-router";
+  import { useMutation, useQuery } from "@vue/apollo-composable";
+  import AccountGroup from "vue-material-design-icons/AccountGroup.vue";
+  import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
+  import RSS from "vue-material-design-icons/Rss.vue";
+  import Share from "vue-material-design-icons/Share.vue";
+  import CalendarSync from "vue-material-design-icons/CalendarSync.vue";
+  import Flag from "vue-material-design-icons/Flag.vue";
+  import ExitToApp from "vue-material-design-icons/ExitToApp.vue";
+  import AccountMultiplePlus from "vue-material-design-icons/AccountMultiplePlus.vue";
+  import Earth from "vue-material-design-icons/Earth.vue";
+  import { useI18n } from "vue-i18n";
+  import { useCreateReport } from "@/composition/apollo/report";
+  import { useHead } from "@/utils/head";
+  import Discussions from "@/components/Group/Sections/DiscussionsSection.vue";
+  import Resources from "@/components/Group/Sections/ResourcesSection.vue";
+  import Posts from "@/components/Group/Sections/PostsSection.vue";
+  import Events from "@/components/Group/Sections/EventsSection.vue";
+  import { Dialog } from "@/plugins/dialog";
+  import { Notifier } from "@/plugins/notifier";
+  import { useGroupResourcesList } from "@/composition/apollo/resources";
+  import { useGroupMembers } from "@/composition/apollo/members";
+ 
+  const props = defineProps<{
+    preferredUsername: string;
+  }>();
+  
+  const preferredUsername = computed(() => props.preferredUsername);
+  
+  const { anonymousReportsConfig } = useAnonymousReportsConfig();
+  const { currentActor } = useCurrentActorClient();
+  const {
+    group,
+    loading: groupLoading,
+    refetch: refetchGroup,
+  } = useGroup(preferredUsername, { afterDateTime: new Date() });
+  const router = useRouter();
+  
+  const { group: discussionGroup } = useGroupDiscussionsList(preferredUsername);
+  const { group: resourcesGroup } = useGroupResourcesList(preferredUsername, {
+    resourcesPage: 1,
+    resourcesLimit: 3,
+  });
+  
+  const { t } = useI18n({ useScope: "global" });
+  
+  // const { person } = usePersonStatusGroup(group);
+  
+  const { result, subscribeToMore } = useQuery<{
+    person: IPerson;
+  }>(
+    PERSON_STATUS_GROUP,
+    () => ({
+      id: currentActor.value?.id,
+      group: usernameWithDomain(group.value),
+    }),
+    () => ({
+      enabled:
+        currentActor.value?.id !== undefined &&
+        currentActor.value?.id !== null &&
+        group.value?.preferredUsername !== undefined &&
+        usernameWithDomain(group.value) !== "",
+    })
+  );
+  subscribeToMore<{ actorId: string; group: string }>({
+    document: GROUP_MEMBERSHIP_SUBSCRIPTION_CHANGED,
+    variables: {
+      actorId: currentActor.value?.id as string,
+      group: usernameWithDomain(group.value),
     },
-    {
-      refetchQueries: [
-        {
-          query: PERSON_STATUS_GROUP,
-          variables: {
-            id: currentActorId,
-            group: groupUsername,
-          },
-        },
-      ],
+  });
+  const person = computed(() => result.value?.person);
+  
+  const MapLeaflet = defineAsyncComponent(
+    () => import("@/components/LeafletMap.vue")
+  );
+  const ShareGroupModal = defineAsyncComponent(
+    () => import("@/components/Group/ShareGroupModal.vue")
+  );
+  
+  const showMap = ref(false);
+  const isReportModalActive = ref(false);
+  const reportModalRef = ref();
+  const isShareModalActive = ref(false);
+  const previewPublic = ref(false);
+  
+  const notifier = inject<Notifier>("notifier");
+  
+  watch(
+    currentActor,
+    (watchedCurrentActor: IActor | undefined, oldActor: IActor | undefined) => {
+      if (
+        watchedCurrentActor?.id &&
+        oldActor &&
+        watchedCurrentActor?.id !== oldActor.id
+      ) {
+        refetchGroup();
+      }
     }
   );
-
-  onJoinGroupError((error) => {
+  
+  const { mutate: joinGroupMutation, onError: onJoinGroupError } =
+    useMutation(JOIN_GROUP);
+  
+  const joinGroup = async (): Promise<void> => {
+    if (!currentActor.value?.id) {
+      router.push({
+        name: RouteName.GROUP_JOIN,
+        params: { preferredUsername: usernameWithDomain(group.value) },
+      });
+      return;
+    }
+    const [groupUsername, currentActorId] = [
+      usernameWithDomain(group.value),
+      currentActor.value?.id,
+    ];
+  
+    joinGroupMutation(
+      {
+        groupId: group.value?.id,
+      },
+      {
+        refetchQueries: [
+          {
+            query: PERSON_STATUS_GROUP,
+            variables: {
+              id: currentActorId,
+              group: groupUsername,
+            },
+          },
+        ],
+      }
+    );
+  
+    onJoinGroupError((error) => {
+      if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+        notifier?.error(error.graphQLErrors[0].message);
+      }
+    });
+  };
+  
+  const dialog = inject<Dialog>("dialog");
+  
+  const openLeaveGroupModal = async (): Promise<void> => {
+    dialog?.confirm({
+      variant: "danger",
+      title: t("Leave group"),
+      message: t(
+        "Are you sure you want to leave the group {groupName}? You'll loose access to this group's private content. This action cannot be undone.",
+        { groupName: `<b>${displayName(group.value)}</b>` }
+      ),
+      onConfirm: leaveGroup,
+      confirmText: t("Leave group"),
+      cancelText: t("Cancel"),
+    });
+  };
+  
+  const {
+    mutate: leaveGroupMutation,
+    onError: onLeaveGroupError,
+    onDone: onLeaveGroupDone,
+  } = useLeaveGroup();
+  
+  const leaveGroup = () => {
+    console.debug("called leaveGroup");
+  
+    const [groupFederatedUsername, currentActorId] = [
+      usernameWithDomain(group.value),
+      currentActor.value?.id,
+    ];
+  
+    leaveGroupMutation(
+      {
+        groupId: group.value?.id,
+      },
+      {
+        refetchQueries: [
+          {
+            query: PERSON_STATUS_GROUP,
+            variables: {
+              id: currentActorId,
+              group: groupFederatedUsername,
+            },
+          },
+        ],
+      }
+    );
+  };
+  
+  onLeaveGroupError((error: any) => {
     if (error.graphQLErrors && error.graphQLErrors.length > 0) {
       notifier?.error(error.graphQLErrors[0].message);
     }
   });
-};
-
-const dialog = inject<Dialog>("dialog");
-
-const openLeaveGroupModal = async (): Promise<void> => {
-  dialog?.confirm({
-    variant: "danger",
-    title: t("Leave group"),
-    message: t(
-      "Are you sure you want to leave the group {groupName}? You'll loose access to this group's private content. This action cannot be undone.",
-      { groupName: `<b>${displayName(group.value)}</b>` }
-    ),
-    onConfirm: leaveGroup,
-    confirmText: t("Leave group"),
-    cancelText: t("Cancel"),
+  
+  onLeaveGroupDone(() => {
+    console.debug("done");
   });
-};
-
-const {
-  mutate: leaveGroupMutation,
-  onError: onLeaveGroupError,
-  onDone: onLeaveGroupDone,
-} = useLeaveGroup();
-
-const leaveGroup = () => {
-  console.debug("called leaveGroup");
-
-  const [groupFederatedUsername, currentActorId] = [
-    usernameWithDomain(group.value),
-    currentActor.value?.id,
-  ];
-
-  leaveGroupMutation(
-    {
-      groupId: group.value?.id,
-    },
-    {
+  
+  const { mutate: followGroupMutation, onError: onFollowGroupError } =
+    useMutation(FOLLOW_GROUP, () => ({
       refetchQueries: [
         {
           query: PERSON_STATUS_GROUP,
           variables: {
-            id: currentActorId,
-            group: groupFederatedUsername,
+            id: currentActor.value?.id,
+            group: usernameWithDomain(group.value),
           },
         },
       ],
+    }));
+  
+  onFollowGroupError((error) => {
+    if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+      notifier?.error(error.graphQLErrors[0].message);
     }
-  );
-};
-
-onLeaveGroupError((error: any) => {
-  if (error.graphQLErrors && error.graphQLErrors.length > 0) {
-    notifier?.error(error.graphQLErrors[0].message);
-  }
-});
-
-onLeaveGroupDone(() => {
-  console.debug("done");
-});
-
-const { mutate: followGroupMutation, onError: onFollowGroupError } =
-  useMutation(FOLLOW_GROUP, () => ({
-    refetchQueries: [
-      {
-        query: PERSON_STATUS_GROUP,
-        variables: {
-          id: currentActor.value?.id,
-          group: usernameWithDomain(group.value),
+  });
+  
+  const followGroup = async (): Promise<void> => {
+    if (!currentActor.value?.id) {
+      router.push({
+        name: RouteName.GROUP_FOLLOW,
+        params: {
+          preferredUsername: usernameWithDomain(group.value),
         },
-      },
-    ],
-  }));
-
-onFollowGroupError((error) => {
-  if (error.graphQLErrors && error.graphQLErrors.length > 0) {
-    notifier?.error(error.graphQLErrors[0].message);
-  }
-});
-
-const followGroup = async (): Promise<void> => {
-  if (!currentActor.value?.id) {
-    router.push({
-      name: RouteName.GROUP_FOLLOW,
-      params: {
-        preferredUsername: usernameWithDomain(group.value),
-      },
+      });
+      return;
+    }
+    followGroupMutation({
+      groupId: group.value?.id,
     });
-    return;
-  }
-  followGroupMutation({
-    groupId: group.value?.id,
-  });
-};
-
-const { mutate: unfollowGroupMutation, onError: onUnfollowGroupError } =
-  useMutation(UNFOLLOW_GROUP, () => ({
-    refetchQueries: [
-      {
-        query: PERSON_STATUS_GROUP,
-        variables: {
-          id: currentActor.value?.id,
-          group: usernameWithDomain(group.value),
+  };
+  
+  const { mutate: unfollowGroupMutation, onError: onUnfollowGroupError } =
+    useMutation(UNFOLLOW_GROUP, () => ({
+      refetchQueries: [
+        {
+          query: PERSON_STATUS_GROUP,
+          variables: {
+            id: currentActor.value?.id,
+            group: usernameWithDomain(group.value),
+          },
         },
-      },
-    ],
-  }));
-
-onUnfollowGroupError((error) => {
-  if (error.graphQLErrors && error.graphQLErrors.length > 0) {
-    notifier?.error(error.graphQLErrors[0].message);
-  }
-});
-
-const unFollowGroup = async (): Promise<void> => {
-  console.debug("unfollow group");
-
-  unfollowGroupMutation({
-    groupId: group.value?.id,
+      ],
+    }));
+  
+  onUnfollowGroupError((error) => {
+    if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+      notifier?.error(error.graphQLErrors[0].message);
+    }
   });
-};
-
-const { mutate: updateGroupFollowMutation } = useMutation(UPDATE_GROUP_FOLLOW);
-
-const toggleFollowNotify = () => {
-  updateGroupFollowMutation({
-    followId: currentActorFollow.value?.id,
-    notify: !isCurrentActorFollowingNotify.value,
+  
+  const unFollowGroup = async (): Promise<void> => {
+    console.debug("unfollow group");
+  
+    unfollowGroupMutation({
+      groupId: group.value?.id,
+    });
+  };
+  
+  const { mutate: updateGroupFollowMutation } = useMutation(UPDATE_GROUP_FOLLOW);
+  
+  const toggleFollowNotify = () => {
+    updateGroupFollowMutation({
+      followId: currentActorFollow.value?.id,
+      notify: !isCurrentActorFollowingNotify.value,
+    });
+  };
+  
+  const {
+    mutate: createReportMutation,
+    onError: onCreateReportError,
+    onDone: onCreateReportDone,
+  } = useCreateReport();
+  
+  const reportGroup = (content: string, forward: boolean) => {
+    isReportModalActive.value = false;
+    console.debug("report group", {
+      reportedId: group.value?.id ?? "",
+      content,
+      forward,
+    });
+  
+    createReportMutation({
+      reportedId: group.value?.id ?? "",
+      content,
+      forward,
+    });
+  };
+  
+  onCreateReportDone(() => {
+    notifier?.success(
+      t("Group {groupTitle} reported", { groupTitle: groupTitle.value })
+    );
   });
-};
-
-const {
-  mutate: createReportMutation,
-  onError: onCreateReportError,
-  onDone: onCreateReportDone,
-} = useCreateReport();
-
-const reportGroup = (content: string, forward: boolean) => {
-  isReportModalActive.value = false;
-  console.debug("report group", {
-    reportedId: group.value?.id ?? "",
-    content,
-    forward,
-  });
-
-  createReportMutation({
-    reportedId: group.value?.id ?? "",
-    content,
-    forward,
-  });
-};
-
-onCreateReportDone(() => {
-  notifier?.success(
-    t("Group {groupTitle} reported", { groupTitle: groupTitle.value })
-  );
-});
-
-onCreateReportError((error: any) => {
-  console.error(error);
-  notifier?.error(
-    t("Error while reporting group {groupTitle}", {
-      groupTitle: groupTitle.value,
-    })
-  );
-});
-
-const triggerShare = (): void => {
-  if (navigator.share) {
-    navigator
-      .share({
-        title: displayName(group.value),
-        url: group.value?.url,
+  
+  onCreateReportError((error: any) => {
+    console.error(error);
+    notifier?.error(
+      t("Error while reporting group {groupTitle}", {
+        groupTitle: groupTitle.value,
       })
-      .then(() => console.debug("Successful share"))
-      .catch((error: any) => console.debug("Error sharing", error));
-  } else {
-    isShareModalActive.value = true;
-    // send popup
-  }
-};
-
-const groupTitle = computed((): undefined | string => {
-  return displayName(group.value);
-});
-
-const groupSummary = computed((): undefined | string => {
-  return group.value?.summary;
-});
-
-useHead({
-  title: computed(() => groupTitle.value ?? ""),
-  meta: [{ name: "description", content: computed(() => groupSummary.value) }],
-});
-
-const personMemberships = computed(
-  () => person.value?.memberships ?? { total: 0, elements: [] }
-);
-
-const groupMember = computed((): IMember | undefined => {
-  if (personMemberships.value?.total > 0) {
-    return personMemberships.value?.elements[0];
-  }
-  return undefined;
-});
-
-const isCurrentActorARejectedGroupMember = computed((): boolean => {
-  return personMemberships.value.elements
-    .filter((membership) => membership.role === MemberRole.REJECTED)
-    .map(({ parent: { id } }) => id)
-    .includes(group.value?.id);
-});
-
-const isCurrentActorAnInvitedGroupMember = computed((): boolean => {
-  return personMemberships.value.elements
-    .filter((membership) => membership.role === MemberRole.INVITED)
-    .map(({ parent: { id } }) => id)
-    .includes(group.value?.id);
-});
-
-/**
- * New members, if on a different server,
- * can take a while to refresh the group and fetch all private data
- */
-const isCurrentActorARecentMember = computed((): boolean => {
-  return (
-    groupMember.value !== undefined &&
-    groupMember.value?.role === MemberRole.MEMBER &&
-    addMinutes(new Date(`${groupMember.value?.updatedAt}Z`), 10) > new Date()
+    );
+  });
+  
+  const triggerShare = (): void => {
+    if (navigator.share) {
+      navigator
+        .share({
+          title: displayName(group.value),
+          url: group.value?.url,
+        })
+        .then(() => console.debug("Successful share"))
+        .catch((error: any) => console.debug("Error sharing", error));
+    } else {
+      isShareModalActive.value = true;
+      // send popup
+    }
+  };
+  
+  const groupTitle = computed((): undefined | string => {
+    return displayName(group.value);
+  });
+  
+  const groupSummary = computed((): undefined | string => {
+    return group.value?.summary;
+  });
+  
+  useHead({
+    title: computed(() => groupTitle.value ?? ""),
+    meta: [{ name: "description", content: computed(() => groupSummary.value) }],
+  });
+  
+  const personMemberships = computed(
+    () => person.value?.memberships ?? { total: 0, elements: [] }
   );
-});
+  
+  const groupMember = computed((): IMember | undefined => {
+    if (personMemberships.value?.total > 0) {
+      return personMemberships.value?.elements[0];
+    }
+    return undefined;
+  });
+  
+  const isCurrentActorARejectedGroupMember = computed((): boolean => {
+    return personMemberships.value.elements
+      .filter((membership) => membership.role === MemberRole.REJECTED)
+      .map(({ parent: { id } }) => id)
+      .includes(group.value?.id);
+  });
+  
+  const isCurrentActorAnInvitedGroupMember = computed((): boolean => {
+    return personMemberships.value.elements
+      .filter((membership) => membership.role === MemberRole.INVITED)
+      .map(({ parent: { id } }) => id)
+      .includes(group.value?.id);
+  });
+  
+  /**
+   * New members, if on a different server,
+   * can take a while to refresh the group and fetch all private data
+   */
+  const isCurrentActorARecentMember = computed((): boolean => {
+    return (
+      groupMember.value !== undefined &&
+      groupMember.value?.role === MemberRole.MEMBER &&
+      addMinutes(new Date(`${groupMember.value?.updatedAt}Z`), 10) > new Date()
+    );
+  });
+  
+  const isCurrentActorOnADifferentDomainThanGroup = computed((): boolean => {
+    return group.value?.domain !== null;
+  });
+  
+  // const members = computed((): IMember[] => {
+  //   return (
+  //     (group.value?.members?.elements ?? []).filter(
+  //       (member: IMember) =>
+  //         ![
+  //           MemberRole.INVITED,
+  //           MemberRole.REJECTED,
+  //           MemberRole.NOT_APPROVED,
+  //         ].includes(member.role)
+  //     ) ?? []
+  //   );
+  // });
+  
+  const physicalAddress = computed((): Address | null => {
+    if (!group.value?.physicalAddress) return null;
+    return new Address(group.value?.physicalAddress);
+  });
+  
+  const ableToReport = computed((): boolean => {
+    return (
+      currentActor.value?.id !== undefined ||
+      anonymousReportsConfig.value?.allowed === true
+    );
+  });
 
-const isCurrentActorOnADifferentDomainThanGroup = computed((): boolean => {
-  return group.value?.domain !== null;
-});
 
-// const members = computed((): IMember[] => {
-//   return (
-//     (group.value?.members?.elements ?? []).filter(
-//       (member: IMember) =>
-//         ![
-//           MemberRole.INVITED,
-//           MemberRole.REJECTED,
-//           MemberRole.NOT_APPROVED,
-//         ].includes(member.role)
-//     ) ?? []
-//   );
-// });
 
-const physicalAddress = computed((): Address | null => {
-  if (!group.value?.physicalAddress) return null;
-  return new Address(group.value?.physicalAddress);
-});
 
-const ableToReport = computed((): boolean => {
-  return (
-    currentActor.value?.id !== undefined ||
-    anonymousReportsConfig.value?.allowed === true
-  );
-});
-
-const organizedEvents = computed((): Paginate<IEvent> => {
+  
+  const organizedEvents = computed((): Paginate<IEvent> => {
+    return {
+      total: group.value?.organizedEvents.total ?? 0,
+      elements:
+        group.value?.organizedEvents.elements.filter((event: IEvent) => {
+          if (previewPublic.value) {
+            return !event.draft; // TODO when events get visibility access add visibility constraint like below for posts
+          }
+          return true;
+        }) ?? [],
+    };
+  });
+  
+  const EventsMeeting = computed((): Paginate<IEvent> => {
   return {
-    total: group.value?.organizedEvents.total ?? 0,
+    total: group.value?.organizedEvents.elements.filter((event: IEvent) => event.category === 'MEETING').length ?? 0,
     elements:
       group.value?.organizedEvents.elements.filter((event: IEvent) => {
         if (previewPublic.value) {
-          return !event.draft; // TODO when events get visibility access add visibility constraint like below for posts
+          return !event.draft && event.category === 'MEETING';
         }
-        return true;
+        return event.category === 'MEETING';
       }) ?? [],
   };
 });
 
-const posts = computed((): Paginate<IPost> => {
+// BILDUNG
+const EventsBildung = computed((): Paginate<IEvent> => {
   return {
-    total: group.value?.posts.total ?? 0,
+    total: group.value?.organizedEvents.elements.filter((event: IEvent) => event.category === 'BILDUNG').length ?? 0,
     elements:
-      group.value?.posts.elements.filter((post: IPost) => {
-        if (previewPublic.value || !isCurrentActorAGroupMember.value) {
-          return !post.draft && post.visibility == PostVisibility.PUBLIC;
+      group.value?.organizedEvents.elements.filter((event: IEvent) => {
+        if (previewPublic.value) {
+          return !event.draft && event.category === 'BILDUNG';
         }
-        return true;
+        return event.category === 'BILDUNG';
       }) ?? [],
   };
 });
 
-const showFollowButton = computed((): boolean => {
-  return !isCurrentActorFollowing.value || previewPublic.value;
+// BILDUNGSURLAUB
+const EventsBildungsurlaub = computed((): Paginate<IEvent> => {
+  return {
+    total: group.value?.organizedEvents.elements.filter((event: IEvent) => event.category === 'BILDUNGSURLAUB').length ?? 0,
+    elements:
+      group.value?.organizedEvents.elements.filter((event: IEvent) => {
+        if (previewPublic.value) {
+          return !event.draft && event.category === 'BILDUNGSURLAUB';
+        }
+        return event.category === 'BILDUNGSURLAUB';
+      }) ?? [],
+  };
 });
 
-const showJoinButton = computed((): boolean => {
-  return !isCurrentActorAGroupMember.value || previewPublic.value;
+// STREIK
+const EventsStreik = computed((): Paginate<IEvent> => {
+  return {
+    total: group.value?.organizedEvents.elements.filter((event: IEvent) => event.category === 'STREIK').length ?? 0,
+    elements:
+      group.value?.organizedEvents.elements.filter((event: IEvent) => {
+        if (previewPublic.value) {
+          return !event.draft && event.category === 'STREIK';
+        }
+        return event.category === 'STREIK';
+      }) ?? [],
+  };
 });
 
-const isGroupInviteOnly = computed((): boolean => {
-  return (
-    (!isCurrentActorAGroupMember.value || previewPublic) &&
-    group.value?.openness === Openness.INVITE_ONLY
-  );
+// VORBEREITUNGSTREFFEN
+const EventsVorbereitungstreffen = computed((): Paginate<IEvent> => {
+  return {
+    total: group.value?.organizedEvents.elements.filter((event: IEvent) => event.category === 'VORBEREITUNGSTREFFEN').length ?? 0,
+    elements:
+      group.value?.organizedEvents.elements.filter((event: IEvent) => {
+        if (previewPublic.value) {
+          return !event.draft && event.category === 'VORBEREITUNGSTREFFEN';
+        }
+        return event.category === 'VORBEREITUNGSTREFFEN';
+      }) ?? [],
+  };
 });
 
-const areGroupMembershipsModerated = computed((): boolean => {
-  return (
-    (!isCurrentActorAGroupMember.value || previewPublic) &&
-    group.value?.openness === Openness.MODERATED
-  );
+// MUSIK
+const EventsMusik = computed((): Paginate<IEvent> => {
+  return {
+    total: group.value?.organizedEvents.elements.filter((event: IEvent) => event.category === 'MUSIK').length ?? 0,
+    elements:
+      group.value?.organizedEvents.elements.filter((event: IEvent) => {
+        if (previewPublic.value) {
+          return !event.draft && event.category === 'MUSIK';
+        }
+        return event.category === 'MUSIK';
+      }) ?? [],
+  };
 });
 
-const doesGroupManuallyApprovesFollowers = computed((): boolean | undefined => {
-  return (
-    (!isCurrentActorAGroupMember.value || previewPublic) &&
-    group.value?.manuallyApprovesFollowers
-  );
+// KREATIV
+const EventsKreativ = computed((): Paginate<IEvent> => {
+  return {
+    total: group.value?.organizedEvents.elements.filter((event: IEvent) => event.category === 'KREATIV').length ?? 0,
+    elements:
+      group.value?.organizedEvents.elements.filter((event: IEvent) => {
+        if (previewPublic.value) {
+          return !event.draft && event.category === 'KREATIV';
+        }
+        return event.category === 'KREATIV';
+      }) ?? [],
+  };
 });
 
-const isCurrentActorAGroupAdmin = computed((): boolean => {
-  return hasCurrentActorThisRole(MemberRole.ADMINISTRATOR);
+// AKTION_DEMO
+const EventsAktionDemo = computed((): Paginate<IEvent> => {
+  return {
+    total: group.value?.organizedEvents.elements.filter((event: IEvent) => event.category === 'AKTION_DEMO').length ?? 0,
+    elements:
+      group.value?.organizedEvents.elements.filter((event: IEvent) => {
+        if (previewPublic.value) {
+          return !event.draft && event.category === 'AKTION_DEMO';
+        }
+        return event.category === 'AKTION_DEMO';
+      }) ?? [],
+  };
 });
 
-const isCurrentActorAGroupModerator = computed((): boolean => {
-  return hasCurrentActorThisRole([
-    MemberRole.MODERATOR,
-    MemberRole.ADMINISTRATOR,
-  ]);
+// OFFENES_PLENUM
+const EventsOffenesPlenum = computed((): Paginate<IEvent> => {
+  return {
+    total: group.value?.organizedEvents.elements.filter((event: IEvent) => event.category === 'OFFENES_PLENUM').length ?? 0,
+    elements:
+      group.value?.organizedEvents.elements.filter((event: IEvent) => {
+        if (previewPublic.value) {
+          return !event.draft && event.category === 'OFFENES_PLENUM';
+        }
+        return event.category === 'OFFENES_PLENUM';
+      }) ?? [],
+  };
 });
 
-const isCurrentActorAGroupMember = computed((): boolean => {
-  return hasCurrentActorThisRole([
-    MemberRole.MODERATOR,
-    MemberRole.ADMINISTRATOR,
-    MemberRole.MEMBER,
-  ]);
-});
-
-const isCurrentActorAPendingGroupMember = computed((): boolean => {
-  return hasCurrentActorThisRole([MemberRole.NOT_APPROVED]);
-});
-
-const currentActorFollow = computed((): IFollower | undefined => {
-  if (person?.value?.follows?.total && person?.value?.follows?.total > 0) {
-    return person?.value?.follows?.elements[0];
-  }
-  return undefined;
-});
-
-const isCurrentActorFollowing = computed((): boolean => {
-  return currentActorFollow.value?.approved === true;
-});
-
-const isCurrentActorPendingFollow = computed((): boolean => {
-  return currentActorFollow.value?.approved === false;
-});
-
-const isCurrentActorFollowingNotify = computed((): boolean => {
-  return (
-    isCurrentActorFollowing.value && currentActorFollow.value?.notify === true
-  );
-});
-
-const hasCurrentActorThisRole = (givenRole: string | string[]): boolean => {
-  const roles = Array.isArray(givenRole) ? givenRole : [givenRole];
-  return (
-    personMemberships.value?.total > 0 &&
-    roles.includes(personMemberships.value?.elements[0].role)
-  );
-};
-
-const { members } = useGroupMembers(preferredUsername, {
-  enabled: computed(() => isCurrentActorAGroupMember.value),
-});
-
-watch(isCurrentActorAGroupMember, () => {
-  refetchGroup();
-});
-</script>
+  const posts = computed((): Paginate<IPost> => {
+    return {
+      total: group.value?.posts.total ?? 0,
+      elements:
+        group.value?.posts.elements.filter((post: IPost) => {
+          if (previewPublic.value || !isCurrentActorAGroupMember.value) {
+            return !post.draft && post.visibility == PostVisibility.PUBLIC;
+          }
+          return true;
+        }) ?? [],
+    };
+  });
+  
+  const showFollowButton = computed((): boolean => {
+    return !isCurrentActorFollowing.value || previewPublic.value;
+  });
+  
+  const showJoinButton = computed((): boolean => {
+    return !isCurrentActorAGroupMember.value || previewPublic.value;
+  });
+  
+  const isGroupInviteOnly = computed((): boolean => {
+    return (
+      (!isCurrentActorAGroupMember.value || previewPublic) &&
+      group.value?.openness === Openness.INVITE_ONLY
+    );
+  });
+  
+  const areGroupMembershipsModerated = computed((): boolean => {
+    return (
+      (!isCurrentActorAGroupMember.value || previewPublic) &&
+      group.value?.openness === Openness.MODERATED
+    );
+  });
+  
+  const doesGroupManuallyApprovesFollowers = computed((): boolean | undefined => {
+    return (
+      (!isCurrentActorAGroupMember.value || previewPublic) &&
+      group.value?.manuallyApprovesFollowers
+    );
+  });
+  
+  const isCurrentActorAGroupAdmin = computed((): boolean => {
+    return hasCurrentActorThisRole(MemberRole.ADMINISTRATOR);
+  });
+  
+  const isCurrentActorAGroupModerator = computed((): boolean => {
+    return hasCurrentActorThisRole([
+      MemberRole.MODERATOR,
+      MemberRole.ADMINISTRATOR,
+    ]);
+  });
+  
+  const isCurrentActorAGroupMember = computed((): boolean => {
+    return hasCurrentActorThisRole([
+      MemberRole.MODERATOR,
+      MemberRole.ADMINISTRATOR,
+      MemberRole.MEMBER,
+    ]);
+  });
+  
+  const isCurrentActorAPendingGroupMember = computed((): boolean => {
+    return hasCurrentActorThisRole([MemberRole.NOT_APPROVED]);
+  });
+  
+  const currentActorFollow = computed((): IFollower | undefined => {
+    if (person?.value?.follows?.total && person?.value?.follows?.total > 0) {
+      return person?.value?.follows?.elements[0];
+    }
+    return undefined;
+  });
+  
+  const isCurrentActorFollowing = computed((): boolean => {
+    return currentActorFollow.value?.approved === true;
+  });
+  
+  const isCurrentActorPendingFollow = computed((): boolean => {
+    return currentActorFollow.value?.approved === false;
+  });
+  
+  const isCurrentActorFollowingNotify = computed((): boolean => {
+    return (
+      isCurrentActorFollowing.value && currentActorFollow.value?.notify === true
+    );
+  });
+  
+  const hasCurrentActorThisRole = (givenRole: string | string[]): boolean => {
+    const roles = Array.isArray(givenRole) ? givenRole : [givenRole];
+    return (
+      personMemberships.value?.total > 0 &&
+      roles.includes(personMemberships.value?.elements[0].role)
+    );
+  };
+  
+  const { members } = useGroupMembers(preferredUsername, {
+    enabled: computed(() => isCurrentActorAGroupMember.value),
+  });
+  
+  watch(isCurrentActorAGroupMember, () => {
+    refetchGroup();
+  });
+  </script>
 <style lang="scss" scoped>
 @use "@/styles/_mixins" as *;
+@media (max-width: 1552px) {
+  .post-list {
+    justify-content: center;
+    display: grid;
+    margin-top: 0.68rem;
+  }
+  .posts-wrapper {
+    max-width: 500px;
+  }
+  .public-container {
+    flex-direction: column-reverse!important;
+    margin-top: 15px;
+  }
+}
+@media (max-width: 1024px) {
+  .event-list {
+    max-width: 350px;
+  }
+}
+@media (max-width: 768px) { /* Adjust breakpoint as needed */
+  .pt-10 {
+    /* Mobile styles */
+    max-width: 90vw; /* Set maximum width to 90% of viewport width */
+  }
+  .main-content {
+        margin-top: -35px;
+      }
+  .logo {
+        scale: 0.6;
+      }
+  .title-container {
+        margin-top: -18px;
+      }
+  .block-container {
+        margin-top: 80px;
+      }
+  .header {
+        margin-top: -15px!important;
+      }
+}
 div.container {
   .block-container {
     display: flex;
     flex-wrap: wrap;
-    margin-top: 15px;
 
     &.presentation {
       padding: 0 0 10px;
       position: relative;
       flex-direction: column;
+      margin-top: 100px;
 
       & > *:not(img) {
         position: relative;
-        z-index: 2;
+        z-index: 40;
       }
 
       & > .banner-container {
@@ -1296,26 +1645,33 @@ div.container {
     }
   }
 
+.pt-10 {
+	padding-top: 0;
+}
   .public-container {
     display: flex;
     flex-wrap: wrap;
     flex-direction: row-reverse;
     padding: 0;
-    margin-top: 1rem;
 
     .group-metadata {
-      min-width: 20rem;
+      min-width: 35rem;
       flex: 1;
+      @media (max-width: 768px) { /* Media query for mobile devices (adjust breakpoint as needed) */
+        min-width: 100%; /* Set width to 100% on mobile */
+        padding-left: 0; /* Remove padding on mobile */
+  }
       // @include padding-left(1rem);
       // @include mobile {
       //   @include padding-left(0);
-      // }
+      //}
 
       .sticky {
         position: sticky;
         // background: white;
         top: 50px;
         padding: 1rem;
+        margin-top: -25px;
       }
     }
 
@@ -1328,4 +1684,32 @@ div.container {
   height: 60vh;
   width: 100%;
 }
-</style>
+.summary {
+  max-width: 1000px;
+}
+.title-container {
+    margin-bottom: 15px;
+}
+.title-container br {
+    display: none;
+}
+.post-list {
+    margin-top: 0.68rem;
+  }
+
+.main-event-list {
+  justify-content: center;
+  display: flex;
+}
+div.summary a {
+      color: #fff;
+      font-weight: bold;
+      border: 1px solid;
+      border-radius: 4px;
+      padding-left: 5px;
+      padding-right: 5px;
+    }
+div.summary a:hover {
+      text-decoration: underline;
+        }
+    </style>

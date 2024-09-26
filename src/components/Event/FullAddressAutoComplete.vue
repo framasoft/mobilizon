@@ -173,7 +173,7 @@
       class="map"
       v-if="!hideMap && !disabled && (selected.geom || detailsAddress)"
     >
-      <map-leaflet
+      <map-old
         :coords="selected.geom ?? defaultCoords"
         :marker="mapMarkerValue"
         :updateDraggableMarkerCallback="reverseGeoCode"
@@ -209,8 +209,8 @@ import { useReverseGeocode } from "@/composition/apollo/address";
 import { useLazyQuery } from "@vue/apollo-composable";
 import { AddressSearchType } from "@/types/enums";
 import Loading from "vue-material-design-icons/Loading.vue";
-const MapLeaflet = defineAsyncComponent(
-  () => import("@/components/LeafletMap.vue")
+const MapOld = defineAsyncComponent(
+  () => import("@/components/LeafletMapOld.vue")
 );
 
 const props = withDefaults(

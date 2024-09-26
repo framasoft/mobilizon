@@ -435,6 +435,7 @@ export const FETCH_GROUP_EVENTS = gql`
           uuid
           title
           beginsOn
+	        category
           status
           draft
           options {
@@ -457,6 +458,7 @@ export const FETCH_GROUP_EVENTS = gql`
             url
             id
           }
+	        category
         }
         total
       }

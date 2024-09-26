@@ -14,7 +14,7 @@
   }
 
   h2 {
-    @apply text-xl mt-2;
+    @apply text-xl mt-2 font-bold;
   }
 
   h3 {

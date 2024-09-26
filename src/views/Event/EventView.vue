@@ -1,8 +1,7 @@
 <template>
-  <div class="container mx-auto">
+  <div class="container container-event mx-auto mt-20">
     <o-loading v-model:active="eventLoading" />
     <div class="flex flex-col mb-3">
-      <event-banner :picture="event?.picture" />
       <div
         class="flex flex-col relative pb-2 bg-white dark:bg-zinc-700 my-4 rounded"
       >
@@ -16,21 +15,15 @@
             :date="event.beginsOn.toString()"
             class="absolute left-3 -top-16"
           />
-        </div>
-
-        <div
-          class="start-time-icon-wrapper relative"
-          v-if="event?.beginsOn && event?.options.showStartTime"
-        >
-          <start-time-icon
+            <start-time-icon
             :date="event.beginsOn.toString()"
-            class="absolute right-3 -top-16"
+            class="absolute -top-16"
+            style="top: -3rem; left: 6.5rem;"
           />
         </div>
-
         <section class="intro px-2 pt-4" dir="auto">
           <div class="flex flex-wrap gap-2 justify-end">
-            <div class="flex-1 min-w-[300px]">
+            <div class="flex-1">
               <div
                 v-if="eventLoading"
                 class="animate-pulse mb-2 h-12 bg-slate-200 w-3/4"
@@ -132,26 +125,6 @@
                     <tag variant="info">{{ organizerDomain }}</tag>
                   </a>
                 </template>
-                <div
-                  v-if="eventLoading"
-                  class="animate-pulse mb-2 h-6 space-y-6 bg-slate-200 w-64"
-                />
-                <p v-else class="flex flex-wrap gap-1 items-center" dir="auto">
-                  <tag v-if="eventCategory" class="category" capitalize>{{
-                    eventCategory
-                  }}</tag>
-                  <router-link
-                    class="rounded-md truncate text-sm text-violet-title py-1 bg-purple-3 dark:text-violet-3 category"
-                    v-for="tag in event?.tags ?? []"
-                    :key="tag.title"
-                    :to="{ name: RouteName.TAG, params: { tag: tag.title } }"
-                  >
-                    <tag>{{ tag.title }}</tag>
-                  </router-link>
-                </p>
-                <tag variant="warning" size="medium" v-if="event?.draft"
-                  >{{ t("Draft") }}
-                </tag>
               </div>
             </div>
 
@@ -171,15 +144,15 @@
       </div>
 
       <div
-        class="rounded-lg dark:border-violet-title flex flex-wrap flex-col md:flex-row-reverse gap-4"
+        class="main-content rounded-lg dark:border-violet-title flex flex-wrap flex-col md:flex-row-reverse gap-4"
       >
         <aside
-          class="rounded bg-white dark:bg-zinc-700 shadow-md h-min max-w-screen-sm"
+          class="sticky rounded bg-white dark:bg-zinc-700 shadow-md h-min"
         >
-          <div class="sticky p-4">
+          <div class="p-4">
             <aside
               v-if="eventLoading"
-              class="animate-pulse rounded bg-white dark:bg-zinc-700 h-min max-w-screen-sm"
+              class="sticky animate-pulse rounded bg-white dark:bg-zinc-700 h-min"
             >
               <div class="mb-6 p-2" v-for="i in 3" :key="i">
                 <div class="mb-2 h-6 bg-slate-200 w-64" />
@@ -198,13 +171,23 @@
               :user="loggedUser"
               @showMapModal="showMap = true"
             />
+            <div v-if="eventLoading">
+              <div class="animate-pulse mb-2 h-6 bg-slate-200 w-64" />
+              <div class="animate-pulse mb-2 h-6 bg-slate-200 w-64" />
+            </div>
+            <EventActionButtons
+              v-else-if="event"
+              :event="event"
+              :currentActor="currentActor"
+              :participations="participations"
+              :person="person"
+            />
           </div>
         </aside>
-        <div class="flex-1">
+        <div class="flex-1 w-full">
           <section
             class="event-description bg-white dark:bg-zinc-700 px-3 pt-1 pb-3 rounded mb-4"
           >
-            <h2 class="text-2xl">{{ t("About this event") }}</h2>
             <div
               v-if="eventLoading"
               class="animate-pulse mb-2 h-6 space-y-6 bg-slate-200 w-3/4"
@@ -224,7 +207,7 @@
               <div
                 :lang="event?.language"
                 dir="auto"
-                class="mt-4 prose md:prose-lg lg:prose-xl dark:prose-invert prose-h1:text-xl prose-h1:font-semibold prose-h2:text-lg prose-h3:text-base md:prose-h1:text-2xl md:prose-h1:font-semibold md:prose-h2:text-xl md:prose-h3:text-lg lg:prose-h1:text-2xl lg:prose-h1:font-semibold lg:prose-h2:text-xl lg:prose-h3:text-lg"
+                class="overflow-auto mt-4 prose md:prose-lg lg:prose-xl dark:prose-invert prose-h1:text-xl prose-h1:font-semibold prose-h2:text-lg prose-h3:text-base md:prose-h1:text-2xl md:prose-h1:font-semibold md:prose-h2:text-xl md:prose-h3:text-lg lg:prose-h1:text-2xl lg:prose-h1:font-semibold lg:prose-h2:text-xl lg:prose-h3:text-lg"
                 ref="eventDescriptionElement"
                 v-html="event.description"
               />
@@ -239,18 +222,17 @@
               class="my-2"
             />
           </section>
-          <section
-            class="bg-white dark:bg-zinc-700 px-3 pt-1 pb-3 rounded my-4"
-            ref="commentsObserver"
-          >
-            <a href="#comments">
-              <h2 class="text-2xl" id="comments">{{ t("Comments") }}</h2>
-            </a>
-            <comment-tree v-if="event && loadComments" :event="event" />
-          </section>
         </div>
       </div>
-
+      <section
+          class="bg-white dark:bg-zinc-700 px-3 pt-1 pb-3 rounded my-4"
+          ref="commentsObserver"
+        >
+          <a href="#comments">
+            <h2 class="text-2xl" id="comments">{{ t("Comments") }}</h2>
+          </a>
+          <comment-tree v-if="event && loadComments" :event="event" />
+      </section>
       <section
         class="bg-white dark:bg-zinc-700 px-3 pt-1 pb-3 rounded my-4"
         v-if="(event?.relatedEvents ?? []).length > 0"
@@ -260,6 +242,7 @@
         </h2>
         <multi-card :events="event?.relatedEvents ?? []" />
       </section>
+    <div class="main-modal">
       <o-modal
         v-model:active="showMap"
         :close-button-aria-label="t('Close')"
@@ -272,12 +255,13 @@
         <template #default>
           <event-map
             v-if="showMap"
-            :routingType="routingType ?? RoutingType.OPENSTREETMAP"
+            :routingType="RoutingType.GOOGLE_MAPS"
             :address="event.physicalAddress"
             @close="showMap = false"
           />
         </template>
       </o-modal>
+      </div>
     </div>
   </div>
 </template>
@@ -312,6 +296,7 @@ import Tag from "@/components/TagElement.vue";
 import EventMetadataSidebar from "@/components/Event/EventMetadataSidebar.vue";
 import EventBanner from "@/components/Event/EventBanner.vue";
 import EventActionSection from "@/components/Event/EventActionSection.vue";
+import EventActionButtons from "@/components/Event/EventActionButtons.vue";
 import PopoverActorCard from "@/components/Account/PopoverActorCard.vue";
 import { IEventMetadataDescription } from "@/types/event-metadata";
 import { eventMetaDataList } from "@/services/EventMetadata";
@@ -333,7 +318,6 @@ import { useLoggedUser } from "@/composition/apollo/user";
 import { useQuery } from "@vue/apollo-composable";
 import {
   useEventCategories,
-  useRoutingType,
 } from "@/composition/apollo/config";
 import { useI18n } from "vue-i18n";
 import { Notifier } from "@/plugins/notifier";
@@ -416,8 +400,6 @@ const groupFederatedUsername = computed(() =>
 );
 
 const { person } = usePersonStatusGroup(groupFederatedUsername);
-
-const { eventCategories } = useEventCategories();
 
 // metaInfo() {
 //   return {
@@ -598,17 +580,6 @@ const integrations = computed((): Record<string, IEventMetadataDescription> => {
 
 const showMap = ref(false);
 
-const { routingType } = useRoutingType();
-
-const eventCategory = computed((): string | undefined => {
-  if (event.value?.category === "MEETING") {
-    return undefined;
-  }
-  return (eventCategories.value ?? []).find((eventCategoryToFind) => {
-    return eventCategoryToFind.id === event.value?.category;
-  })?.label as string;
-});
-
 const organizer = computed((): IActor | null => {
   if (event.value?.attributedTo?.id) {
     return event.value.attributedTo;
@@ -635,5 +606,24 @@ useHead({
 
 .event-description .mention.h-card {
   @apply inline-block border border-zinc-600 dark:border-zinc-300 rounded py-0.5 px-1;
+}
+.container-event {
+  max-width: 1240px;
+}
+@media (min-width: 953px) {
+    .sticky  {
+        position: sticky;
+        top: 50px;
+        max-width: 435px;
+    }
+
+}
+@media (max-width: 952px) {
+    .main-content  {
+        flex-direction: column-reverse;
+    }
+    .sticky {
+        max-width: 100%;
+    }
 }
 </style>

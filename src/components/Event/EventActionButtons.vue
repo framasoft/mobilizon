@@ -1,211 +1,13 @@
 <template>
-  <div class="">
-    <p
-      class="inline-flex gap-2 ml-auto"
-      v-if="
-        event.joinOptions !== EventJoinOptions.EXTERNAL &&
-        !event.options.hideNumberOfParticipants
-      "
-    >
-      <router-link
-        class="participations-link"
-        v-if="canManageEvent && event?.draft === false"
-        :to="{
-          name: RouteName.PARTICIPATIONS,
-          params: { eventId: event.uuid },
-        }"
-      >
-        <!-- We retire one because of the event creator who is a
-                    participant -->
-        <span v-if="maximumAttendeeCapacity">
-          {{
-            t(
-              "{available}/{capacity} available places",
-              {
-                available:
-                  maximumAttendeeCapacity - event.participantStats.participant,
-                capacity: maximumAttendeeCapacity,
-              },
-              maximumAttendeeCapacity - event.participantStats.participant
-            )
-          }}
-        </span>
-        <span v-else>
-          {{
-            t(
-              "No one is participating|One person participating|{going} people participating",
-              {
-                going: event.participantStats.participant,
-              },
-              event.participantStats.participant
-            )
-          }}
-        </span>
-      </router-link>
-      <span v-else>
-        <span v-if="maximumAttendeeCapacity">
-          {{
-            t(
-              "{available}/{capacity} available places",
-              {
-                available:
-                  maximumAttendeeCapacity -
-                  (event?.participantStats.participant ?? 0),
-                capacity: maximumAttendeeCapacity,
-              },
-              maximumAttendeeCapacity -
-                (event?.participantStats.participant ?? 0)
-            )
-          }}
-        </span>
-        <span v-else>
-          {{
-            t(
-              "No one is participating|One person participating|{going} people participating",
-              {
-                going: event?.participantStats.participant,
-              },
-              event?.participantStats.participant ?? 0
-            )
-          }}
-        </span>
-      </span>
-      <VTooltip v-if="event?.local === false">
-        <HelpCircleOutline :size="16" />
-        <template #popper>
-          {{
-            t(
-              "The actual number of participants may differ, as this event is hosted on another instance."
-            )
-          }}
-        </template>
-      </VTooltip>
-    </p>
-    <div class="flex flex-col gap-1 mt-1">
-      <o-dropdown class="ml-auto">
-        <template #trigger>
-          <o-button icon-right="dots-horizontal">
-          </o-button>
-        </template>
-        <o-dropdown-item aria-role="listitem" has-link v-if="canManageEvent">
-          <router-link
-            class="flex gap-1"
-            :to="{
-              name: RouteName.PARTICIPATIONS,
-              params: { eventId: event?.uuid },
-            }"
-          >
-            <AccountMultiple />
-            {{ t("Participations") }}
-          </router-link>
-        </o-dropdown-item>
-        <o-dropdown-item aria-role="listitem" has-link v-if="canManageEvent">
-          <router-link
-            class="flex gap-1"
-            :to="{
-              name: RouteName.ANNOUNCEMENTS,
-              params: { eventId: event?.uuid },
-            }"
-          >
-            <Bullhorn />
-            {{ t("Announcements") }}
-          </router-link>
-        </o-dropdown-item>
-        <o-dropdown-item
-          aria-role="listitem"
-          has-link
-          v-if="canManageEvent || event?.draft"
-        >
-          <router-link
-            class="flex gap-1"
-            :to="{
-              name: RouteName.EDIT_EVENT,
-              params: { eventId: event?.uuid },
-            }"
-          >
-            <Pencil />
-            {{ t("Edit") }}
-          </router-link>
-        </o-dropdown-item>
-        <o-dropdown-item
-          aria-role="listitem"
-          has-link
-          v-if="canManageEvent || event?.draft"
-        >
-          <router-link
-            class="flex gap-1"
-            :to="{
-              name: RouteName.DUPLICATE_EVENT,
-              params: { eventId: event?.uuid },
-            }"
-          >
-            <ContentDuplicate />
-            {{ t("Duplicate") }}
-          </router-link>
-        </o-dropdown-item>
-        <o-dropdown-item
-          aria-role="listitem"
-          v-if="canManageEvent || event?.draft"
-          @click="openDeleteEventModal"
-          @keyup.enter="openDeleteEventModal"
-          ><span class="flex gap-1">
-            <Delete />
-            {{ t("Delete") }}
-          </span>
-        </o-dropdown-item>
-
-        <hr
-          role="presentation"
-          class="dropdown-divider"
-          aria-role="o-dropdown-item"
-          v-if="canManageEvent || event?.draft"
-        />
-        <o-dropdown-item
-          aria-role="listitem"
-          v-if="event?.draft === false"
-          @click="triggerShare()"
-          @keyup.enter="triggerShare()"
-          class="p-1"
-        >
-          <span class="flex gap-1">
-            <Share />
-            {{ t("Share this event") }}
-          </span>
-        </o-dropdown-item>
-        <o-dropdown-item
-          aria-role="listitem"
-          @click="downloadIcsEvent()"
-          @keyup.enter="downloadIcsEvent()"
-          v-if="event?.draft === false"
-        >
-          <span class="flex gap-1">
-            <CalendarPlus />
-            {{ t("Add to my calendar") }}
-          </span>
-        </o-dropdown-item>
-        <o-dropdown-item
-          aria-role="listitem"
-          v-if="ableToReport"
-          @click="isReportModalActive = true"
-          @keyup.enter="isReportModalActive = true"
-          class="p-1"
-        >
-          <span class="flex gap-1">
-            <Flag />
-            {{ t("Report") }}
-          </span>
-        </o-dropdown-item>
-      </o-dropdown>
-    </div>
+  <div class="" style="display: flex;gap: 0.5rem;justify-content: center;">
     <external-participation-button
       v-if="event && event.joinOptions === EventJoinOptions.EXTERNAL"
-      class="mt-2"
       :event="event"
       :current-actor="currentActor"
     />
+
     <participation-section
       v-else-if="event && anonymousParticipationConfig"
-      class="mt-2"
       :participation="participations[0]"
       :event="event"
       :anonymousParticipation="anonymousParticipation"
@@ -218,7 +20,25 @@
       @confirm-leave="confirmLeave"
       @cancel-anonymous-participation="cancelAnonymousParticipation"
     />
-  </div>
+
+    <o-button
+outlined
+icon-right="share"
+@click="triggerShare()"
+@keyup.enter="triggerShare()"
+>
+{{ t("Share") }}
+</o-button>
+
+<o-button
+outlined
+@click="downloadIcsEvent()"
+@keyup.enter="downloadIcsEvent()"
+>
+{{ t("Speichern") }}
+</o-button>
+</div>
+
   <o-modal
     v-model:active="isReportModalActive"
     has-modal-card
@@ -342,17 +162,10 @@ import { IEvent } from "@/types/event.model";
 import ParticipationSection from "@/components/Participation/ParticipationSection.vue";
 import ReportModal from "@/components/Report/ReportModal.vue";
 import IdentityPicker from "@/components/Account/IdentityPicker.vue";
-import { EventJoinOptions, ParticipantRole, MemberRole } from "@/types/enums";
+import { EventJoinOptions, ParticipantRole } from "@/types/enums";
 import { GRAPHQL_API_ENDPOINT } from "@/api/_entrypoint";
 import { computed, defineAsyncComponent, inject, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import Flag from "vue-material-design-icons/Flag.vue";
-import CalendarPlus from "vue-material-design-icons/CalendarPlus.vue";
-import ContentDuplicate from "vue-material-design-icons/ContentDuplicate.vue";
-import Delete from "vue-material-design-icons/Delete.vue";
-import Pencil from "vue-material-design-icons/Pencil.vue";
-import HelpCircleOutline from "vue-material-design-icons/HelpCircleOutline.vue";
-import Share from "vue-material-design-icons/Share.vue";
 import {
   EVENT_PERSON_PARTICIPATION,
   FETCH_EVENT,
@@ -372,7 +185,6 @@ import {
 import {
   useAnonymousActorId,
   useAnonymousParticipationConfig,
-  useAnonymousReportsConfig,
 } from "@/composition/apollo/config";
 import { useCurrentUserIdentities } from "@/composition/apollo/actor";
 import { useRouter } from "vue-router";
@@ -380,11 +192,8 @@ import { IParticipant } from "@/types/participant.model";
 import { ApolloCache, FetchResult } from "@apollo/client/core";
 import { useMutation } from "@vue/apollo-composable";
 import { useCreateReport } from "@/composition/apollo/report";
-import { useDeleteEvent } from "@/composition/apollo/event";
 import { useOruga } from "@oruga-ui/oruga-next";
 import ExternalParticipationButton from "./ExternalParticipationButton.vue";
-import AccountMultiple from "vue-material-design-icons/AccountMultiple.vue";
-import Bullhorn from "vue-material-design-icons/Bullhorn.vue";
 
 const ShareEventModal = defineAsyncComponent(
   () => import("@/components/Event/ShareEventModal.vue")
@@ -404,7 +213,6 @@ const dialog = inject<Dialog>("dialog");
 
 const router = useRouter();
 
-const { anonymousReportsConfig } = useAnonymousReportsConfig();
 const { anonymousActorId } = useAnonymousActorId();
 const { anonymousParticipationConfig } = useAnonymousParticipationConfig();
 const { identities } = useCurrentUserIdentities();
@@ -412,13 +220,6 @@ const { identities } = useCurrentUserIdentities();
 const event = computed(() => props.event);
 
 const identity = ref<IPerson | undefined | null>(null);
-
-const ableToReport = computed((): boolean => {
-  return (
-    props.currentActor?.id != null ||
-    anonymousReportsConfig.value?.allowed === true
-  );
-});
 
 const organizer = computed((): IActor | null => {
   if (event.value?.attributedTo?.id) {
@@ -479,10 +280,6 @@ const triggerShare = (): void => {
   // @ts-ignore-end
 };
 
-const canManageEvent = computed((): boolean => {
-  return actorIsOrganizer.value || hasGroupPrivileges.value;
-});
-
 // const actorIsParticipant = computed((): boolean => {
 //   if (actorIsOrganizer.value) return true;
 
@@ -491,23 +288,6 @@ const canManageEvent = computed((): boolean => {
 //     participations.value[0].role === ParticipantRole.PARTICIPANT
 //   );
 // });
-
-const actorIsOrganizer = computed((): boolean => {
-  return (
-    props.participations.length > 0 &&
-    props.participations[0].role === ParticipantRole.CREATOR
-  );
-});
-
-const hasGroupPrivileges = computed((): boolean => {
-  return (
-    props.person?.memberships !== undefined &&
-    props.person?.memberships?.total > 0 &&
-    [MemberRole.MODERATOR, MemberRole.ADMINISTRATOR].includes(
-      props.person?.memberships?.elements[0].role
-    )
-  );
-});
 
 const joinEventWithConfirmation = (actor: IPerson): void => {
   isJoinConfirmationModalActive.value = true;
@@ -861,64 +641,4 @@ onMounted(async () => {
   }
 });
 
-const {
-  mutate: deleteEvent,
-  onDone: onDeleteEventDone,
-  onError: onDeleteEventError,
-} = useDeleteEvent();
-
-const escapeRegExp = (string: string) => {
-  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
-};
-
-const deleteEventMessage = computed(() => {
-  const participantsLength = event.value?.participantStats.participant;
-  const prefix = participantsLength
-    ? t(
-        "There are {participants} participants.",
-        {
-          participants: event.value.participantStats.participant,
-        },
-        event.value.participantStats.participant
-      )
-    : "";
-  return `${prefix}
-        ${t(
-          "Are you sure you want to delete this event? This action cannot be reverted."
-        )}
-        <br><br>
-        ${t('To confirm, type your event title "{eventTitle}"', {
-          eventTitle: event.value?.title,
-        })}`;
-});
-
-const openDeleteEventModal = () => {
-  dialog?.prompt({
-    title: t("Delete event"),
-    message: deleteEventMessage.value,
-    confirmText: t("Delete event"),
-    cancelText: t("Cancel"),
-    variant: "danger",
-    hasIcon: true,
-    hasInput: true,
-    inputAttrs: {
-      placeholder: event.value?.title,
-      pattern: escapeRegExp(event.value?.title ?? ""),
-    },
-    onConfirm: (result: string) => {
-      console.debug("calling delete event", result);
-      if (result.trim() === event.value?.title) {
-        event.value?.id ? deleteEvent({ eventId: event.value?.id }) : null;
-      }
-    },
-  });
-};
-
-onDeleteEventDone(() => {
-  router.push({ name: RouteName.MY_EVENTS });
-});
-
-onDeleteEventError((error) => {
-  console.error(error);
-});
 </script>
