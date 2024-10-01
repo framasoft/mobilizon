@@ -8,15 +8,15 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-10-08 10:34+0000\n"
-"Last-Translator: Ricardo Coelho <ricardo@nexy.com.br>\n"
+"PO-Revision-Date: 2024-10-02 09:18+0000\n"
+"Last-Translator: veroandi <veroandi@posteo.net>\n"
 "Language-Team: Portuguese (Brazil) <https://weblate.framasoft.org/projects/"
 "mobilizon/backend-errors/pt_BR/>\n"
 "Language: pt_BR\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.14.1\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Weblate 5.7.2\n"
 
 #: lib/mobilizon/discussions/discussion.ex:68
 #, elixir-autogen
@@ -42,7 +42,7 @@ msgid "is reserved"
 msgstr "está reservado"
 
 msgid "does not match confirmation"
-msgstr "está diferente da confirmação"
+msgstr "não corresponde à confirmação"
 
 msgid "is still associated with this entry"
 msgstr "ainda está associado a esta entrada"
@@ -52,7 +52,7 @@ msgstr "ainda estão associados a esta entrada"
 
 msgid "should be %{count} character(s)"
 msgid_plural "should be %{count} character(s)"
-msgstr[0] "deveria ter %{count} caracter"
+msgstr[0] "deveria ter %{count} caractere"
 msgstr[1] "deveria ter %{count} caracteres"
 
 msgid "should have %{count} item(s)"
@@ -62,7 +62,7 @@ msgstr[1] "deveria ter %{count} itens"
 
 msgid "should be at least %{count} character(s)"
 msgid_plural "should be at least %{count} character(s)"
-msgstr[0] "deveria ter pelo menos %{count} caracter"
+msgstr[0] "deveria ter pelo menos %{count} caractere"
 msgstr[1] "deveria ter pelo menos %{count} caracteres"
 
 msgid "should have at least %{count} item(s)"
@@ -81,24 +81,24 @@ msgstr[0] ""
 msgstr[1] ""
 
 msgid "must be less than %{number}"
-msgstr ""
+msgstr "deve ser menor que %{number}"
 
 msgid "must be greater than %{number}"
-msgstr ""
+msgstr "deve ser maior que %{number}"
 
 msgid "must be less than or equal to %{number}"
-msgstr ""
+msgstr "deve ser menor ou igual a %{number}"
 
 msgid "must be greater than or equal to %{number}"
-msgstr ""
+msgstr "deve ser maior ou igual a %{number}"
 
 msgid "must be equal to %{number}"
-msgstr ""
+msgstr "deve ser igual a %{number}"
 
 #: lib/graphql/resolvers/user.ex:116
 #, elixir-autogen, elixir-format
 msgid "Cannot refresh the token"
-msgstr ""
+msgstr "Não é possível atualizar o token"
 
 #: lib/graphql/resolvers/group.ex:276
 #, elixir-autogen, elixir-format
