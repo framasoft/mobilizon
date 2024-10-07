@@ -61,7 +61,7 @@
       </div>
 
       <o-field
-        horizontal
+        grouped
         :label="t('Starts on…')"
         class="items-center"
         label-for="begins-on-field"
@@ -82,10 +82,13 @@
           }"
         >
         </o-datetimepicker>
+        <o-switch v-model="eventOptions.showStartTime">{{
+          t("Show the time when the event begins")
+        }}</o-switch>
       </o-field>
 
       <o-field
-        horizontal
+        grouped
         :label="t('Ends on…')"
         label-for="ends-on-field"
         class="items-center"
@@ -107,10 +110,13 @@
           }"
         >
         </o-datetimepicker>
+        <o-switch v-model="eventOptions.showEndTime">{{
+          t("Show the time when the event ends")
+        }}</o-switch>
       </o-field>
 
       <o-button class="block" variant="text" @click="dateSettingsIsOpen = true">
-        {{ t("Date parameters") }}
+        {{ t("Timezone parameters") }}
       </o-button>
 
       <div class="my-6">
@@ -476,7 +482,7 @@
   >
     <form class="p-3">
       <header class="">
-        <h2 class="">{{ t("Date and time settings") }}</h2>
+        <h2 class="">{{ t("Timezone") }}</h2>
       </header>
       <section class="">
         <p>
@@ -486,7 +492,7 @@
             )
           }}
         </p>
-        <o-field :label="t('Timezone')" label-for="timezone" expanded>
+        <o-field expanded>
           <o-select
             :placeholder="t('Select a timezone')"
             :loading="timezoneLoading"
@@ -516,16 +522,6 @@
             icon-left="close"
             :title="t('Clear timezone field')"
           />
-        </o-field>
-        <o-field :label="t('Event page settings')">
-          <o-switch v-model="eventOptions.showStartTime">{{
-            t("Show the time when the event begins")
-          }}</o-switch>
-        </o-field>
-        <o-field>
-          <o-switch v-model="eventOptions.showEndTime">{{
-            t("Show the time when the event ends")
-          }}</o-switch>
         </o-field>
       </section>
       <footer class="mt-2">
