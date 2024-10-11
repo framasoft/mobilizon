@@ -63,9 +63,10 @@
           <h2 class="">{{ $t("Pick a profile or a group") }}</h2>
         </header>
         <section class="">
-          <div class="flex flex-wrap gap-2 items-center">
-            <div class="max-h-[400px] overflow-y-auto flex-1">
+          <div class="flex flex-wrap gap-2 items-center flex-col lg:flex-row">
+            <div class="max-h-[400px] overflow-y-auto flex-1 w-full">
               <organizer-picker
+                class="p-5 w-3/4"
                 v-if="currentActor"
                 :current-actor="currentActor"
                 :identities="identities ?? []"
@@ -80,6 +81,7 @@
               <div v-if="isSelectedActorAGroup">
                 <p>{{ $t("Add a contact") }}</p>
                 <o-input
+                  expanded
                   :placeholder="$t('Filter by name')"
                   :value="contactFilter"
                   @input="debounceSetFilterByName"
@@ -137,8 +139,12 @@
             </div>
           </div>
         </section>
-        <footer class="my-2">
-          <o-button variant="primary" @click="pickActor">
+        <footer class="my-2 text-center sm:text-right">
+          <o-button
+            variant="primary"
+            class="w-full sm:w-auto"
+            @click="pickActor"
+          >
             {{ $t("Pick") }}
           </o-button>
         </footer>

@@ -1,6 +1,7 @@
 <template>
   <div class="max-w-md mx-auto">
     <o-input
+      expanded
       dir="auto"
       :placeholder="t('Filter by profile or group name')"
       v-model="actorFilterProxy"
