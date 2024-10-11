@@ -540,40 +540,43 @@
     v-if="hasCurrentActorPermissionsToEdit"
   >
     <div class="container mx-auto">
-      <div class="flex justify-between items-center">
-        <span class="dark:text-gray-900" v-if="isEventModified">
+      <div class="lg:flex lg:justify-between lg:items-center lg:flex-wrap">
+        <div
+          class="text-red-900 text-center w-full margin m-1 lg:m-0 lg:w-auto lg:text-left"
+          v-if="isEventModified"
+        >
           {{ t("Unsaved changes") }}
-        </span>
+        </div>
         <div class="flex flex-wrap gap-3 items-center justify-end">
           <o-button
+            expanded
             variant="text"
             @click="confirmGoBack"
             class="dark:!text-black ml-auto"
             >{{ t("Cancel") }}</o-button
           >
           <!-- If an event has been published we can't make it draft anymore -->
-          <span class="" v-if="event.draft === true">
-            <o-button
-              variant="primary"
-              class="!text-black hover:!text-white"
-              outlined
-              @click="createOrUpdateDraft"
-              :disabled="saving"
-              >{{ t("Save draft") }}</o-button
-            >
-          </span>
-          <span class="ml-auto">
-            <o-button
-              variant="primary"
-              :disabled="saving"
-              @click="createOrUpdatePublish"
-              @keyup.enter="createOrUpdatePublish"
-            >
-              <span v-if="isUpdate === false">{{ t("Create my event") }}</span>
-              <span v-else-if="event.draft === true">{{ t("Publish") }}</span>
-              <span v-else>{{ t("Update my event") }}</span>
-            </o-button>
-          </span>
+          <o-button
+            v-if="event.draft === true"
+            expanded
+            variant="primary"
+            class="!text-black hover:!text-white"
+            outlined
+            @click="createOrUpdateDraft"
+            :disabled="saving"
+            >{{ t("Save draft") }}</o-button
+          >
+          <o-button
+            expanded
+            variant="primary"
+            :disabled="saving"
+            @click="createOrUpdatePublish"
+            @keyup.enter="createOrUpdatePublish"
+          >
+            <span v-if="isUpdate === false">{{ t("Create my event") }}</span>
+            <span v-else-if="event.draft === true">{{ t("Publish") }}</span>
+            <span v-else>{{ t("Update my event") }}</span>
+          </o-button>
         </div>
       </div>
     </div>
