@@ -402,7 +402,7 @@
       <section class="my-4">
         <h2>{{ t("Status") }}</h2>
 
-        <fieldset>
+        <fieldset id="status">
           <legend>
             {{
               t(
@@ -1428,6 +1428,29 @@ const registerOption = computed({
 
   & + span.radio-label {
     padding-left: 3px;
+  }
+}
+
+#status .o-field--addons {
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+#status .o-field--addons > label {
+  flex: 1 1 0;
+  margin: 0;
+}
+#status .o-field--addons .mr-2 {
+  margin: 0;
+}
+
+#status .o-field--addons > label .o-radio__label {
+  width: 100%;
+}
+
+@media screen and (max-width: 700px) {
+  #status .o-field--addons {
+    flex-direction: column;
   }
 }
 </style>
