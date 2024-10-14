@@ -12,30 +12,24 @@
   </div>
 </template>
 <script lang="ts" setup>
+import { formatTimeString } from "@/filters/datetime";
 import { computed } from "vue";
-import { useI18n } from "vue-i18n";
 
 import Clock from "vue-material-design-icons/ClockTimeTenOutline.vue";
-
-const { locale } = useI18n({ useScope: "global" });
-
-const localeConverted = locale.replace("_", "-");
 
 const props = withDefaults(
   defineProps<{
     date: string;
+    timezone?: string;
     small?: boolean;
   }>(),
-  { small: false }
+  { small: false, timezone: "Etc/UTC" }
 );
 
 const dateObj = computed<Date>(() => new Date(props.date));
 
 const time = computed<string>(() =>
-  dateObj.value.toLocaleTimeString(localeConverted, {
-    hour: "2-digit",
-    minute: "2-digit",
-  })
+  formatTimeString(props.date, props.timezone)
 );
 
 const smallStyle = computed<string>(() => (props.small ? "0.9" : "2"));

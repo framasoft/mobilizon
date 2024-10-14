@@ -24,6 +24,7 @@
         >
           <start-time-icon
             :date="event.beginsOn.toString()"
+            :timezone="event.options.timezone ?? undefined"
             class="absolute right-3 -top-16"
           />
         </div>
