@@ -124,9 +124,13 @@
               <!-- Less than 10 seats left -->
               <span class="has-text-danger" v-if="lastSeatsLeft">
                 {{
-                  t("{number} seats left", {
-                    number: seatsLeft,
-                  })
+                  t(
+                    "{number} seats left",
+                    {
+                      number: seatsLeft,
+                    },
+                    seatsLeft ?? 0
+                  )
                 }}
               </span>
               <span
