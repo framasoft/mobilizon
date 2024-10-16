@@ -189,8 +189,9 @@
           <li class="m-auto" v-if="islongEvents">
             <router-link
               :to="{
+                ...$route,
                 name: RouteName.SEARCH,
-                query: { contentType: 'SHORTEVENTS' },
+                query: { ...$route.query, contentType: 'SHORTEVENTS' },
               }"
               class="block py-2 pr-4 pl-3 text-zinc-700 border-b border-gray-100 hover:bg-zinc-50 md:hover:bg-transparent md:border-0 md:hover:text-mbz-purple-700 md:p-0 dark:text-zinc-400 md:dark:hover:text-white dark:hover:bg-zinc-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
               >{{ t("Events") }}</router-link
@@ -198,7 +199,11 @@
           </li>
           <li class="m-auto" v-else>
             <router-link
-              :to="{ name: RouteName.SEARCH, query: { contentType: 'EVENTS' } }"
+              :to="{
+                ...$route,
+                name: RouteName.SEARCH,
+                query: { ...$route.query, contentType: 'EVENTS' },
+              }"
               class="block py-2 pr-4 pl-3 text-zinc-700 border-b border-gray-100 hover:bg-zinc-50 md:hover:bg-transparent md:border-0 md:hover:text-mbz-purple-700 md:p-0 dark:text-zinc-400 md:dark:hover:text-white dark:hover:bg-zinc-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
               >{{ t("Events") }}</router-link
             >
@@ -206,8 +211,9 @@
           <li class="m-auto" v-if="islongEvents">
             <router-link
               :to="{
+                ...$route,
                 name: RouteName.SEARCH,
-                query: { contentType: 'LONGEVENTS' },
+                query: { ...$route.query, contentType: 'LONGEVENTS' },
               }"
               class="block py-2 pr-4 pl-3 text-zinc-700 border-b border-gray-100 hover:bg-zinc-50 md:hover:bg-transparent md:border-0 md:hover:text-mbz-purple-700 md:p-0 dark:text-zinc-400 md:dark:hover:text-white dark:hover:bg-zinc-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
               >{{ t("Activities") }}</router-link
@@ -215,7 +221,11 @@
           </li>
           <li class="m-auto">
             <router-link
-              :to="{ name: RouteName.SEARCH, query: { contentType: 'GROUPS' } }"
+              :to="{
+                ...$route,
+                name: RouteName.SEARCH,
+                query: { ...$route.query, contentType: 'GROUPS' },
+              }"
               class="block py-2 pr-4 pl-3 text-zinc-700 border-b border-gray-100 hover:bg-zinc-50 md:hover:bg-transparent md:border-0 md:hover:text-mbz-purple-700 md:p-0 dark:text-zinc-400 md:dark:hover:text-white dark:hover:bg-zinc-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
               >{{ t("Groups") }}</router-link
             >
