@@ -29,7 +29,8 @@
   <search-fields
     v-model:search="search"
     v-model:location="location"
-    :locationDefaultText="location?.description"
+    :locationDefaultText="location?.description ?? userLocation?.name"
+    v-on:update:location="updateLocation"
     :fromLocalStorage="true"
   />
   <!-- Categories preview -->
@@ -237,6 +238,7 @@ const currentUserParticipations = computed(
 
 const location = ref(null);
 const search = ref("");
+const noLocation = ref(false);
 
 watch(location, (newLoc, oldLoc) =>
   console.debug("LOCATION UPDATED from", { ...oldLoc }, " to ", { ...newLoc })
@@ -428,6 +430,13 @@ const currentUserLocation = computed(() => {
 
 const userLocation = computed(() => {
   console.debug("new userLocation");
+  if (noLocation.value) {
+    return {
+      lon: null,
+      lat: null,
+      name: null,
+    };
+  }
   if (location.value) {
     console.debug("userLocation is typed location");
     return addressToLocation(location.value);
@@ -500,6 +509,10 @@ const performGeoLocation = () => {
       doingGeoloc.value = false;
     }
   );
+};
+
+const updateLocation = (newlocation: IAddress | null) => {
+  noLocation.value = newlocation == null;
 };
 
 /**

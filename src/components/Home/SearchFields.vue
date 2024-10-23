@@ -27,6 +27,7 @@
       :default-text="locationDefaultText"
       labelClass="sr-only"
       :placeholder="t('e.g. Nantes, Berlin, Cork, …')"
+      v-on:update:modelValue="modelValueUpdate"
     />
     <o-button native-type="submit" icon-left="magnify">
       <template v-if="search">{{ t("Go!") }}</template>
@@ -94,6 +95,10 @@ const search = computed({
     emit("update:search", newSearch);
   },
 });
+
+const modelValueUpdate = (newlocation: IAddress | null) => {
+  emit("update:location", newlocation);
+};
 
 const submit = () => {
   emit("submit");

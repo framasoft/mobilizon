@@ -374,7 +374,7 @@ const asyncData = async (query: string): Promise<void> => {
 };
 
 const selectedAddressText = computed(() => {
-  if (!selected) return undefined;
+  if (!selected || !selected.id) return undefined;
   return addressFullName(selected);
 });
 
