@@ -884,26 +884,35 @@ enum ViewMode {
 
 enum EventSortValues {
   MATCH_DESC = "MATCH_DESC",
+  CREATED_AT_ASC = "CREATED_AT_ASC",
+  CREATED_AT_DESC = "CREATED_AT_DESC",
   START_TIME_ASC = "START_TIME_ASC",
   START_TIME_DESC = "START_TIME_DESC",
-  CREATED_AT_DESC = "CREATED_AT_DESC",
-  CREATED_AT_ASC = "CREATED_AT_ASC",
   PARTICIPANT_COUNT_DESC = "PARTICIPANT_COUNT_DESC",
 }
 
 enum GroupSortValues {
   MATCH_DESC = "MATCH_DESC",
+  CREATED_AT_ASC = "CREATED_AT_ASC",
+  CREATED_AT_DESC = "CREATED_AT_DESC",
+  MEMBER_COUNT_ASC = "MEMBER_COUNT_ASC",
   MEMBER_COUNT_DESC = "MEMBER_COUNT_DESC",
+  LAST_EVENT_ACTIVITY = "LAST_EVENT_ACTIVITY",
 }
 
 enum SortValues {
+  //Common
   MATCH_DESC = "MATCH_DESC",
-  START_TIME_ASC = "START_TIME_ASC",
-  START_TIME_DESC = "START_TIME_DESC",
   CREATED_AT_DESC = "CREATED_AT_DESC",
   CREATED_AT_ASC = "CREATED_AT_ASC",
+  // EventSortValues
+  START_TIME_ASC = "START_TIME_ASC",
+  START_TIME_DESC = "START_TIME_DESC",
   PARTICIPANT_COUNT_DESC = "PARTICIPANT_COUNT_DESC",
+  // GroupSortValues
+  MEMBER_COUNT_ASC = "MEMBER_COUNT_ASC",
   MEMBER_COUNT_DESC = "MEMBER_COUNT_DESC",
+  LAST_EVENT_ACTIVITY = "LAST_EVENT_ACTIVITY",
 }
 
 const props = defineProps<{
@@ -1261,10 +1270,28 @@ const sortOptions = computed(() => {
   }
 
   if (contentType.value === ContentType.GROUPS) {
-    options.push({
-      key: SortValues.MEMBER_COUNT_DESC,
-      label: t("Number of members"),
-    });
+    options.push(
+      {
+        key: SortValues.MEMBER_COUNT_ASC,
+        label: t("Increasing number of members"),
+      },
+      {
+        key: SortValues.MEMBER_COUNT_DESC,
+        label: t("Decreasing number of members"),
+      },
+      {
+        key: SortValues.CREATED_AT_ASC,
+        label: t("Increasing creation date"),
+      },
+      {
+        key: SortValues.CREATED_AT_DESC,
+        label: t("Decreasing creation date"),
+      },
+      {
+        key: SortValues.LAST_EVENT_ACTIVITY,
+        label: t("Last event activity"),
+      }
+    );
   }
 
   return options;

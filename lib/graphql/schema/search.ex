@@ -171,7 +171,11 @@ defmodule Mobilizon.GraphQL.Schema.SearchType do
 
   enum :search_group_sort_options do
     value(:match_desc, description: "The pertinence of the result")
-    value(:member_count_desc, description: "The members count of the group")
+    value(:member_count_asc, description: "The members count of the group ascendant order")
+    value(:member_count_desc, description: "The members count of the group descendent order")
+    value(:created_at_asc, description: "When the group was created ascendant order")
+    value(:created_at_desc, description: "When the group was created descendent order")
+    value(:last_event_activity, description: "Last event activity of the group")
   end
 
   enum :search_event_sort_options do

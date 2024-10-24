@@ -13,6 +13,7 @@ defmodule Mobilizon.Actors do
   alias Mobilizon.Actors.{Actor, Bot, Follower, Member}
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Crypto
+  alias Mobilizon.Events.Event
   alias Mobilizon.Events.FeedToken
   alias Mobilizon.Medias
   alias Mobilizon.Service.Workers
@@ -518,7 +519,6 @@ defmodule Mobilizon.Actors do
     query = from(a in Actor)
 
     query
-    |> distinct([q], q.id)
     |> actor_by_username_or_name_query(term)
     |> maybe_join_address(
       Keyword.get(options, :location),
@@ -532,7 +532,55 @@ defmodule Mobilizon.Actors do
     |> filter_by_minimum_visibility(Keyword.get(options, :minimum_visibility, :public))
     |> filter_suspended(false)
     |> filter_out_anonymous_actor_id(anonymous_actor_id)
+    # order_by
+    |> actor_order(Keyword.get(options, :sort_by, :match_desc))
   end
+
+  # sort by most recent id if "best match"
+  defp actor_order(query, :match_desc) do
+    query
+    |> order_by([q], desc: q.id)
+  end
+
+  defp actor_order(query, :last_event_activity) do
+    query
+    |> join(:left, [q], e in Event, on: e.attributed_to_id == q.id)
+    |> group_by([q, e], q.id)
+    |> order_by([q, e], [
+      # put groups with no events at the end of the list
+      fragment("MAX(?) IS NULL", e.updated_at),
+      # last edited event of the group
+      desc: max(e.updated_at),
+      # sort group with no event by id
+      desc: q.id
+    ])
+  end
+
+  defp actor_order(query, :member_count_asc) do
+    query
+    |> join(:left, [q], m in Member, on: m.parent_id == q.id)
+    |> group_by([q, m], q.id)
+    |> order_by([q, m], asc: count(m.id), asc: q.id)
+  end
+
+  defp actor_order(query, :member_count_desc) do
+    query
+    |> join(:left, [q], m in Member, on: m.parent_id == q.id)
+    |> group_by([q, m], q.id)
+    |> order_by([q, m], desc: count(m.id), desc: q.id)
+  end
+
+  defp actor_order(query, :created_at_asc) do
+    query
+    |> order_by([q], asc: q.inserted_at)
+  end
+
+  defp actor_order(query, :created_at_desc) do
+    query
+    |> order_by([q], desc: q.inserted_at)
+  end
+
+  defp actor_order(query, _), do: query
 
   @doc """
   Gets a group by its title.
@@ -1388,16 +1436,6 @@ defmodule Mobilizon.Actors do
       [a],
       fragment(
         "f_unaccent(?) %> f_unaccent(?) or f_unaccent(coalesce(?, '')) %> f_unaccent(?)",
-        a.preferred_username,
-        ^username,
-        a.name,
-        ^username
-      )
-    )
-    |> order_by(
-      [a],
-      fragment(
-        "word_similarity(?, ?) + word_similarity(coalesce(?, ''), ?) desc",
         a.preferred_username,
         ^username,
         a.name,
