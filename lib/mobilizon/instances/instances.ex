@@ -73,7 +73,7 @@ defmodule Mobilizon.Instances do
           query
       end
 
-    %Page{elements: elements} = paged_instances = Page.build_page(query, page, limit, :domain)
+    %Page{elements: elements} = paged_instances = Page.build_page(query, page, limit)
 
     %Page{
       paged_instances

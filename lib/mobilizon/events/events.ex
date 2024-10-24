@@ -602,7 +602,7 @@ defmodule Mobilizon.Events do
     |> filter_local_or_from_followed_instances_events()
     |> filter_public_visibility()
     |> event_order(Map.get(args, :sort_by, :match_desc), search_string)
-    |> Page.build_page(page, limit, :begins_on)
+    |> Page.build_page(page, limit)
   end
 
   @doc """
