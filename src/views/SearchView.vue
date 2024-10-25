@@ -438,7 +438,8 @@
         id="results-anchor"
         class="hidden sm:flex items-center justify-between dark:text-slate-100 mb-2"
       >
-        <p v-if="totalCount === 0">
+        <p v-if="searchLoading">{{ t("Loading search results...") }}</p>
+        <p v-else-if="totalCount === 0">
           <span
             v-if="
               contentType === ContentType.EVENTS ||
