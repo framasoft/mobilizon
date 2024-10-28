@@ -132,9 +132,7 @@ export enum SearchTabs {
 }
 
 export enum ContentType {
-  ALL = "ALL",
   EVENTS = "EVENTS",
-  SHORTEVENTS = "SHORTEVENTS",
   LONGEVENTS = "LONGEVENTS",
   GROUPS = "GROUPS",
 }

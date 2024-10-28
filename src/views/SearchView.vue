@@ -34,41 +34,36 @@
           <li
             v-for="content in contentTypeMapping"
             :key="content.contentType"
-            class="flex gap-1"
+            class="flex gap-1 items-center"
           >
-            <Magnify
-              v-if="content.contentType === ContentType.ALL"
-              :size="24"
+            <input
+              :id="'contentType' + content.contentType"
+              v-model="contentType"
+              type="radio"
+              name="contentType"
+              :value="content.contentType"
+              class="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600"
             />
 
-            <Calendar
-              v-if="content.contentType === ContentType.EVENTS"
-              :size="24"
-            />
-
-            <Calendar
-              v-if="content.contentType === ContentType.SHORTEVENTS"
-              :size="24"
-            />
-
-            <CalendarStar
-              v-if="content.contentType === ContentType.LONGEVENTS"
-              :size="24"
-            />
-
-            <AccountMultiple
-              v-if="content.contentType === ContentType.GROUPS"
-              :size="24"
-            />
-
-            <router-link
-              :to="{
-                ...$route,
-                query: { ...$route.query, contentType: content.contentType },
-              }"
+            <label
+              :for="'contentType' + content.contentType"
+              class="cursor-pointer w-full font-medium text-gray-900 dark:text-gray-300 flex gap-1"
             >
-              {{ content.label }}
-            </router-link>
+              <Calendar
+                v-if="content.contentType === ContentType.EVENTS"
+                :size="24"
+              />
+
+              <CalendarStar
+                v-if="content.contentType === ContentType.LONGEVENTS"
+                :size="24"
+              />
+
+              <AccountMultiple
+                v-if="content.contentType === ContentType.GROUPS"
+                :size="24"
+              /><span>{{ content.label }}</span></label
+            >
           </li>
         </ul>
 
@@ -90,7 +85,7 @@
               />
               <label
                 for="selfTarget"
-                class="ml-3 font-medium text-gray-900 dark:text-gray-300"
+                class="cursor-pointer ml-3 font-medium text-gray-900 dark:text-gray-300"
                 >{{ t("From this instance only") }}</label
               >
             </div>
@@ -106,7 +101,7 @@
               />
               <label
                 for="internalTarget"
-                class="ml-3 font-medium text-gray-900 dark:text-gray-300"
+                class="cursor-pointer ml-3 font-medium text-gray-900 dark:text-gray-300"
                 >{{ t("In this instance's network") }}</label
               >
             </div>
@@ -142,7 +137,7 @@
                 />
                 <label
                   :for="key"
-                  class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
+                  class="cursor-pointer ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
                   >{{ eventStartDateRangeOption.label }}</label
                 >
               </div>
@@ -182,7 +177,7 @@
                 />
                 <label
                   :for="distanceOption.id"
-                  class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
+                  class="cursor-pointer ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
                   >{{ distanceOption.label }}</label
                 >
               </div>
@@ -216,7 +211,7 @@
                 />
                 <label
                   :for="category.id"
-                  class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
+                  class="cursor-pointer ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
                   >{{ category.label }}</label
                 >
               </div>
@@ -277,7 +272,7 @@
                 />
                 <label
                   :for="eventStatusOption.id"
-                  class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
+                  class="cursor-pointer ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
                   >{{ eventStatusOption.label }}</label
                 >
               </div>
@@ -324,7 +319,7 @@
                 />
                 <label
                   :for="key"
-                  class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
+                  class="cursor-pointer ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
                   >{{ language }}</label
                 >
               </div>
@@ -360,61 +355,6 @@
           </template>
         </filter-section>
 
-        <!--
-
-            <div class="">
-              <label v-translate class="font-bold" for="host">Mobilizon instance</label>
-
-              <input
-                id="host"
-                v-model="formHost"
-                type="text"
-                name="host"
-                placeholder="mobilizon.fr"
-                class="dark:text-black md:max-w-fit w-full"
-              />
-            </div>
-
-            <div class="">
-              <label v-translate class="inline font-bold" for="tagsAllOf">All of these tags</label>
-              <button
-                v-if="formTagsAllOf.length !== 0"
-                v-translate
-                class="text-sm ml-2"
-                @click="resetField('tagsAllOf')"
-              >
-                Reset
-              </button>
-
-              <vue-tags-input
-                v-model="formTagAllOf"
-                :placeholder="tagsPlaceholder"
-                :tags="formTagsAllOf"
-                @tags-changed="(newTags) => (formTagsAllOf = newTags)"
-              />
-            </div>
-
-            <div>
-              <div>
-                <label v-translate class="inline font-bold" for="tagsOneOf">One of these tags</label>
-                <button
-                  v-if="formTagsOneOf.length !== 0"
-                  v-translate
-                  class="text-sm ml-2"
-                  @click="resetField('tagsOneOf')"
-                >
-                  Reset
-                </button>
-              </div>
-
-              <vue-tags-input
-                v-model="formTagOneOf"
-                :placeholder="tagsPlaceholder"
-                :tags="formTagsOneOf"
-                @tags-changed="(newTags) => (formTagsOneOf = newTags)"
-              />
-            </div>-->
-
         <div class="sr-only">
           <button
             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
@@ -440,13 +380,9 @@
       >
         <p v-if="searchLoading">{{ t("Loading search results...") }}</p>
         <p v-else-if="totalCount === 0">
-          <span
-            v-if="
-              contentType === ContentType.EVENTS ||
-              contentType === ContentType.SHORTEVENTS
-            "
-            >{{ t("No events found") }}</span
-          >
+          <span v-if="contentType === ContentType.EVENTS">{{
+            t("No events found")
+          }}</span>
           <span v-else-if="contentType === ContentType.LONGEVENTS">{{
             t("No activities found")
           }}</span>
@@ -456,12 +392,7 @@
           <span v-else>{{ t("No results found") }}</span>
         </p>
         <p v-else>
-          <span
-            v-if="
-              contentType === ContentType.EVENTS ||
-              contentType === ContentType.SHORTEVENTS
-            "
-          >
+          <span v-if="contentType === ContentType.EVENTS">
             {{
               t(
                 "{eventsCount} events found",
@@ -503,12 +434,27 @@
             t("Sort by")
           }}</label>
           <o-select
-            :placeholder="t('Sort by')"
-            v-model="sortBy"
-            id="sortOptionSelect"
+            v-if="contentType !== ContentType.GROUPS"
+            :placeholder="t('Sort by events')"
+            v-model="sortByEvents"
+            id="sortOptionSelectEvents"
           >
             <option
-              v-for="sortOption in sortOptions"
+              v-for="sortOption in sortOptionsEvents"
+              :key="sortOption.key"
+              :value="sortOption.key"
+            >
+              {{ sortOption.label }}
+            </option>
+          </o-select>
+          <o-select
+            v-if="contentType === ContentType.GROUPS"
+            :placeholder="t('Sort by groups')"
+            v-model="sortByGroups"
+            id="sortOptionSelectGroups"
+          >
+            <option
+              v-for="sortOption in sortOptionsGroups"
               :key="sortOption.key"
               :value="sortOption.key"
             >
@@ -533,92 +479,9 @@
         </div>
       </div>
       <div v-if="mode === ViewMode.LIST">
-        <template v-if="contentType === ContentType.ALL">
-          <template v-if="searchLoading">
-            <SkeletonGroupResultList v-for="i in 2" :key="i" />
-            <SkeletonEventResultList v-for="i in 4" :key="i" />
-          </template>
-          <o-notification v-if="features && !features.groups" variant="danger">
-            {{ t("Groups are not enabled on this instance.") }}
-          </o-notification>
-          <div v-else-if="searchGroups && searchGroups?.total > 0">
-            <GroupCard
-              class="my-2"
-              v-for="group in searchGroups?.elements"
-              :group="group"
-              :key="group.id"
-              :isRemoteGroup="group.__typename === 'GroupResult'"
-              :isLoggedIn="currentUser?.isLoggedIn"
-              mode="row"
-            />
-          </div>
-          <div v-if="searchEvents && searchEvents.total > 0">
-            <event-card
-              mode="row"
-              v-for="event in searchEvents?.elements"
-              :event="event"
-              :key="event.uuid"
-              :options="{
-                isRemoteEvent: event.__typename === 'EventResult',
-                isLoggedIn: currentUser?.isLoggedIn,
-              }"
-              class="my-4"
-            />
-          </div>
-          <EmptyContent v-else-if="searchLoading === false" icon="magnify">
-            <span v-if="searchIsUrl">
-              {{ t("No event found at this address") }}
-            </span>
-            <span v-else-if="!search">
-              {{ t("No results found") }}
-            </span>
-            <i18n-t keypath="No results found for {search}" tag="span" v-else>
-              <template #search>
-                <b class="">{{ search }}</b>
-              </template>
-            </i18n-t>
-            <template #desc v-if="searchIsUrl && !currentUser?.id">
-              {{
-                t(
-                  "Only registered users may fetch remote events from their URL."
-                )
-              }}
-            </template>
-            <template #desc v-else>
-              <p class="my-2 text-start">
-                {{ t("Suggestions:") }}
-              </p>
-              <ul class="list-disc list-inside text-start">
-                <li>
-                  {{ t("Make sure that all words are spelled correctly.") }}
-                </li>
-                <li>{{ t("Try different keywords.") }}</li>
-                <li>{{ t("Try more general keywords.") }}</li>
-                <li>{{ t("Try fewer keywords.") }}</li>
-                <li>{{ t("Change the filters.") }}</li>
-              </ul>
-            </template>
-          </EmptyContent>
-          <o-pagination
-            v-if="
-              (searchEvents && searchEvents?.total > EVENT_PAGE_LIMIT) ||
-              (searchGroups && searchGroups?.total > GROUP_PAGE_LIMIT)
-            "
-            :total="
-              Math.max(searchEvents?.total ?? 0, searchGroups?.total ?? 0)
-            "
-            v-model:current="page"
-            :per-page="EVENT_PAGE_LIMIT"
-            :aria-next-label="t('Next page')"
-            :aria-previous-label="t('Previous page')"
-            :aria-page-label="t('Page')"
-            :aria-current-label="t('Current page')"
-          />
-        </template>
         <template
-          v-else-if="
+          v-if="
             contentType === ContentType.EVENTS ||
-            contentType === ContentType.SHORTEVENTS ||
             contentType === ContentType.LONGEVENTS
           "
         >
@@ -803,7 +666,6 @@ import {
 import Calendar from "vue-material-design-icons/Calendar.vue";
 import CalendarStar from "vue-material-design-icons/CalendarStar.vue";
 import AccountMultiple from "vue-material-design-icons/AccountMultiple.vue";
-import Magnify from "vue-material-design-icons/Magnify.vue";
 
 import { useHead } from "@/utils/head";
 import type { Locale } from "date-fns";
@@ -886,27 +748,11 @@ enum GroupSortValues {
   LAST_EVENT_ACTIVITY = "LAST_EVENT_ACTIVITY",
 }
 
-enum SortValues {
-  //Common
-  MATCH_DESC = "MATCH_DESC",
-  CREATED_AT_DESC = "CREATED_AT_DESC",
-  CREATED_AT_ASC = "CREATED_AT_ASC",
-  // EventSortValues
-  START_TIME_ASC = "START_TIME_ASC",
-  START_TIME_DESC = "START_TIME_DESC",
-  PARTICIPANT_COUNT_DESC = "PARTICIPANT_COUNT_DESC",
-  // GroupSortValues
-  MEMBER_COUNT_ASC = "MEMBER_COUNT_ASC",
-  MEMBER_COUNT_DESC = "MEMBER_COUNT_DESC",
-  LAST_EVENT_ACTIVITY = "LAST_EVENT_ACTIVITY",
-}
-
 const props = defineProps<{
   tag?: string;
 }>();
 const tag = computed(() => props.tag);
 
-const page = useRouteQuery("page", 1, integerTransformer);
 const eventPage = useRouteQuery("eventPage", 1, integerTransformer);
 const groupPage = useRouteQuery("groupPage", 1, integerTransformer);
 
@@ -920,10 +766,9 @@ const distance = useRouteQuery("distance", "10_km");
 const when = useRouteQuery("when", "any");
 const contentType = useRouteQuery(
   "contentType",
-  tag.value ? ContentType.EVENTS : ContentType.ALL,
+  ContentType.EVENTS,
   enumTransformer(ContentType)
 );
-
 const isOnline = useRouteQuery("isOnline", false, booleanTransformer);
 const categoryOneOf = useRouteQuery("categoryOneOf", [], arrayTransformer);
 const statusOneOf = useRouteQuery(
@@ -932,16 +777,22 @@ const statusOneOf = useRouteQuery(
   arrayTransformer
 );
 const languageOneOf = useRouteQuery("languageOneOf", [], arrayTransformer);
+
 const searchTarget = useRouteQuery(
   "target",
   SearchTargets.INTERNAL,
   enumTransformer(SearchTargets)
 );
 const mode = useRouteQuery("mode", ViewMode.LIST, enumTransformer(ViewMode));
-const sortBy = useRouteQuery(
-  "sortBy",
-  SortValues.START_TIME_ASC,
-  enumTransformer(SortValues)
+const sortByEvents = useRouteQuery(
+  "sortByEvents",
+  EventSortValues.MATCH_DESC,
+  enumTransformer(EventSortValues)
+);
+const sortByGroups = useRouteQuery(
+  "sortByGroups",
+  GroupSortValues.MATCH_DESC,
+  enumTransformer(GroupSortValues)
 );
 const bbox = useRouteQuery("bbox", undefined);
 const zoom = useRouteQuery("zoom", undefined, integerTransformer);
@@ -1069,34 +920,26 @@ const contentTypeMapping = computed(() => {
   if (islongEvents.value) {
     return [
       {
-        contentType: "ALL",
-        label: t("Everything"),
-      },
-      {
-        contentType: "SHORTEVENTS",
+        contentType: ContentType.EVENTS,
         label: t("Events"),
       },
       {
-        contentType: "LONGEVENTS",
+        contentType: ContentType.LONGEVENTS,
         label: t("Activities"),
       },
       {
-        contentType: "GROUPS",
+        contentType: ContentType.GROUPS,
         label: t("Groups"),
       },
     ];
   } else {
     return [
       {
-        contentType: "ALL",
-        label: t("Everything"),
-      },
-      {
-        contentType: "EVENTS",
+        contentType: ContentType.EVENTS,
         label: t("Events"),
       },
       {
-        contentType: "GROUPS",
+        contentType: ContentType.GROUPS,
         label: t("Groups"),
       },
     ];
@@ -1209,7 +1052,7 @@ const geoHashLocation = computed(() =>
 const radius = computed(() => Number.parseInt(distance.value.slice(0, -3)));
 
 const longEvents = computed(() => {
-  if (contentType.value === ContentType.SHORTEVENTS) {
+  if (contentType.value === ContentType.EVENTS) {
     return false;
   } else if (contentType.value === ContentType.LONGEVENTS) {
     return true;
@@ -1222,63 +1065,60 @@ const totalCount = computed(() => {
   return (searchEvents.value?.total ?? 0) + (searchGroups.value?.total ?? 0);
 });
 
-const sortOptions = computed(() => {
+const sortOptionsGroups = computed(() => {
   const options = [
     {
-      key: SortValues.MATCH_DESC,
+      key: GroupSortValues.MATCH_DESC,
       label: t("Best match"),
+    },
+    {
+      key: GroupSortValues.MEMBER_COUNT_ASC,
+      label: t("Increasing number of members"),
+    },
+    {
+      key: GroupSortValues.MEMBER_COUNT_DESC,
+      label: t("Decreasing number of members"),
+    },
+    {
+      key: GroupSortValues.CREATED_AT_ASC,
+      label: t("Increasing creation date"),
+    },
+    {
+      key: GroupSortValues.CREATED_AT_DESC,
+      label: t("Decreasing creation date"),
+    },
+    {
+      key: GroupSortValues.LAST_EVENT_ACTIVITY,
+      label: t("Last event activity"),
     },
   ];
 
-  if (
-    contentType.value === ContentType.EVENTS ||
-    contentType.value === ContentType.SHORTEVENTS ||
-    contentType.value === ContentType.LONGEVENTS
-  ) {
-    options.push(
-      {
-        key: SortValues.START_TIME_ASC,
-        label: t("Event date"),
-      },
-      {
-        key: SortValues.CREATED_AT_DESC,
-        label: t("Most recently published"),
-      },
-      {
-        key: SortValues.CREATED_AT_ASC,
-        label: t("Least recently published"),
-      },
-      {
-        key: SortValues.PARTICIPANT_COUNT_DESC,
-        label: t("With the most participants"),
-      }
-    );
-  }
+  return options;
+});
 
-  if (contentType.value === ContentType.GROUPS) {
-    options.push(
-      {
-        key: SortValues.MEMBER_COUNT_ASC,
-        label: t("Increasing number of members"),
-      },
-      {
-        key: SortValues.MEMBER_COUNT_DESC,
-        label: t("Decreasing number of members"),
-      },
-      {
-        key: SortValues.CREATED_AT_ASC,
-        label: t("Increasing creation date"),
-      },
-      {
-        key: SortValues.CREATED_AT_DESC,
-        label: t("Decreasing creation date"),
-      },
-      {
-        key: SortValues.LAST_EVENT_ACTIVITY,
-        label: t("Last event activity"),
-      }
-    );
-  }
+const sortOptionsEvents = computed(() => {
+  const options = [
+    {
+      key: EventSortValues.MATCH_DESC,
+      label: t("Best match"),
+    },
+    {
+      key: EventSortValues.START_TIME_ASC,
+      label: t("Event date"),
+    },
+    {
+      key: EventSortValues.CREATED_AT_DESC,
+      label: t("Most recently published"),
+    },
+    {
+      key: EventSortValues.CREATED_AT_ASC,
+      label: t("Least recently published"),
+    },
+    {
+      key: EventSortValues.PARTICIPANT_COUNT_DESC,
+      label: t("With the most participants"),
+    },
+  ];
 
   return options;
 });
@@ -1334,11 +1174,11 @@ watch(isOnline, (newIsOnline) => {
 });
 
 const sortByForType = (
-  value: SortValues,
-  allowed: typeof EventSortValues | typeof GroupSortValues
-): SortValues | undefined => {
-  if (value === SortValues.START_TIME_ASC && when.value === "past") {
-    value = SortValues.START_TIME_DESC;
+  value: EventSortValues,
+  allowed: typeof EventSortValues
+): EventSortValues | undefined => {
+  if (value === EventSortValues.START_TIME_ASC && when.value === "past") {
+    value = EventSortValues.START_TIME_DESC;
   }
   return Object.values(allowed).includes(value) ? value : undefined;
 };
@@ -1373,18 +1213,13 @@ watch(
     searchTarget,
     bbox,
     zoom,
-    sortBy,
+    sortByEvents,
+    sortByGroups,
     boostLanguagesQuery,
   ],
   ([newContentType]) => {
     switch (newContentType) {
-      case ContentType.ALL:
-        page.value = 1;
-        break;
       case ContentType.EVENTS:
-        eventPage.value = 1;
-        break;
-      case ContentType.SHORTEVENTS:
         eventPage.value = 1;
         break;
       case ContentType.LONGEVENTS:
@@ -1408,10 +1243,8 @@ const { result: searchElementsResult, loading: searchLoading } = useQuery<{
   endsOn: end.value,
   longevents: longEvents.value,
   radius: geoHashLocation.value ? radius.value : undefined,
-  eventPage:
-    contentType.value === ContentType.ALL ? page.value : eventPage.value,
-  groupPage:
-    contentType.value === ContentType.ALL ? page.value : groupPage.value,
+  eventPage: eventPage.value,
+  groupPage: groupPage.value,
   limit: EVENT_PAGE_LIMIT,
   type: isOnline.value ? "ONLINE" : undefined,
   categoryOneOf: categoryOneOf.value,
@@ -1420,8 +1253,8 @@ const { result: searchElementsResult, loading: searchLoading } = useQuery<{
   searchTarget: searchTarget.value,
   bbox: mode.value === ViewMode.MAP ? bbox.value : undefined,
   zoom: zoom.value,
-  sortByEvents: sortByForType(sortBy.value, EventSortValues),
-  sortByGroups: sortByForType(sortBy.value, GroupSortValues),
+  sortByEvents: sortByForType(sortByEvents.value, EventSortValues),
+  sortByGroups: sortByGroups.value,
   boostLanguages: boostLanguagesQuery.value,
 }));
 </script>
