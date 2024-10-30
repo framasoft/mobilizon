@@ -29,6 +29,10 @@ const icons: Record<string, () => Promise<any>> = {
     import(`../../../node_modules/vue-material-design-icons/LinkOff.vue`),
   Image: () =>
     import(`../../../node_modules/vue-material-design-icons/Image.vue`),
+  Information: () =>
+    import(
+      `../../../node_modules/vue-material-design-icons/InformationVariant.vue`
+    ),
   FormatListBulleted: () =>
     import(
       `../../../node_modules/vue-material-design-icons/FormatListBulleted.vue`

@@ -9,7 +9,7 @@
   >
     <template #default>
       <div
-        class="flex flex-wrap gap-2 py-1"
+        class="flex flex-wrap gap-2 p-2"
         v-if="group && group.organizedEvents.total > 0"
       >
         <event-minimalist-card
@@ -24,6 +24,17 @@
       <!-- <o-skeleton animated v-else></o-skeleton> -->
     </template>
     <template #create>
+      <o-button
+        tag="router-link"
+        class="button"
+        variant="text"
+        :to="{
+          name: RouteName.GROUP_EVENTS,
+          params: { preferredUsername: usernameWithDomain(group) },
+          query: { showPassedEvents: true },
+        }"
+        >{{ t("View past events") }}</o-button
+      >
       <o-button
         tag="router-link"
         v-if="isModerator"

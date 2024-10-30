@@ -1,8 +1,13 @@
 <template>
   <div class="container mx-auto is-widescreen">
-    <div class="header flex flex-col">
+    <o-notification v-if="groupLoading" variant="info">
+      {{ t("Loading…") }}
+    </o-notification>
+    <o-notification v-if="!group && groupLoading === false" variant="danger">
+      {{ t("No group found") }}
+    </o-notification>
+    <div class="header flex flex-col" v-if="group">
       <breadcrumbs-nav
-        v-if="group"
         :links="[
           { name: RouteName.MY_GROUPS, text: t('My groups') },
           {
@@ -12,8 +17,7 @@
           },
         ]"
       />
-      <!-- <o-loading v-model:active="$apollo.loading"></o-loading> -->
-      <header class="block-container presentation" v-if="group">
+      <header class="block-container presentation">
         <div class="banner-container">
           <lazy-image-wrapper :picture="group.banner" />
         </div>
@@ -31,64 +35,14 @@
             <AccountGroup v-else :size="128" />
           </div>
           <div class="title-container flex flex-1 flex-col text-center">
-            <h1 class="m-0" v-if="group.name">
+            <h1 class="m-1" v-if="group.name">
               {{ group.name }}
             </h1>
-            <!-- <o-skeleton v-else :animated="true" /> -->
-            <span dir="ltr" class="" v-if="group.preferredUsername"
+            <span dir="ltr" class="m-1" v-if="group.preferredUsername"
               >@{{ usernameWithDomain(group) }}</span
             >
-            <!-- <o-skeleton v-else :animated="true" /> -->
-            <br />
           </div>
           <div class="flex flex-wrap justify-center flex-col md:flex-row">
-            <div
-              class="flex flex-col items-center flex-1 m-0"
-              v-if="isCurrentActorAGroupMember && !previewPublic && members"
-            >
-              <div class="flex">
-                <figure
-                  :title="
-                    t(`{'@'}{username} ({role})`, {
-                      username: usernameWithDomain(member.actor),
-                      role: member.role,
-                    })
-                  "
-                  v-for="member in members.elements"
-                  :key="member.actor.id"
-                  class="-mr-3"
-                >
-                  <img
-                    class="rounded-full h-8"
-                    :src="member.actor.avatar.url"
-                    v-if="member.actor.avatar"
-                    alt=""
-                    width="32"
-                    height="32"
-                  />
-                  <AccountCircle v-else :size="32" />
-                </figure>
-              </div>
-              <p>
-                {{
-                  t(
-                    "{count} members",
-                    {
-                      count: group.members?.total,
-                    },
-                    group.members?.total
-                  )
-                }}
-                <router-link
-                  v-if="isCurrentActorAGroupAdmin"
-                  :to="{
-                    name: RouteName.GROUP_MEMBERS_SETTINGS,
-                    params: { preferredUsername: usernameWithDomain(group) },
-                  }"
-                  >{{ t("Add / Remove…") }}</router-link
-                >
-              </p>
-            </div>
             <div class="flex flex-wrap gap-3 justify-center">
               <o-button
                 outlined
@@ -375,12 +329,14 @@
             :invitations="[groupMember]"
           />
           <o-notification
+            class="my-2"
             v-if="isCurrentActorARejectedGroupMember"
             variant="danger"
           >
             {{ t("You have been removed from this group's members.") }}
           </o-notification>
           <o-notification
+            class="my-2"
             v-if="
               isCurrentActorAGroupMember &&
               isCurrentActorARecentMember &&
@@ -394,47 +350,11 @@
               )
             }}
           </o-notification>
-        </div>
-      </header>
-    </div>
-    <div
-      v-if="isCurrentActorAGroupMember && !previewPublic && group"
-      class="block-container flex gap-2 flex-wrap mt-3"
-    >
-      <!-- Private things -->
-      <div class="flex-1 m-0 flex flex-col flex-wrap gap-2">
-        <!-- Group discussions -->
-        <Discussions :group="discussionGroup ?? group" class="flex-1" />
-        <!-- Resources -->
-        <Resources :group="resourcesGroup ?? group" class="flex-1" />
-      </div>
-      <!-- Public things -->
-      <div class="flex-1 m-0 flex flex-col flex-wrap gap-2">
-        <!-- Events -->
-        <Events
-          :group="group"
-          :isModerator="isCurrentActorAGroupModerator"
-          class="flex-1"
-        />
-        <!-- Posts -->
-        <Posts
-          :group="group"
-          :isModerator="isCurrentActorAGroupModerator"
-          :isMember="isCurrentActorAGroupMember"
-          class="flex-1"
-        />
-      </div>
-    </div>
-    <o-notification
-      v-else-if="!group && groupLoading === false"
-      variant="danger"
-    >
-      {{ t("No group found") }}
-    </o-notification>
-    <div v-else-if="group" class="public-container flex flex-col">
-      <aside class="group-metadata">
-        <div class="sticky">
-          <o-notification v-if="group.domain && !isCurrentActorAGroupMember">
+          <o-notification
+            class="my-2"
+            v-if="group && group.domain && !isCurrentActorAGroupMember"
+            variant="info"
+          >
             <p>
               {{
                 t(
@@ -450,173 +370,196 @@
               >{{ t("View full profile") }}</o-button
             >
           </o-notification>
-          <event-metadata-block
-            :title="t('About')"
-            v-if="group.summary && group.summary !== '<p></p>'"
+        </div>
+      </header>
+    </div>
+    <div v-if="group">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mb-2">
+        <!-- Private thing: Group discussions -->
+        <Discussions
+          v-if="isCurrentActorAGroupMember && !previewPublic"
+          :group="discussionGroup ?? group"
+        />
+        <!-- Private thing: Resources -->
+        <Resources
+          v-if="isCurrentActorAGroupMember && !previewPublic"
+          :group="resourcesGroup ?? group"
+        />
+        <!-- Public thing: Events -->
+        <Events
+          :group="group"
+          :isModerator="isCurrentActorAGroupModerator && !previewPublic"
+        />
+        <!-- Public thing: Posts -->
+        <Posts
+          :group="group"
+          :isModerator="isCurrentActorAGroupModerator && !previewPublic"
+          :isMember="isCurrentActorAGroupMember && !previewPublic"
+        />
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+        <!-- Public thing: Members -->
+        <group-section :title="t('Members')" icon="account-group">
+          <template #default>
+            <div class="flex flex-col justify-center h-full">
+              <div
+                class="flex flex-col items-center"
+                v-if="isCurrentActorAGroupMember && !previewPublic && members"
+              >
+                <div class="flex">
+                  <figure
+                    :title="
+                      t(`{'@'}{username} ({role})`, {
+                        username: usernameWithDomain(member.actor),
+                        role: member.role,
+                      })
+                    "
+                    v-for="member in members.elements"
+                    :key="member.actor.id"
+                    class="-mr-3"
+                  >
+                    <img
+                      class="rounded-full h-8"
+                      :src="member.actor.avatar.url"
+                      v-if="member.actor.avatar"
+                      alt=""
+                      width="32"
+                      height="32"
+                    />
+                    <AccountCircle v-else :size="32" />
+                  </figure>
+                </div>
+              </div>
+              <div class="">
+                <h2 class="text-center">
+                  {{
+                    t(
+                      "{count} members",
+                      {
+                        count: group.members?.total,
+                      },
+                      group.members?.total
+                    )
+                  }}
+                </h2>
+              </div>
+            </div></template
           >
+          <template #create>
+            <o-button
+              v-if="isCurrentActorAGroupAdmin && !previewPublic"
+              tag="router-link"
+              :to="{
+                name: RouteName.GROUP_MEMBERS_SETTINGS,
+                params: { preferredUsername: usernameWithDomain(group) },
+              }"
+              class="button is-primary"
+              >{{ t("Add / Remove…") }}</o-button
+            >
+          </template>
+        </group-section>
+        <!-- Public thing: About -->
+        <group-section :title="t('About')" icon="information">
+          <template #default>
             <div
+              v-if="group.summary"
               dir="auto"
-              class="prose lg:prose-xl dark:prose-invert"
+              class="prose lg:prose-xl dark:prose-invert p-2"
               v-html="group.summary"
-            />
-          </event-metadata-block>
-          <event-metadata-block :title="t('Members')">
-            <template #icon>
-              <AccountGroup :size="48" />
-            </template>
-            {{
-              t(
-                "{count} members",
-                {
-                  count: group.members?.total,
-                },
-                group.members?.total
-              )
-            }}
-          </event-metadata-block>
-          <event-metadata-block
-            v-if="physicalAddress && physicalAddress.url"
-            :title="t('Location')"
-          >
-            <template #icon>
+            ></div>
+            <empty-content v-else icon="information" :inline="true">
+              {{ t("No about content yet") }}
+            </empty-content>
+          </template>
+          <template #create>
+            <o-button
+              v-if="isCurrentActorAGroupAdmin && !previewPublic"
+              tag="router-link"
+              :to="{
+                name: RouteName.GROUP_PUBLIC_SETTINGS,
+                params: { preferredUsername: usernameWithDomain(group) },
+              }"
+              class="button is-primary"
+              >{{ t("Edit") }}</o-button
+            >
+          </template>
+        </group-section>
+        <!-- Public thing: Location -->
+        <group-section :title="t('Location')" icon="earth">
+          <template #default
+            ><div
+              class="flex flex-col justify-center h-full"
+              v-if="physicalAddress && physicalAddress.url"
+            >
               <o-icon
                 v-if="physicalAddress.poiInfos.poiIcon.icon"
                 :icon="physicalAddress.poiInfos.poiIcon.icon"
                 customSize="48"
               />
               <Earth v-else :size="48" />
-            </template>
-            <div class="address-wrapper">
-              <span
-                v-if="!physicalAddress || !addressFullName(physicalAddress)"
-                >{{ t("No address defined") }}</span
-              >
-              <div class="address" v-if="physicalAddress">
-                <div>
-                  <address dir="auto">
-                    <p
-                      class="addressDescription"
-                      :title="physicalAddress.poiInfos.name"
-                    >
-                      {{ physicalAddress.poiInfos.name }}
-                    </p>
-                    <p class="has-text-grey-dark">
-                      {{ physicalAddress.poiInfos.alternativeName }}
-                    </p>
-                  </address>
+              <div class="address-wrapper">
+                <div class="address">
+                  <div class="text-center">
+                    <span v-if="!addressFullName(physicalAddress)">{{
+                      t("No address defined")
+                    }}</span>
+                    <address dir="auto">
+                      <p
+                        class="addressDescription"
+                        :title="physicalAddress.poiInfos.name"
+                      >
+                        {{ physicalAddress.poiInfos.name }}
+                      </p>
+                      <p class="has-text-grey-dark">
+                        {{ physicalAddress.poiInfos.alternativeName }}
+                      </p>
+                    </address>
+                  </div>
                 </div>
-                <o-button
-                  class="map-show-button"
-                  variant="text"
-                  @click="showMap = !showMap"
-                  @keyup.enter="showMap = !showMap"
-                  v-if="physicalAddress.geom"
-                >
-                  {{ t("Show map") }}
-                </o-button>
               </div>
             </div>
-          </event-metadata-block>
-        </div>
-      </aside>
-      <div class="main-content min-w-min flex-auto py-0 px-2">
-        <section>
-          <h2 class="text-2xl font-bold">{{ t("Upcoming events") }}</h2>
-          <div
-            class="flex flex-col gap-3"
-            v-if="group && organizedEvents.elements.length > 0"
+            <empty-content v-else icon="earth" :inline="true">
+              {{ t("No location yet") }}
+            </empty-content></template
           >
-            <event-minimalist-card
-              v-for="event in organizedEvents.elements.slice(0, 3)"
-              :event="event"
-              :key="event.uuid"
-              class="organized-event"
-            />
-          </div>
-          <empty-content
-            v-else-if="group"
-            icon="calendar"
-            :inline="true"
-            description-classes="flex flex-col items-stretch"
-          >
-            {{ t("No public upcoming events") }}
-            <template #desc>
-              <template v-if="isCurrentActorFollowing">
-                <i18n-t
-                  keypath="You will receive notifications about this group's public activity depending on %{notification_settings}."
-                >
-                  <template #notification_settings>
-                    <router-link :to="{ name: RouteName.NOTIFICATIONS }">{{
-                      t("your notification settings")
-                    }}</router-link>
-                  </template>
-                </i18n-t>
-              </template>
-              <o-button
-                tag="router-link"
-                class="my-2 self-center"
-                variant="text"
-                :to="{
-                  name: RouteName.GROUP_EVENTS,
-                  params: { preferredUsername: usernameWithDomain(group) },
-                  query: { showPassedEvents: true },
-                }"
-                >{{ t("View past events") }}</o-button
-              >
-            </template>
-          </empty-content>
-          <!-- <o-skeleton animated v-else-if="$apollo.loading"></o-skeleton> -->
-          <div class="flex justify-center">
+          <template #create>
             <o-button
-              tag="router-link"
-              class="my-4"
+              v-if="physicalAddress && physicalAddress.geom"
               variant="text"
-              v-if="organizedEvents.total > 0"
-              :to="{
-                name: RouteName.GROUP_EVENTS,
-                params: { preferredUsername: usernameWithDomain(group) },
-                query: {
-                  showPassedEvents: organizedEvents.elements.length === 0,
-                },
-              }"
-              >{{ t("View all events") }}</o-button
+              @click="showMap = !showMap"
+              @keyup.enter="showMap = !showMap"
             >
-          </div>
-        </section>
-        <section class="flex flex-col items-stretch">
-          <h2 class="ml-0 text-2xl font-bold">{{ t("Latest posts") }}</h2>
-
-          <multi-post-list-item
-            v-if="
-              posts.elements.filter(
-                (post) =>
-                  !post.draft && post.visibility === PostVisibility.PUBLIC
-              ).length > 0
-            "
-            :posts="
-              posts.elements.filter(
-                (post) =>
-                  !post.draft && post.visibility === PostVisibility.PUBLIC
-              )
-            "
-          />
-          <empty-content v-else-if="group" icon="bullhorn" :inline="true">
-            {{ t("No posts yet") }}
-          </empty-content>
-          <!-- <o-skeleton animated v-else-if="$apollo.loading"></o-skeleton> -->
-          <o-button
-            class="self-center my-2"
-            v-if="posts.total > 0"
-            tag="router-link"
-            variant="text"
-            :to="{
-              name: RouteName.POSTS,
-              params: { preferredUsername: usernameWithDomain(group) },
-            }"
-            >{{ t("View all posts") }}</o-button
-          >
-        </section>
+              {{ t("Show map") }}
+            </o-button>
+            <o-button
+              v-if="isCurrentActorAGroupAdmin && !previewPublic"
+              tag="router-link"
+              :to="{
+                name: RouteName.GROUP_PUBLIC_SETTINGS,
+                params: { preferredUsername: usernameWithDomain(group) },
+              }"
+              class="button is-primary"
+              >{{ t("Edit") }}</o-button
+            >
+          </template>
+        </group-section>
       </div>
+    </div>
+    <div class="my-2">
+      <template v-if="isCurrentActorFollowing">
+        <i18n-t
+          class="my-2"
+          keypath="You will receive notifications about this group's public activity depending on %{notification_settings}."
+        >
+          <template #notification_settings>
+            <router-link :to="{ name: RouteName.NOTIFICATIONS }">{{
+              t("your notification settings")
+            }}</router-link>
+          </template>
+        </i18n-t>
+      </template>
+    </div>
+    <div v-if="group" class="public-container flex flex-col">
       <o-modal
         v-if="physicalAddress && physicalAddress.geom"
         v-model:active="showMap"
@@ -654,7 +597,6 @@
 </template>
 
 <script lang="ts" setup>
-// import EventCard from "@/components/Event/EventCard.vue";
 import {
   displayName,
   IActor,
@@ -662,14 +604,11 @@ import {
   IPerson,
   usernameWithDomain,
 } from "@/types/actor";
-// import CompactTodo from "@/components/Todo/CompactTodo.vue";
-import EventMinimalistCard from "@/components/Event/EventMinimalistCard.vue";
-import MultiPostListItem from "@/components/Post/MultiPostListItem.vue";
 import { Address, addressFullName } from "@/types/address.model";
 import InvitationsList from "@/components/Group/InvitationsList.vue";
 import { addMinutes } from "date-fns";
 import { JOIN_GROUP } from "@/graphql/member";
-import { MemberRole, Openness, PostVisibility } from "@/types/enums";
+import { MemberRole, Openness } from "@/types/enums";
 import { IMember } from "@/types/actor/member.model";
 import RouteName from "../../router/name";
 import ReportModal from "@/components/Report/ReportModal.vue";
@@ -678,11 +617,7 @@ import {
   PERSON_STATUS_GROUP,
 } from "@/graphql/actor";
 import LazyImageWrapper from "../../components/Image/LazyImageWrapper.vue";
-import EventMetadataBlock from "../../components/Event/EventMetadataBlock.vue";
 import EmptyContent from "../../components/Utils/EmptyContent.vue";
-import { Paginate } from "@/types/paginate";
-import { IEvent } from "@/types/event.model";
-import { IPost } from "@/types/post.model";
 import {
   FOLLOW_GROUP,
   UNFOLLOW_GROUP,
@@ -715,6 +650,7 @@ import { Dialog } from "@/plugins/dialog";
 import { Notifier } from "@/plugins/notifier";
 import { useGroupResourcesList } from "@/composition/apollo/resources";
 import { useGroupMembers } from "@/composition/apollo/members";
+import GroupSection from "@/components/Group/GroupSection.vue";
 
 const props = defineProps<{
   preferredUsername: string;
@@ -1092,32 +1028,6 @@ const ableToReport = computed((): boolean => {
   );
 });
 
-const organizedEvents = computed((): Paginate<IEvent> => {
-  return {
-    total: group.value?.organizedEvents.total ?? 0,
-    elements:
-      group.value?.organizedEvents.elements.filter((event: IEvent) => {
-        if (previewPublic.value) {
-          return !event.draft; // TODO when events get visibility access add visibility constraint like below for posts
-        }
-        return true;
-      }) ?? [],
-  };
-});
-
-const posts = computed((): Paginate<IPost> => {
-  return {
-    total: group.value?.posts.total ?? 0,
-    elements:
-      group.value?.posts.elements.filter((post: IPost) => {
-        if (previewPublic.value || !isCurrentActorAGroupMember.value) {
-          return !post.draft && post.visibility == PostVisibility.PUBLIC;
-        }
-        return true;
-      }) ?? [],
-  };
-});
-
 const showFollowButton = computed((): boolean => {
   return !isCurrentActorFollowing.value || previewPublic.value;
 });
@@ -1243,10 +1153,6 @@ div.container {
       text-align: right;
       justify-content: flex-end;
       display: flex;
-
-      .map-show-button {
-        cursor: pointer;
-      }
 
       address {
         font-style: normal;

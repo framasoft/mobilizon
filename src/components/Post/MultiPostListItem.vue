@@ -1,5 +1,5 @@
 <template>
-  <div class="posts-wrapper grid gap-4">
+  <div class="posts-wrapper grid gap-2">
     <post-list-item
       v-for="post in posts"
       :key="post.id"
