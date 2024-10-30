@@ -111,6 +111,10 @@ const icons: Record<string, () => Promise<any>> = {
   Map: () => import(`../../../node_modules/vue-material-design-icons/Map.vue`),
   MapMarker: () =>
     import(`../../../node_modules/vue-material-design-icons/MapMarker.vue`),
+  MapMarkerDistance: () =>
+    import(
+      `../../../node_modules/vue-material-design-icons/MapMarkerDistance.vue`
+    ),
   Close: () =>
     import(`../../../node_modules/vue-material-design-icons/Close.vue`),
   Magnify: () =>

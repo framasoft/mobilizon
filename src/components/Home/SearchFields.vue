@@ -28,12 +28,37 @@
       labelClass="sr-only"
       :placeholder="t('e.g. Nantes, Berlin, Cork, …')"
       v-on:update:modelValue="modelValueUpdate"
-    />
+    >
+      <o-button
+        v-if="distance"
+        class="!h-auto"
+        icon-left="map-marker-distance"
+        :title="t('Select distance')"
+        @click="showDistance = !showDistance"
+      />
+    </full-address-auto-complete>
     <o-button native-type="submit" icon-left="magnify">
       <template v-if="search">{{ t("Go!") }}</template>
       <template v-else>{{ t("Explore!") }}</template>
     </o-button>
   </form>
+  <div
+    class="border-black border-2 bg-white pt-1 pb-1 w-64 mx-auto"
+    v-if="showDistance"
+  >
+    <span class="mx-2 font-medium text-gray-900 dark:text-slate-100 text-left">
+      {{ t("Distance") }}
+    </span>
+    <select v-model="distance">
+      <option
+        v-for="distance_item in distanceList"
+        :value="distance_item.distance"
+        :key="distance_item.distance"
+      >
+        {{ distance_item.label }}
+      </option>
+    </select>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -44,7 +69,7 @@ import {
   getLocationFromLocal,
   storeLocationInLocal,
 } from "@/utils/location";
-import { computed, defineAsyncComponent } from "vue";
+import { computed, defineAsyncComponent, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter, useRoute } from "vue-router";
 import RouteName from "@/router/name";
@@ -57,6 +82,7 @@ const props = defineProps<{
   location: IAddress | null;
   locationDefaultText?: string | null;
   search: string;
+  distance: number | null;
   fromLocalStorage?: boolean | false;
 }>();
 
@@ -66,6 +92,7 @@ const route = useRoute();
 const emit = defineEmits<{
   (event: "update:location", location: IAddress | null): void;
   (event: "update:search", newSearch: string): void;
+  (event: "update:distance", newDistance: number): void;
   (event: "submit"): void;
 }>();
 
@@ -96,21 +123,113 @@ const search = computed({
   },
 });
 
+const showDistance = ref(false);
+
+const distance = computed({
+  get(): number {
+    return props.distance;
+  },
+  set(newDistance: number) {
+    emit("update:distance", newDistance);
+    showDistance.value = false;
+  },
+});
+
+const distanceList = computed(() => {
+  return [
+    {
+      distance: 5,
+      label: t(
+        "{number} kilometers",
+        {
+          number: 5,
+        },
+        5
+      ),
+    },
+    {
+      distance: 10,
+      label: t(
+        "{number} kilometers",
+        {
+          number: 10,
+        },
+        10
+      ),
+    },
+    {
+      distance: 25,
+      label: t(
+        "{number} kilometers",
+        {
+          number: 25,
+        },
+        25
+      ),
+    },
+    {
+      distance: 50,
+      label: t(
+        "{number} kilometers",
+        {
+          number: 50,
+        },
+        50
+      ),
+    },
+    {
+      distance: 100,
+      label: t(
+        "{number} kilometers",
+        {
+          number: 100,
+        },
+        100
+      ),
+    },
+    {
+      distance: 150,
+      label: t(
+        "{number} kilometers",
+        {
+          number: 150,
+        },
+        150
+      ),
+    },
+  ];
+});
+
+console.debug("initial", distance.value, search.value, location.value);
+
 const modelValueUpdate = (newlocation: IAddress | null) => {
   emit("update:location", newlocation);
 };
 
 const submit = () => {
   emit("submit");
-  const { lat, lon } = addressToLocation(location.value);
+  const search_query = {
+    locationName: undefined,
+    lat: undefined,
+    lon: undefined,
+    search: search.value,
+    distance: undefined,
+  };
+  if (distance.value != null) {
+    search_query.distance = distance.value.toString() + "_km";
+  }
+  if (location.value) {
+    const { lat, lon } = addressToLocation(location.value);
+    search_query.locationName =
+      location.value.locality ?? location.value.region;
+    search_query.lat = lat;
+    search_query.lon = lon;
+  }
   router.push({
     name: RouteName.SEARCH,
     query: {
       ...route.query,
-      locationName: location.value?.locality ?? location.value?.region,
-      lat,
-      lon,
-      search: search.value,
+      ...search_query,
     },
   });
 };

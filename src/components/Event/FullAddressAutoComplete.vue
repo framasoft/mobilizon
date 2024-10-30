@@ -63,6 +63,7 @@
             </template>
           </template>
         </o-autocomplete>
+        <slot></slot>
         <o-button
           :disabled="!queryTextWithDefault"
           @click="resetAddress"

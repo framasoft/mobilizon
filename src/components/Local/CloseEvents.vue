@@ -97,6 +97,7 @@ import { EventSortField, SortDirection } from "@/types/enums";
 const props = defineProps<{
   userLocation: LocationType;
   doingGeoloc?: boolean;
+  distance: number | null;
 }>();
 defineEmits(["doGeoLoc"]);
 
@@ -112,9 +113,9 @@ const geoHash = computed(() => {
   return geo;
 });
 
-const distance = computed<number>(() =>
-  userLocation.value?.isIPLocation ? 150 : 25
-);
+const distance = computed<number>(() => {
+  return props.distance | 25;
+});
 
 const eventsQuery = useQuery<{
   searchEvents: Paginate<IEvent>;

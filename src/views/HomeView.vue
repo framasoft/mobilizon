@@ -29,6 +29,7 @@
   <search-fields
     v-model:search="search"
     v-model:location="location"
+    v-model:distance="distance"
     :locationDefaultText="location?.description ?? userLocation?.name"
     v-on:update:location="updateLocation"
     :fromLocalStorage="true"
@@ -146,6 +147,7 @@
     @doGeoLoc="performGeoLocation()"
     :userLocation="userLocation"
     :doingGeoloc="doingGeoloc"
+    :distance="distance"
   />
 </template>
 
@@ -239,6 +241,7 @@ const currentUserParticipations = computed(
 const location = ref(null);
 const search = ref("");
 const noLocation = ref(false);
+const current_distance = ref(null);
 
 watch(location, (newLoc, oldLoc) =>
   console.debug("LOCATION UPDATED from", { ...oldLoc }, " to ", { ...newLoc })
@@ -449,6 +452,20 @@ const userLocation = computed(() => {
     return currentUserLocation.value;
   }
   return userSettingsLocation.value;
+});
+
+const distance = computed({
+  get(): number | null {
+    if (noLocation.value) {
+      return null;
+    } else if (current_distance.value == null) {
+      return userLocation.value?.isIPLocation ? 150 : 25;
+    }
+    return current_distance.value;
+  },
+  set(newDistance: number) {
+    current_distance.value = newDistance;
+  },
 });
 
 const { mutate: saveCurrentUserLocation } = useMutation<any, LocationType>(
