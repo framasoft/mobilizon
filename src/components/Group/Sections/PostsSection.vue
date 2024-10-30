@@ -2,7 +2,6 @@
   <group-section
     :title="t('Announcements')"
     icon="bullhorn"
-    :privateSection="false"
     :route="{
       name: RouteName.POSTS,
       params: { preferredUsername: usernameWithDomain(group) },

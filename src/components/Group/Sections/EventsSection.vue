@@ -2,7 +2,6 @@
   <group-section
     :title="t('Events')"
     icon="calendar"
-    :privateSection="false"
     :route="{
       name: RouteName.GROUP_EVENTS,
       params: { preferredUsername: usernameWithDomain(group) },

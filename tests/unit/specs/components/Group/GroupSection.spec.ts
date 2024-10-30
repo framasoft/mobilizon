@@ -29,7 +29,6 @@ const createSlotButtonText = "+ Create a post";
 type Props = {
   title?: string;
   icon?: string;
-  privateSection?: boolean;
   route?: { name: string; params: { preferredUsername: string } };
 };
 
@@ -73,10 +72,6 @@ describe("GroupSection", () => {
 
     expect(wrapper.find("a").attributes("href")).toBe(`/@${groupUsername}/p`);
 
-    // expect(wrapper.find(".group-section-title").classes("privateSection")).toBe(
-    //   true
-    // );
-
     expect(wrapper.find("section > div.flex-1").text()).toBe(defaultSlotText);
     expect(wrapper.find(".flex.justify-end.p-2 a").text()).toBe(
       createSlotButtonText
@@ -88,11 +83,8 @@ describe("GroupSection", () => {
   });
 
   it("renders public group section", () => {
-    const wrapper = generateWrapper({ privateSection: false });
+    const wrapper = generateWrapper();
 
-    // expect(wrapper.find(".group-section-title").classes("privateSection")).toBe(
-    //   false
-    // );
     expect(wrapper.html()).toMatchSnapshot();
   });
 });
