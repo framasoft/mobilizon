@@ -29,36 +29,26 @@
       :placeholder="t('e.g. Nantes, Berlin, Cork, …')"
       v-on:update:modelValue="modelValueUpdate"
     >
-      <o-button
-        v-if="distance"
-        class="!h-auto"
-        icon-left="map-marker-distance"
-        :title="t('Select distance')"
-        @click="showDistance = !showDistance"
-      />
+      <o-dropdown v-model="distance" position="bottom-right" v-if="distance">
+        <template #trigger>
+          <o-button
+            icon-left="map-marker-distance"
+            :title="t('Select distance')"
+          />
+        </template>
+        <o-dropdown-item
+          v-for="distance_item in distanceList"
+          :value="distance_item.distance"
+          :label="distance_item.label"
+          :key="distance_item.distance"
+        />
+      </o-dropdown>
     </full-address-auto-complete>
     <o-button native-type="submit" icon-left="magnify">
       <template v-if="search">{{ t("Go!") }}</template>
       <template v-else>{{ t("Explore!") }}</template>
     </o-button>
   </form>
-  <div
-    class="border-black border-2 bg-white pt-1 pb-1 w-64 mx-auto"
-    v-if="showDistance"
-  >
-    <span class="mx-2 font-medium text-gray-900 dark:text-slate-100 text-left">
-      {{ t("Distance") }}
-    </span>
-    <select v-model="distance">
-      <option
-        v-for="distance_item in distanceList"
-        :value="distance_item.distance"
-        :key="distance_item.distance"
-      >
-        {{ distance_item.label }}
-      </option>
-    </select>
-  </div>
 </template>
 
 <script lang="ts" setup>
@@ -69,7 +59,7 @@ import {
   getLocationFromLocal,
   storeLocationInLocal,
 } from "@/utils/location";
-import { computed, defineAsyncComponent, ref } from "vue";
+import { computed, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter, useRoute } from "vue-router";
 import RouteName from "@/router/name";
@@ -123,15 +113,12 @@ const search = computed({
   },
 });
 
-const showDistance = ref(false);
-
 const distance = computed({
   get(): number {
     return props.distance;
   },
   set(newDistance: number) {
     emit("update:distance", newDistance);
-    showDistance.value = false;
   },
 });
 
@@ -212,11 +199,11 @@ const submit = () => {
     locationName: undefined,
     lat: undefined,
     lon: undefined,
-    search: search.value,
+    search: undefined,
     distance: undefined,
   };
-  if (distance.value != null) {
-    search_query.distance = distance.value.toString() + "_km";
+  if (search.value != "") {
+    search_query.search = search.value;
   }
   if (location.value) {
     const { lat, lon } = addressToLocation(location.value);
@@ -224,6 +211,9 @@ const submit = () => {
       location.value.locality ?? location.value.region;
     search_query.lat = lat;
     search_query.lon = lon;
+    if (distance.value != null) {
+      search_query.distance = distance.value.toString() + "_km";
+    }
   }
   router.push({
     name: RouteName.SEARCH,

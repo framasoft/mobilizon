@@ -30,7 +30,7 @@
     v-model:search="search"
     v-model:location="location"
     v-model:distance="distance"
-    :locationDefaultText="location?.description ?? userLocation?.name"
+    :locationDefaultText="userLocation?.name"
     v-on:update:location="updateLocation"
     :fromLocalStorage="true"
   />
@@ -456,7 +456,7 @@ const userLocation = computed(() => {
 
 const distance = computed({
   get(): number | null {
-    if (noLocation.value) {
+    if (noLocation.value || !userLocation.value?.name) {
       return null;
     } else if (current_distance.value == null) {
       return userLocation.value?.isIPLocation ? 150 : 25;
