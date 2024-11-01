@@ -1313,24 +1313,35 @@ const timezone = computed({
   },
 });
 
+// Timezone specified in user settings
 const userTimezone = computed((): string | undefined => {
   return loggedUser.value?.settings?.timezone;
 });
 
+const browserTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+// Timezone specified in user settings or local timezone browser if unavailable
 const userActualTimezone = computed((): string => {
   if (userTimezone.value) {
     return userTimezone.value;
   }
-  return Intl.DateTimeFormat().resolvedOptions().timeZone;
+  return browserTimeZone;
 });
 
 const tzOffset = (date: Date | null): number => {
-  if (timezone.value && date) {
-    const eventUTCOffset = getTimezoneOffset(timezone.value, date);
-    const localUTCOffset = getTimezoneOffset(userActualTimezone.value, date);
-    return (eventUTCOffset - localUTCOffset) / (60 * 1000);
+  if (!timezone.value || !date) {
+    return 0;
   }
-  return 0;
+  // diff between UTC and selected timezone
+  // example: Asia/Shanghai is + 8 hours
+  const eventUTCOffset = getTimezoneOffset(timezone.value, date);
+
+  // diff between UTC and local browser timezone
+  // example: Europe/Paris is + 1 hour (or +2 depending of daylight saving time)
+  const localUTCOffset = getTimezoneOffset(browserTimeZone, date);
+
+  // example : offset is 8-1=7
+  return (eventUTCOffset - localUTCOffset) / (60 * 1000);
 };
 
 const eventPhysicalAddress = computed({
