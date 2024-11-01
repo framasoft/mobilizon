@@ -718,9 +718,11 @@ const saving = ref(false);
 
 const initializeEvent = () => {
   const roundUpTo15Minutes = (time: Date) => {
-    time.setMilliseconds(Math.round(time.getMilliseconds() / 1000) * 1000);
-    time.setSeconds(Math.round(time.getSeconds() / 60) * 60);
-    time.setMinutes(Math.round(time.getMinutes() / 15) * 15);
+    time.setUTCMilliseconds(
+      Math.round(time.getUTCMilliseconds() / 1000) * 1000
+    );
+    time.setUTCSeconds(Math.round(time.getUTCSeconds() / 60) * 60);
+    time.setUTCMinutes(Math.round(time.getUTCMinutes() / 15) * 15);
     return time;
   };
 
@@ -1208,7 +1210,7 @@ const beginsOn = computed({
     }
     // return event.value.beginsOn taking care of timezone
     const date = new Date(event.value.beginsOn);
-    date.setMinutes(date.getMinutes() + tzOffset(date));
+    date.setUTCMinutes(date.getUTCMinutes() + tzOffset(date));
     return date;
   },
   set(newBeginsOn: Date | null) {
@@ -1218,18 +1220,18 @@ const beginsOn = computed({
     }
 
     // usefull for comparaison
-    newBeginsOn.setSeconds(0);
-    newBeginsOn.setMilliseconds(0);
+    newBeginsOn.setUTCSeconds(0);
+    newBeginsOn.setUTCMilliseconds(0);
 
     // update event.value.beginsOn taking care of timezone
     const date = new Date(newBeginsOn.getTime());
-    date.setMinutes(date.getMinutes() - tzOffset(newBeginsOn));
+    date.setUTCMinutes(date.getUTCMinutes() - tzOffset(newBeginsOn));
     event.value.beginsOn = date.toISOString();
 
     // Update endsOn to make sure endsOn is later than beginsOn
     if (endsOn.value && endsOn.value <= newBeginsOn) {
       const newEndsOn = new Date(newBeginsOn);
-      newEndsOn.setHours(newBeginsOn.getHours() + 1);
+      newEndsOn.setUTCHours(newBeginsOn.getUTCHours() + 1);
       endsOn.value = newEndsOn;
     }
   },
@@ -1243,7 +1245,7 @@ const endsOn = computed({
 
     // return event.value.endsOn taking care of timezone
     const date = new Date(event.value.endsOn);
-    date.setMinutes(date.getMinutes() + tzOffset(date));
+    date.setUTCMinutes(date.getUTCMinutes() + tzOffset(date));
     return date;
   },
   set(newEndsOn: Date | null) {
@@ -1253,12 +1255,12 @@ const endsOn = computed({
     }
 
     // usefull for comparaison
-    newEndsOn.setSeconds(0);
-    newEndsOn.setMilliseconds(0);
+    newEndsOn.setUTCSeconds(0);
+    newEndsOn.setUTCMilliseconds(0);
 
     // update event.value.endsOn taking care of timezone
     const date = new Date(newEndsOn.getTime());
-    date.setMinutes(date.getMinutes() - tzOffset(newEndsOn));
+    date.setUTCMinutes(date.getUTCMinutes() - tzOffset(newEndsOn));
     event.value.endsOn = date.toISOString();
   },
 });
