@@ -716,7 +716,19 @@ const dateSettingsIsOpen = ref(false);
 
 const saving = ref(false);
 
+const setEventTimezoneToUserTimezoneIfUnset = () => {
+  if (userTimezone.value && event.value.options.timezone == null) {
+    event.value.options.timezone = userTimezone.value;
+  }
+};
+
+// usefull if the page is loaded from scratch
+watch(loggedUser, setEventTimezoneToUserTimezoneIfUnset);
+
 const initializeEvent = () => {
+  // usefull if the data is already cached
+  setEventTimezoneToUserTimezoneIfUnset();
+
   const roundUpTo15Minutes = (time: Date) => {
     time.setUTCMilliseconds(
       Math.round(time.getUTCMilliseconds() / 1000) * 1000
