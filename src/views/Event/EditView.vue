@@ -72,9 +72,6 @@
           icon="calendar-today"
           :locale="$i18n.locale.replace('_', '-')"
           v-model="beginsOn"
-          horizontal-time-picker
-          :tz-offset="tzOffset(beginsOn)"
-          :first-day-of-week="firstDayOfWeek"
           :datepicker="{
             id: 'begins-on-field',
             'aria-next-label': t('Next month'),
@@ -99,10 +96,7 @@
           icon="calendar-today"
           :locale="$i18n.locale.replace('_', '-')"
           v-model="endsOn"
-          horizontal-time-picker
           :min-datetime="beginsOn"
-          :tz-offset="tzOffset(endsOn)"
-          :first-day-of-week="firstDayOfWeek"
           :datepicker="{
             id: 'ends-on-field',
             'aria-next-label': t('Next month'),
@@ -671,7 +665,6 @@ import { Dialog } from "@/plugins/dialog";
 import { Notifier } from "@/plugins/notifier";
 import { useHead } from "@/utils/head";
 import { useOruga } from "@oruga-ui/oruga-next";
-import type { Locale } from "date-fns";
 import sortBy from "lodash/sortBy";
 import { escapeHtml } from "@/utils/html";
 
@@ -1210,37 +1203,63 @@ const isEventModified = computed((): boolean => {
 
 const beginsOn = computed({
   get(): Date | null {
-    // if (this.timezone && this.event.beginsOn) {
-    //   return utcToZonedTime(this.event.beginsOn, this.timezone);
-    // }
-    return event.value.beginsOn ? new Date(event.value.beginsOn) : null;
+    if (!event.value.beginsOn) {
+      return null;
+    }
+    // return event.value.beginsOn taking care of timezone
+    const date = new Date(event.value.beginsOn);
+    date.setMinutes(date.getMinutes() + tzOffset(date));
+    return date;
   },
   set(newBeginsOn: Date | null) {
-    event.value.beginsOn = newBeginsOn?.toISOString() ?? null;
-    if (!event.value.endsOn || !newBeginsOn) return;
-    const dateBeginsOn = new Date(newBeginsOn);
-    const dateEndsOn = new Date(event.value.endsOn);
-    let endsOn = new Date(event.value.endsOn);
-    if (dateEndsOn < dateBeginsOn) {
-      endsOn = dateBeginsOn;
-      endsOn.setHours(dateBeginsOn.getHours() + 1);
+    if (!newBeginsOn) {
+      event.value.beginsOn = null;
+      return;
     }
-    if (dateEndsOn === dateBeginsOn) {
-      endsOn.setHours(dateEndsOn.getHours() + 1);
+
+    // usefull for comparaison
+    newBeginsOn.setSeconds(0);
+    newBeginsOn.setMilliseconds(0);
+
+    // update event.value.beginsOn taking care of timezone
+    const date = new Date(newBeginsOn.getTime());
+    date.setMinutes(date.getMinutes() - tzOffset(newBeginsOn));
+    event.value.beginsOn = date.toISOString();
+
+    // Update endsOn to make sure endsOn is later than beginsOn
+    if (endsOn.value && endsOn.value <= newBeginsOn) {
+      const newEndsOn = new Date(newBeginsOn);
+      newEndsOn.setHours(newBeginsOn.getHours() + 1);
+      endsOn.value = newEndsOn;
     }
-    event.value.endsOn = endsOn.toISOString();
   },
 });
 
 const endsOn = computed({
   get(): Date | null {
-    // if (this.event.endsOn && this.timezone) {
-    //   return utcToZonedTime(this.event.endsOn, this.timezone);
-    // }
-    return event.value.endsOn ? new Date(event.value.endsOn) : null;
+    if (!event.value.endsOn) {
+      return null;
+    }
+
+    // return event.value.endsOn taking care of timezone
+    const date = new Date(event.value.endsOn);
+    date.setMinutes(date.getMinutes() + tzOffset(date));
+    return date;
   },
   set(newEndsOn: Date | null) {
-    event.value.endsOn = newEndsOn?.toISOString() ?? null;
+    if (!newEndsOn) {
+      event.value.endsOn = null;
+      return;
+    }
+
+    // usefull for comparaison
+    newEndsOn.setSeconds(0);
+    newEndsOn.setMilliseconds(0);
+
+    // update event.value.endsOn taking care of timezone
+    const date = new Date(newEndsOn.getTime());
+    date.setMinutes(date.getMinutes() - tzOffset(newEndsOn));
+    event.value.endsOn = date.toISOString();
   },
 });
 
@@ -1353,12 +1372,6 @@ const maximumAttendeeCapacity = computed({
       newMaximumAttendeeCapacity
     );
   },
-});
-
-const dateFnsLocale = inject<Locale>("dateFnsLocale");
-
-const firstDayOfWeek = computed((): number => {
-  return dateFnsLocale?.options?.weekStartsOn || 0;
 });
 
 const { event: fetchedEvent, onResult: onFetchEventResult } = useFetchEvent(
