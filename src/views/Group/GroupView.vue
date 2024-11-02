@@ -373,18 +373,155 @@
         </div>
       </header>
     </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-2 mb-2">
+      <!-- Public thing: Members -->
+      <group-section :title="t('Members')" icon="account-group">
+        <template #default>
+          <div class="flex flex-col justify-center h-full">
+            <div
+              class="flex flex-col items-center"
+              v-if="isCurrentActorAGroupMember && !previewPublic && members"
+            >
+              <div class="flex">
+                <figure
+                  :title="
+                    t(`{'@'}{username} ({role})`, {
+                      username: usernameWithDomain(member.actor),
+                      role: member.role,
+                    })
+                  "
+                  v-for="member in members.elements"
+                  :key="member.actor.id"
+                  class="-mr-3"
+                >
+                  <img
+                    class="rounded-full h-8"
+                    :src="member.actor.avatar.url"
+                    v-if="member.actor.avatar"
+                    alt=""
+                    width="32"
+                    height="32"
+                  />
+                  <AccountCircle v-else :size="32" />
+                </figure>
+              </div>
+            </div>
+            <div class="">
+              <h2 class="text-center">
+                {{
+                  t(
+                    "{count} members",
+                    {
+                      count: group.members?.total,
+                    },
+                    group.members?.total
+                  )
+                }}
+              </h2>
+            </div>
+          </div></template
+        >
+        <template #create>
+          <o-button
+            v-if="isCurrentActorAGroupAdmin && !previewPublic"
+            tag="router-link"
+            :to="{
+              name: RouteName.GROUP_MEMBERS_SETTINGS,
+              params: { preferredUsername: usernameWithDomain(group) },
+            }"
+            class="button is-primary"
+            >{{ t("Add / Remove…") }}</o-button
+          >
+        </template>
+      </group-section>
+      <!-- Public thing: About -->
+      <group-section :title="t('About')" icon="information">
+        <template #default>
+          <div
+            v-if="group.summary"
+            dir="auto"
+            class="prose lg:prose-xl dark:prose-invert p-2"
+            v-html="group.summary"
+          ></div>
+          <empty-content v-else icon="information" :inline="true">
+            {{ t("No about content yet") }}
+          </empty-content>
+        </template>
+        <template #create>
+          <o-button
+            v-if="isCurrentActorAGroupAdmin && !previewPublic"
+            tag="router-link"
+            :to="{
+              name: RouteName.GROUP_PUBLIC_SETTINGS,
+              params: { preferredUsername: usernameWithDomain(group) },
+            }"
+            class="button is-primary"
+            >{{ t("Edit") }}</o-button
+          >
+        </template>
+      </group-section>
+      <!-- Public thing: Location -->
+      <group-section :title="t('Location')" icon="earth">
+        <template #default
+          ><div
+            class="flex flex-col justify-center h-full"
+            v-if="physicalAddress && physicalAddress.url"
+          >
+            <o-icon
+              v-if="physicalAddress.poiInfos.poiIcon.icon"
+              :icon="physicalAddress.poiInfos.poiIcon.icon"
+              customSize="48"
+            />
+            <Earth v-else :size="48" />
+            <div class="address-wrapper">
+              <div class="address">
+                <div class="text-center">
+                  <span v-if="!addressFullName(physicalAddress)">{{
+                    t("No address defined")
+                  }}</span>
+                  <address dir="auto">
+                    <p
+                      class="addressDescription"
+                      :title="physicalAddress.poiInfos.name"
+                    >
+                      {{ physicalAddress.poiInfos.name }}
+                    </p>
+                    <p class="has-text-grey-dark">
+                      {{ physicalAddress.poiInfos.alternativeName }}
+                    </p>
+                  </address>
+                </div>
+              </div>
+            </div>
+          </div>
+          <empty-content v-else icon="earth" :inline="true">
+            {{ t("No location yet") }}
+          </empty-content></template
+        >
+        <template #create>
+          <o-button
+            v-if="physicalAddress && physicalAddress.geom"
+            variant="text"
+            @click="showMap = !showMap"
+            @keyup.enter="showMap = !showMap"
+          >
+            {{ t("Show map") }}
+          </o-button>
+          <o-button
+            v-if="isCurrentActorAGroupAdmin && !previewPublic"
+            tag="router-link"
+            :to="{
+              name: RouteName.GROUP_PUBLIC_SETTINGS,
+              params: { preferredUsername: usernameWithDomain(group) },
+            }"
+            class="button is-primary"
+            >{{ t("Edit") }}</o-button
+          >
+        </template>
+      </group-section>
+    </div>
     <div v-if="group">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mb-2">
-        <!-- Private thing: Group discussions -->
-        <Discussions
-          v-if="isCurrentActorAGroupMember && !previewPublic"
-          :group="discussionGroup ?? group"
-        />
-        <!-- Private thing: Resources -->
-        <Resources
-          v-if="isCurrentActorAGroupMember && !previewPublic"
-          :group="resourcesGroup ?? group"
-        />
         <!-- Public thing: Events -->
         <Events
           :group="group"
@@ -396,153 +533,16 @@
           :isModerator="isCurrentActorAGroupModerator && !previewPublic"
           :isMember="isCurrentActorAGroupMember && !previewPublic"
         />
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
-        <!-- Public thing: Members -->
-        <group-section :title="t('Members')" icon="account-group">
-          <template #default>
-            <div class="flex flex-col justify-center h-full">
-              <div
-                class="flex flex-col items-center"
-                v-if="isCurrentActorAGroupMember && !previewPublic && members"
-              >
-                <div class="flex">
-                  <figure
-                    :title="
-                      t(`{'@'}{username} ({role})`, {
-                        username: usernameWithDomain(member.actor),
-                        role: member.role,
-                      })
-                    "
-                    v-for="member in members.elements"
-                    :key="member.actor.id"
-                    class="-mr-3"
-                  >
-                    <img
-                      class="rounded-full h-8"
-                      :src="member.actor.avatar.url"
-                      v-if="member.actor.avatar"
-                      alt=""
-                      width="32"
-                      height="32"
-                    />
-                    <AccountCircle v-else :size="32" />
-                  </figure>
-                </div>
-              </div>
-              <div class="">
-                <h2 class="text-center">
-                  {{
-                    t(
-                      "{count} members",
-                      {
-                        count: group.members?.total,
-                      },
-                      group.members?.total
-                    )
-                  }}
-                </h2>
-              </div>
-            </div></template
-          >
-          <template #create>
-            <o-button
-              v-if="isCurrentActorAGroupAdmin && !previewPublic"
-              tag="router-link"
-              :to="{
-                name: RouteName.GROUP_MEMBERS_SETTINGS,
-                params: { preferredUsername: usernameWithDomain(group) },
-              }"
-              class="button is-primary"
-              >{{ t("Add / Remove…") }}</o-button
-            >
-          </template>
-        </group-section>
-        <!-- Public thing: About -->
-        <group-section :title="t('About')" icon="information">
-          <template #default>
-            <div
-              v-if="group.summary"
-              dir="auto"
-              class="prose lg:prose-xl dark:prose-invert p-2"
-              v-html="group.summary"
-            ></div>
-            <empty-content v-else icon="information" :inline="true">
-              {{ t("No about content yet") }}
-            </empty-content>
-          </template>
-          <template #create>
-            <o-button
-              v-if="isCurrentActorAGroupAdmin && !previewPublic"
-              tag="router-link"
-              :to="{
-                name: RouteName.GROUP_PUBLIC_SETTINGS,
-                params: { preferredUsername: usernameWithDomain(group) },
-              }"
-              class="button is-primary"
-              >{{ t("Edit") }}</o-button
-            >
-          </template>
-        </group-section>
-        <!-- Public thing: Location -->
-        <group-section :title="t('Location')" icon="earth">
-          <template #default
-            ><div
-              class="flex flex-col justify-center h-full"
-              v-if="physicalAddress && physicalAddress.url"
-            >
-              <o-icon
-                v-if="physicalAddress.poiInfos.poiIcon.icon"
-                :icon="physicalAddress.poiInfos.poiIcon.icon"
-                customSize="48"
-              />
-              <Earth v-else :size="48" />
-              <div class="address-wrapper">
-                <div class="address">
-                  <div class="text-center">
-                    <span v-if="!addressFullName(physicalAddress)">{{
-                      t("No address defined")
-                    }}</span>
-                    <address dir="auto">
-                      <p
-                        class="addressDescription"
-                        :title="physicalAddress.poiInfos.name"
-                      >
-                        {{ physicalAddress.poiInfos.name }}
-                      </p>
-                      <p class="has-text-grey-dark">
-                        {{ physicalAddress.poiInfos.alternativeName }}
-                      </p>
-                    </address>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <empty-content v-else icon="earth" :inline="true">
-              {{ t("No location yet") }}
-            </empty-content></template
-          >
-          <template #create>
-            <o-button
-              v-if="physicalAddress && physicalAddress.geom"
-              variant="text"
-              @click="showMap = !showMap"
-              @keyup.enter="showMap = !showMap"
-            >
-              {{ t("Show map") }}
-            </o-button>
-            <o-button
-              v-if="isCurrentActorAGroupAdmin && !previewPublic"
-              tag="router-link"
-              :to="{
-                name: RouteName.GROUP_PUBLIC_SETTINGS,
-                params: { preferredUsername: usernameWithDomain(group) },
-              }"
-              class="button is-primary"
-              >{{ t("Edit") }}</o-button
-            >
-          </template>
-        </group-section>
+        <!-- Private thing: Group discussions -->
+        <Discussions
+          v-if="isCurrentActorAGroupMember && !previewPublic"
+          :group="discussionGroup ?? group"
+        />
+        <!-- Private thing: Resources -->
+        <Resources
+          v-if="isCurrentActorAGroupMember && !previewPublic"
+          :group="resourcesGroup ?? group"
+        />
       </div>
     </div>
     <div class="my-2">
