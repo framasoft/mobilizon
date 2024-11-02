@@ -443,7 +443,12 @@
             class="prose lg:prose-xl dark:prose-invert p-2"
             v-html="group.summary"
           ></div>
-          <empty-content v-else icon="information" :inline="true">
+          <empty-content
+            v-else
+            icon="information"
+            :inline="true"
+            :center="true"
+          >
             {{ t("No about content yet") }}
           </empty-content>
         </template>
@@ -494,7 +499,7 @@
               </div>
             </div>
           </div>
-          <empty-content v-else icon="earth" :inline="true">
+          <empty-content v-else icon="earth" :inline="true" :center="true">
             {{ t("No location yet") }}
           </empty-content></template
         >

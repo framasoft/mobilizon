@@ -12,7 +12,7 @@
     <div class="flex-1 min-h-40">
       <slot></slot>
     </div>
-    <div class="flex justify-end p-2">
+    <div class="flex flex-wrap justify-end p-2">
       <slot name="create"></slot>
     </div>
   </section>
