@@ -743,8 +743,8 @@ const initializeEvent = () => {
 
   end.setUTCHours(now.getUTCHours() + 3);
 
-  event.value.beginsOn = now.toISOString();
-  event.value.endsOn = end.toISOString();
+  beginsOn.value = now;
+  endsOn.value = end;
 };
 
 const organizerActor = computed({
@@ -1215,66 +1215,54 @@ const isEventModified = computed((): boolean => {
   );
 });
 
-const beginsOn = computed({
-  get(): Date | null {
-    if (!event.value.beginsOn) {
-      return null;
-    }
-    // return event.value.beginsOn taking care of timezone
-    const date = new Date(event.value.beginsOn);
-    date.setUTCMinutes(date.getUTCMinutes() + tzOffset(date));
-    return date;
-  },
-  set(newBeginsOn: Date | null) {
-    if (!newBeginsOn) {
-      event.value.beginsOn = null;
-      return;
-    }
+const beginsOn = ref(new Date());
+const endsOn = ref(new Date());
 
-    // usefull for comparaison
-    newBeginsOn.setUTCSeconds(0);
-    newBeginsOn.setUTCMilliseconds(0);
+const updateEventDateRelatedToTimezone = () => {
+  // update event.value.beginsOn taking care of timezone
+  const dateBeginsOn = new Date(beginsOn.value.getTime());
+  dateBeginsOn.setUTCMinutes(dateBeginsOn.getUTCMinutes() - tzOffset.value);
+  event.value.beginsOn = dateBeginsOn.toISOString();
 
-    // update event.value.beginsOn taking care of timezone
-    const date = new Date(newBeginsOn.getTime());
-    date.setUTCMinutes(date.getUTCMinutes() - tzOffset(newBeginsOn));
-    event.value.beginsOn = date.toISOString();
+  // update event.value.endsOn taking care of timezone
+  const dateEndsOn = new Date(endsOn.value.getTime());
+  dateEndsOn.setUTCMinutes(dateEndsOn.getUTCMinutes() - tzOffset.value);
+  event.value.endsOn = dateEndsOn.toISOString();
+};
 
-    // Update endsOn to make sure endsOn is later than beginsOn
-    if (endsOn.value && endsOn.value <= newBeginsOn) {
-      const newEndsOn = new Date(newBeginsOn);
-      newEndsOn.setUTCHours(newBeginsOn.getUTCHours() + 1);
-      endsOn.value = newEndsOn;
-    }
-  },
+watch(beginsOn, (newBeginsOn) => {
+  if (!newBeginsOn) {
+    event.value.beginsOn = null;
+    return;
+  }
+
+  // usefull for comparaison
+  newBeginsOn.setUTCSeconds(0);
+  newBeginsOn.setUTCMilliseconds(0);
+
+  // update event.value.beginsOn taking care of timezone
+  updateEventDateRelatedToTimezone();
+
+  // Update endsOn to make sure endsOn is later than beginsOn
+  if (endsOn.value && endsOn.value <= newBeginsOn) {
+    const newEndsOn = new Date(newBeginsOn);
+    newEndsOn.setUTCHours(newBeginsOn.getUTCHours() + 1);
+    endsOn.value = newEndsOn;
+  }
 });
 
-const endsOn = computed({
-  get(): Date | null {
-    if (!event.value.endsOn) {
-      return null;
-    }
+watch(endsOn, (newEndsOn) => {
+  if (!newEndsOn) {
+    event.value.endsOn = null;
+    return;
+  }
 
-    // return event.value.endsOn taking care of timezone
-    const date = new Date(event.value.endsOn);
-    date.setUTCMinutes(date.getUTCMinutes() + tzOffset(date));
-    return date;
-  },
-  set(newEndsOn: Date | null) {
-    if (!newEndsOn) {
-      event.value.endsOn = null;
-      return;
-    }
+  // usefull for comparaison
+  newEndsOn.setUTCSeconds(0);
+  newEndsOn.setUTCMilliseconds(0);
 
-    // usefull for comparaison
-    newEndsOn.setUTCSeconds(0);
-    newEndsOn.setUTCMilliseconds(0);
-
-    // update event.value.endsOn taking care of timezone
-    const date = new Date(newEndsOn.getTime());
-    date.setUTCMinutes(date.getUTCMinutes() - tzOffset(newEndsOn));
-    event.value.endsOn = date.toISOString();
-  },
+  // update event.value.endsOn taking care of timezone
+  updateEventDateRelatedToTimezone();
 });
 
 const { timezones: rawTimezones, loading: timezoneLoading } = useTimezones();
@@ -1342,10 +1330,13 @@ const userActualTimezone = computed((): string => {
   return browserTimeZone;
 });
 
-const tzOffset = (date: Date | null): number => {
-  if (!timezone.value || !date) {
+const tzOffset = computed((): number => {
+  if (!timezone.value) {
     return 0;
   }
+
+  const date = new Date();
+
   // diff between UTC and selected timezone
   // example: Asia/Shanghai is + 8 hours
   const eventUTCOffset = getTimezoneOffset(timezone.value, date);
@@ -1356,7 +1347,12 @@ const tzOffset = (date: Date | null): number => {
 
   // example : offset is 8-1=7
   return (eventUTCOffset - localUTCOffset) / (60 * 1000);
-};
+});
+
+watch(tzOffset, () => {
+  // tzOffset has been changed, we need to update the event dates
+  updateEventDateRelatedToTimezone();
+});
 
 const eventPhysicalAddress = computed({
   get(): IAddress | null {
@@ -1402,6 +1398,20 @@ const maximumAttendeeCapacity = computed({
 const { event: fetchedEvent, onResult: onFetchEventResult } = useFetchEvent(
   eventId.value
 );
+
+// update the date components if the event changed (after fetching it, for example)
+watch(event, () => {
+  if (event.value.beginsOn) {
+    const date = new Date(event.value.beginsOn);
+    date.setUTCMinutes(date.getUTCMinutes() + tzOffset.value);
+    beginsOn.value = date;
+  }
+  if (event.value.endsOn) {
+    const date = new Date(event.value.endsOn);
+    date.setUTCMinutes(date.getUTCMinutes() + tzOffset.value);
+    endsOn.value = date;
+  }
+});
 
 watch(
   fetchedEvent,
