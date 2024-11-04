@@ -7,7 +7,7 @@
   <input
     :type="time ? 'datetime-local' : 'date'"
     :key="time.toString()"
-    class="rounded invalid:border-red-500"
+    class="rounded invalid:border-red-500 dark:bg-zinc-600"
     v-model="component"
     :min="computeMin"
     @blur="$emit('blur')"
