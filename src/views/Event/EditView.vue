@@ -66,19 +66,13 @@
         class="items-center"
         label-for="begins-on-field"
       >
-        <o-datetimepicker
-          class="datepicker starts-on"
-          :placeholder="t('Type or select a date…')"
-          icon="calendar-today"
-          :locale="$i18n.locale.replace('_', '-')"
-          v-model="beginsOn"
-          :datepicker="{
-            id: 'begins-on-field',
-            'aria-next-label': t('Next month'),
-            'aria-previous-label': t('Previous month'),
-          }"
-        >
-        </o-datetimepicker>
+        <input
+          type="datetime-local"
+          class="rounded"
+          v-model="beginsOnComponentDateTime"
+          @blur="consistencyBeginsOnBeforeEndsOn"
+        />
+
         <o-switch v-model="eventOptions.showStartTime">{{
           t("Show the time when the event begins")
         }}</o-switch>
@@ -90,20 +84,13 @@
         label-for="ends-on-field"
         class="items-center"
       >
-        <o-datetimepicker
-          class="datepicker ends-on"
-          :placeholder="t('Type or select a date…')"
-          icon="calendar-today"
-          :locale="$i18n.locale.replace('_', '-')"
-          v-model="endsOn"
-          :min-datetime="beginsOn"
-          :datepicker="{
-            id: 'ends-on-field',
-            'aria-next-label': t('Next month'),
-            'aria-previous-label': t('Previous month'),
-          }"
-        >
-        </o-datetimepicker>
+        <input
+          type="datetime-local"
+          class="rounded"
+          v-model="endsOnComponentDateTime"
+          :min="beginsOnComponentDateTime"
+          @blur="consistencyBeginsOnBeforeEndsOn"
+        />
         <o-switch v-model="eventOptions.showEndTime">{{
           t("Show the time when the event ends")
         }}</o-switch>
@@ -1218,6 +1205,34 @@ const isEventModified = computed((): boolean => {
 const beginsOn = ref(new Date());
 const endsOn = ref(new Date());
 
+const beginsOnComponentDateTime = computed({
+  get() {
+    // UTC to local
+    const localDate = new Date(
+      beginsOn.value.getTime() - beginsOn.value.getTimezoneOffset() * 60000
+    );
+    return localDate.toISOString().slice(0, 16); // Format to 'YYYY-MM-DDTHH:MM'
+  },
+  set(value) {
+    // Local timezone
+    beginsOn.value = new Date(value);
+  },
+});
+
+const endsOnComponentDateTime = computed({
+  get() {
+    // UTC to local
+    const localDate = new Date(
+      endsOn.value.getTime() - endsOn.value.getTimezoneOffset() * 60000
+    );
+    return localDate.toISOString().slice(0, 16); // Format to 'YYYY-MM-DDTHH:MM'
+  },
+  set(value) {
+    // Local timezone
+    endsOn.value = new Date(value);
+  },
+});
+
 const updateEventDateRelatedToTimezone = () => {
   // update event.value.beginsOn taking care of timezone
   const dateBeginsOn = new Date(beginsOn.value.getTime());
@@ -1242,13 +1257,6 @@ watch(beginsOn, (newBeginsOn) => {
 
   // update event.value.beginsOn taking care of timezone
   updateEventDateRelatedToTimezone();
-
-  // Update endsOn to make sure endsOn is later than beginsOn
-  if (endsOn.value && endsOn.value <= newBeginsOn) {
-    const newEndsOn = new Date(newBeginsOn);
-    newEndsOn.setUTCHours(newBeginsOn.getUTCHours() + 1);
-    endsOn.value = newEndsOn;
-  }
 });
 
 watch(endsOn, (newEndsOn) => {
@@ -1264,6 +1272,22 @@ watch(endsOn, (newEndsOn) => {
   // update event.value.endsOn taking care of timezone
   updateEventDateRelatedToTimezone();
 });
+
+/* 
+For endsOn, we need to check consistencyBeginsOnBeforeEndsOn() at blur
+because the datetime-local component update itself immediately
+Ex : your event start at 10:00 and stops at 12:00
+To type "10" hours, you will first have "1" hours, then "10" hours
+So you cannot check consistensy in real time, only onBlur because of the moment we falsely have "1:00"
+ */
+const consistencyBeginsOnBeforeEndsOn = () => {
+  // Update endsOn to make sure endsOn is later than beginsOn
+  if (endsOn.value && endsOn.value <= beginsOn.value) {
+    const newEndsOn = new Date(beginsOn.value);
+    newEndsOn.setUTCHours(beginsOn.value.getUTCHours() + 1);
+    endsOn.value = newEndsOn;
+  }
+};
 
 const { timezones: rawTimezones, loading: timezoneLoading } = useTimezones();
 
