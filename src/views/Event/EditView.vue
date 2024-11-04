@@ -62,6 +62,7 @@
 
       <o-field
         grouped
+        groupMultiline
         :label="t('Starts on…')"
         class="items-center"
         label-for="begins-on-field"
@@ -71,14 +72,16 @@
           v-model="beginsOn"
           @blur="consistencyBeginsOnBeforeEndsOn"
         ></event-date-picker>
-
-        <o-switch v-model="showStartTime">{{
-          t("Show the time when the event begins")
-        }}</o-switch>
+        <div class="my-2">
+          <o-switch v-model="showStartTime">{{
+            t("Show the time when the event begins")
+          }}</o-switch>
+        </div>
       </o-field>
 
       <o-field
         grouped
+        groupMultiline
         :label="t('Ends on…')"
         label-for="ends-on-field"
         class="items-center"
@@ -89,9 +92,11 @@
           @blur="consistencyBeginsOnBeforeEndsOn"
           :min="beginsOn"
         ></event-date-picker>
-        <o-switch v-model="showEndTime">{{
-          t("Show the time when the event ends")
-        }}</o-switch>
+        <div class="my-2">
+          <o-switch v-model="showEndTime">{{
+            t("Show the time when the event ends")
+          }}</o-switch>
+        </div>
       </o-field>
 
       <o-button class="block" variant="text" @click="dateSettingsIsOpen = true">
