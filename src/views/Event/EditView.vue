@@ -67,12 +67,12 @@
         label-for="begins-on-field"
       >
         <event-date-picker
-          :time="eventOptions.showStartTime"
+          :time="showStartTime"
           v-model="beginsOn"
           @blur="consistencyBeginsOnBeforeEndsOn"
         ></event-date-picker>
 
-        <o-switch v-model="eventOptions.showStartTime">{{
+        <o-switch v-model="showStartTime">{{
           t("Show the time when the event begins")
         }}</o-switch>
       </o-field>
@@ -84,12 +84,12 @@
         class="items-center"
       >
         <event-date-picker
-          :time="eventOptions.showEndTime"
+          :time="showEndTime"
           v-model="endsOn"
           @blur="consistencyBeginsOnBeforeEndsOn"
           :min="beginsOn"
         ></event-date-picker>
-        <o-switch v-model="eventOptions.showEndTime">{{
+        <o-switch v-model="showEndTime">{{
           t("Show the time when the event ends")
         }}</o-switch>
       </o-field>
@@ -1199,6 +1199,30 @@ const isEventModified = computed((): boolean => {
     JSON.stringify(toEditJSON(event.value)) !==
       JSON.stringify(unmodifiedEvent.value)
   );
+});
+
+const showStartTime = computed({
+  get(): boolean {
+    return event.value.options.showStartTime;
+  },
+  set(newShowStartTime: boolean) {
+    event.value.options = {
+      ...event.value.options,
+      showStartTime: newShowStartTime,
+    };
+  },
+});
+
+const showEndTime = computed({
+  get(): boolean {
+    return event.value.options.showEndTime;
+  },
+  set(newshowEndTime: boolean) {
+    event.value.options = {
+      ...event.value.options,
+      showEndTime: newshowEndTime,
+    };
+  },
 });
 
 const beginsOn = ref(new Date());
