@@ -66,12 +66,10 @@
         class="items-center"
         label-for="begins-on-field"
       >
-        <input
-          type="datetime-local"
-          class="rounded"
-          v-model="beginsOnComponentDateTime"
+        <event-date-picker
+          v-model="beginsOn"
           @blur="consistencyBeginsOnBeforeEndsOn"
-        />
+        ></event-date-picker>
 
         <o-switch v-model="eventOptions.showStartTime">{{
           t("Show the time when the event begins")
@@ -84,13 +82,11 @@
         label-for="ends-on-field"
         class="items-center"
       >
-        <input
-          type="datetime-local"
-          class="rounded"
-          v-model="endsOnComponentDateTime"
-          :min="beginsOnComponentDateTime"
+        <event-date-picker
+          v-model="endsOn"
           @blur="consistencyBeginsOnBeforeEndsOn"
-        />
+          :min="beginsOn"
+        ></event-date-picker>
         <o-switch v-model="eventOptions.showEndTime">{{
           t("Show the time when the event ends")
         }}</o-switch>
@@ -654,6 +650,7 @@ import { useHead } from "@/utils/head";
 import { useOruga } from "@oruga-ui/oruga-next";
 import sortBy from "lodash/sortBy";
 import { escapeHtml } from "@/utils/html";
+import EventDatePicker from "@/components/Event/EventDatePicker.vue";
 
 const DEFAULT_LIMIT_NUMBER_OF_PLACES = 10;
 
@@ -1204,34 +1201,6 @@ const isEventModified = computed((): boolean => {
 
 const beginsOn = ref(new Date());
 const endsOn = ref(new Date());
-
-const beginsOnComponentDateTime = computed({
-  get() {
-    // UTC to local
-    const localDate = new Date(
-      beginsOn.value.getTime() - beginsOn.value.getTimezoneOffset() * 60000
-    );
-    return localDate.toISOString().slice(0, 16); // Format to 'YYYY-MM-DDTHH:MM'
-  },
-  set(value) {
-    // Local timezone
-    beginsOn.value = new Date(value);
-  },
-});
-
-const endsOnComponentDateTime = computed({
-  get() {
-    // UTC to local
-    const localDate = new Date(
-      endsOn.value.getTime() - endsOn.value.getTimezoneOffset() * 60000
-    );
-    return localDate.toISOString().slice(0, 16); // Format to 'YYYY-MM-DDTHH:MM'
-  },
-  set(value) {
-    // Local timezone
-    endsOn.value = new Date(value);
-  },
-});
 
 const updateEventDateRelatedToTimezone = () => {
   // update event.value.beginsOn taking care of timezone
