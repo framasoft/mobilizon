@@ -1235,14 +1235,18 @@ const endsOn = ref(new Date());
 
 const updateEventDateRelatedToTimezone = () => {
   // update event.value.beginsOn taking care of timezone
-  const dateBeginsOn = new Date(beginsOn.value.getTime());
-  dateBeginsOn.setUTCMinutes(dateBeginsOn.getUTCMinutes() - tzOffset.value);
-  event.value.beginsOn = dateBeginsOn.toISOString();
+  if (beginsOn.value) {
+    const dateBeginsOn = new Date(beginsOn.value.getTime());
+    dateBeginsOn.setUTCMinutes(dateBeginsOn.getUTCMinutes() - tzOffset.value);
+    event.value.beginsOn = dateBeginsOn.toISOString();
+  }
 
-  // update event.value.endsOn taking care of timezone
-  const dateEndsOn = new Date(endsOn.value.getTime());
-  dateEndsOn.setUTCMinutes(dateEndsOn.getUTCMinutes() - tzOffset.value);
-  event.value.endsOn = dateEndsOn.toISOString();
+  if (endsOn.value) {
+    // update event.value.endsOn taking care of timezone
+    const dateEndsOn = new Date(endsOn.value.getTime());
+    dateEndsOn.setUTCMinutes(dateEndsOn.getUTCMinutes() - tzOffset.value);
+    event.value.endsOn = dateEndsOn.toISOString();
+  }
 };
 
 watch(beginsOn, (newBeginsOn) => {
@@ -1282,7 +1286,7 @@ So you cannot check consistensy in real time, only onBlur because of the moment 
  */
 const consistencyBeginsOnBeforeEndsOn = () => {
   // Update endsOn to make sure endsOn is later than beginsOn
-  if (endsOn.value && endsOn.value <= beginsOn.value) {
+  if (endsOn.value && beginsOn.value && endsOn.value <= beginsOn.value) {
     const newEndsOn = new Date(beginsOn.value);
     newEndsOn.setUTCHours(beginsOn.value.getUTCHours() + 1);
     endsOn.value = newEndsOn;
