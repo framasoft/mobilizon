@@ -67,6 +67,7 @@
         label-for="begins-on-field"
       >
         <event-date-picker
+          :time="eventOptions.showStartTime"
           v-model="beginsOn"
           @blur="consistencyBeginsOnBeforeEndsOn"
         ></event-date-picker>
@@ -83,6 +84,7 @@
         class="items-center"
       >
         <event-date-picker
+          :time="eventOptions.showEndTime"
           v-model="endsOn"
           @blur="consistencyBeginsOnBeforeEndsOn"
           :min="beginsOn"
