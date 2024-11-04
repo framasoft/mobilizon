@@ -1,7 +1,7 @@
 <template>
   <input
     type="datetime-local"
-    class="rounded"
+    class="rounded invalid:border-red-500"
     v-model="component"
     :min="computeMin"
     @blur="$emit('blur')"
@@ -12,8 +12,8 @@ import { computed } from "vue";
 
 const props = withDefaults(
   defineProps<{
-    modelValue: Date;
-    min?: Date | undefined;
+    modelValue: Date | null;
+    min?: Date | null | undefined;
   }>(),
   {
     min: undefined,
@@ -30,10 +30,19 @@ const UTCToLocal = (date: Date) => {
 
 const component = computed({
   get() {
+    if (!props.modelValue) {
+      return null;
+    }
     return UTCToLocal(props.modelValue);
   },
   set(value) {
-    emit("update:modelValue", new Date(value));
+    console.log("value" + value);
+    if (!value) {
+      emit("update:modelValue", null);
+      return;
+    }
+    const date = new Date(value);
+    emit("update:modelValue", date);
   },
 });
 
