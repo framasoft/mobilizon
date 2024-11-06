@@ -21,20 +21,17 @@
     />
     <full-address-auto-complete
       :resultType="AddressSearchType.ADMINISTRATIVE"
-      v-model="location"
+      v-model="address"
       :hide-map="true"
       :hide-selected="true"
-      :default-text="locationDefaultText"
+      :default-text="addressDefaultText"
       labelClass="sr-only"
       :placeholder="t('e.g. Nantes, Berlin, Cork, …')"
       v-on:update:modelValue="modelValueUpdate"
     >
       <o-dropdown v-model="distance" position="bottom-right" v-if="distance">
         <template #trigger>
-          <o-button
-            icon-left="map-marker-distance"
-            :title="t('Select distance')"
-          />
+          <o-button :title="t('Select distance')">{{ distanceText }}</o-button>
         </template>
         <o-dropdown-item
           v-for="distance_item in distanceList"
@@ -56,8 +53,8 @@ import { IAddress } from "@/types/address.model";
 import { AddressSearchType } from "@/types/enums";
 import {
   addressToLocation,
-  getLocationFromLocal,
-  storeLocationInLocal,
+  getAddressFromLocal,
+  storeAddressInLocal,
 } from "@/utils/location";
 import { computed, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
@@ -69,8 +66,8 @@ const FullAddressAutoComplete = defineAsyncComponent(
 );
 
 const props = defineProps<{
-  location: IAddress | null;
-  locationDefaultText?: string | null;
+  address: IAddress | null;
+  addressDefaultText?: string | null;
   search: string;
   distance: number | null;
   fromLocalStorage?: boolean | false;
@@ -80,26 +77,27 @@ const router = useRouter();
 const route = useRoute();
 
 const emit = defineEmits<{
-  (event: "update:location", location: IAddress | null): void;
+  (event: "update:address", address: IAddress | null): void;
   (event: "update:search", newSearch: string): void;
   (event: "update:distance", newDistance: number): void;
   (event: "submit"): void;
 }>();
 
-const location = computed({
+const address = computed({
   get(): IAddress | null {
-    if (props.location) {
-      return props.location;
+    console.debug("-- get address --", props);
+    if (props.address) {
+      return props.address;
     }
     if (props.fromLocalStorage) {
-      return getLocationFromLocal();
+      return getAddressFromLocal();
     }
     return null;
   },
-  set(newLocation: IAddress | null) {
-    emit("update:location", newLocation);
+  set(newAddress: IAddress | null) {
+    emit("update:address", newAddress);
     if (props.fromLocalStorage) {
-      storeLocationInLocal(newLocation);
+      storeAddressInLocal(newAddress);
     }
   },
 });
@@ -122,75 +120,31 @@ const distance = computed({
   },
 });
 
-const distanceList = computed(() => {
-  return [
-    {
-      distance: 5,
-      label: t(
-        "{number} kilometers",
-        {
-          number: 5,
-        },
-        5
-      ),
-    },
-    {
-      distance: 10,
-      label: t(
-        "{number} kilometers",
-        {
-          number: 10,
-        },
-        10
-      ),
-    },
-    {
-      distance: 25,
-      label: t(
-        "{number} kilometers",
-        {
-          number: 25,
-        },
-        25
-      ),
-    },
-    {
-      distance: 50,
-      label: t(
-        "{number} kilometers",
-        {
-          number: 50,
-        },
-        50
-      ),
-    },
-    {
-      distance: 100,
-      label: t(
-        "{number} kilometers",
-        {
-          number: 100,
-        },
-        100
-      ),
-    },
-    {
-      distance: 150,
-      label: t(
-        "{number} kilometers",
-        {
-          number: 150,
-        },
-        150
-      ),
-    },
-  ];
+const distanceText = computed(() => {
+  return distance.value + " km";
 });
 
-console.debug("initial", distance.value, search.value, location.value);
+const distanceList = computed(() => {
+  const distances = [];
+  [5, 10, 25, 50, 100, 150].forEach((value) => {
+    distances.push({
+      distance: value,
+      label: t(
+        "{number} kilometers",
+        {
+          number: value,
+        },
+        value
+      ),
+    });
+  });
+  return distances;
+});
 
-const modelValueUpdate = (newlocation: IAddress | null) => {
-  emit("update:location", newlocation);
+console.debug("initial", distance.value, search.value, address.value);
+
+const modelValueUpdate = (newaddress: IAddress | null) => {
+  emit("update:address", newaddress);
 };
 
 const submit = () => {
@@ -205,10 +159,9 @@ const submit = () => {
   if (search.value != "") {
     search_query.search = search.value;
   }
-  if (location.value) {
-    const { lat, lon } = addressToLocation(location.value);
-    search_query.locationName =
-      location.value.locality ?? location.value.region;
+  if (address.value) {
+    const { lat, lon } = addressToLocation(address.value);
+    search_query.locationName = address.value.locality ?? address.value.region;
     search_query.lat = lat;
     search_query.lon = lon;
     if (distance.value != null) {

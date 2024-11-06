@@ -3,8 +3,9 @@
     <search-fields
       class="md:ml-10 mr-2"
       v-model:search="search"
-      v-model:location="location"
-      :locationDefaultText="locationName"
+      v-model:address="address"
+      v-model:distance="radius"
+      :addressDefaultText="addressName"
       :fromLocalStorage="true"
     />
   </div>
@@ -151,43 +152,6 @@
                 Object.entries(dateOptions).find(([key]) => key === when)?.[1]
                   ?.label
               }}
-            </span>
-          </template>
-        </filter-section>
-
-        <filter-section
-          v-show="!isOnline"
-          v-model:opened="searchFilterSectionsOpenStatus.eventDistance"
-          :title="t('Distance')"
-        >
-          <template #options>
-            <fieldset class="flex flex-col">
-              <legend class="sr-only">{{ t("Distance") }}</legend>
-              <div
-                v-for="distanceOption in eventDistance"
-                :key="distanceOption.id"
-              >
-                <input
-                  :id="distanceOption.id"
-                  v-model="distance"
-                  type="radio"
-                  name="eventDistance"
-                  :value="distanceOption.id"
-                  class="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600"
-                />
-                <label
-                  :for="distanceOption.id"
-                  class="cursor-pointer ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
-                  >{{ distanceOption.label }}</label
-                >
-              </div>
-            </fieldset>
-          </template>
-          <template #preview>
-            <span
-              class="bg-blue-100 text-blue-800 text-sm font-semibold p-0.5 rounded dark:bg-blue-200 dark:text-blue-800 grow-0"
-            >
-              {{ eventDistance.find(({ id }) => id === distance)?.label }}
             </span>
           </template>
         </filter-section>
@@ -620,7 +584,7 @@
         :contentType="contentType"
         :latitude="latitude"
         :longitude="longitude"
-        :locationName="locationName"
+        :locationName="addressName"
         @map-updated="setBounds"
         :events="searchEvents"
         :groups="searchGroups"
@@ -697,25 +661,25 @@ const EventMarkerMap = defineAsyncComponent(
 
 const search = useRouteQuery("search", "");
 const searchDebounced = refDebounced(search, 1000);
-const locationName = useRouteQuery("locationName", null);
-const location = ref<IAddress | null>(null);
+const addressName = useRouteQuery("locationName", null);
+const address = ref<IAddress | null>(null);
 
-watch(location, (newLocation) => {
-  console.debug("location change", newLocation);
-  if (newLocation?.geom) {
-    latitude.value = parseFloat(newLocation?.geom.split(";")[1]);
-    longitude.value = parseFloat(newLocation?.geom.split(";")[0]);
-    locationName.value = newLocation?.description;
-    console.debug("set location", [
+watch(address, (newAddress: IAddress) => {
+  console.debug("address change", newAddress);
+  if (newAddress?.geom) {
+    latitude.value = parseFloat(newAddress?.geom.split(";")[1]);
+    longitude.value = parseFloat(newAddress?.geom.split(";")[0]);
+    addressName.value = newAddress?.description;
+    console.debug("set address", [
       latitude.value,
       longitude.value,
-      locationName.value,
+      addressName.value,
     ]);
   } else {
-    console.debug("location emptied");
+    console.debug("address emptied");
     latitude.value = undefined;
     longitude.value = undefined;
-    locationName.value = null;
+    addressName.value = null;
   }
 });
 
@@ -759,9 +723,6 @@ const groupPage = useRouteQuery("groupPage", 1, integerTransformer);
 const latitude = useRouteQuery("lat", undefined, floatTransformer);
 const longitude = useRouteQuery("lon", undefined, floatTransformer);
 
-// TODO
-// This should be updated with getRadiusFromLocal if we want to use user's
-// preferences
 const distance = useRouteQuery("distance", "10_km");
 const when = useRouteQuery("when", "any");
 const contentType = useRouteQuery(
@@ -946,75 +907,6 @@ const contentTypeMapping = computed(() => {
   }
 });
 
-const eventDistance = computed(() => {
-  return [
-    {
-      id: "anywhere",
-      label: t("Any distance"),
-    },
-    {
-      id: "5_km",
-      label: t(
-        "{number} kilometers",
-        {
-          number: 5,
-        },
-        5
-      ),
-    },
-    {
-      id: "10_km",
-      label: t(
-        "{number} kilometers",
-        {
-          number: 10,
-        },
-        10
-      ),
-    },
-    {
-      id: "25_km",
-      label: t(
-        "{number} kilometers",
-        {
-          number: 25,
-        },
-        25
-      ),
-    },
-    {
-      id: "50_km",
-      label: t(
-        "{number} kilometers",
-        {
-          number: 50,
-        },
-        50
-      ),
-    },
-    {
-      id: "100_km",
-      label: t(
-        "{number} kilometers",
-        {
-          number: 100,
-        },
-        100
-      ),
-    },
-    {
-      id: "150_km",
-      label: t(
-        "{number} kilometers",
-        {
-          number: 150,
-        },
-        150
-      ),
-    },
-  ];
-});
-
 const eventStatuses = computed(() => {
   return [
     {
@@ -1049,7 +941,14 @@ const geoHashLocation = computed(() =>
   coordsToGeoHash(latitude.value, longitude.value)
 );
 
-const radius = computed(() => Number.parseInt(distance.value.slice(0, -3)));
+const radius = computed({
+  get(): number | null {
+    return Number.parseInt(distance.value.slice(0, -3));
+  },
+  set(newRadius: number) {
+    distance.value = newRadius.toString() + "_km";
+  },
+});
 
 const longEvents = computed(() => {
   if (contentType.value === ContentType.EVENTS) {

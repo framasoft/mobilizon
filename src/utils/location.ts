@@ -9,14 +9,35 @@ const GEOHASH_DEPTH = 9; // put enough accuracy, radius will be used anyway
 export const addressToLocation = (
   address: IAddress
 ): LocationType | undefined => {
-  if (!address.geom) return undefined;
+  if (!address.geom)
+    return {
+      lon: undefined,
+      lat: undefined,
+      name: undefined,
+    };
   const arr = address.geom.split(";");
-  if (arr.length < 2) return undefined;
+  if (arr.length < 2)
+    return {
+      lon: undefined,
+      lat: undefined,
+      name: undefined,
+    };
   return {
     lon: parseFloat(arr[0]),
     lat: parseFloat(arr[1]),
     name: address.description,
   };
+};
+
+export const locationToAddress = (location: LocationType): IAddress | null => {
+  if (location.lon && location.lat) {
+    const new_add = new Address();
+    new_add.geom = location.lon.toString() + ";" + location.lat.toString();
+    new_add.description = location.name || "";
+    console.debug("locationToAddress", location, new_add);
+    return new_add;
+  }
+  return null;
 };
 
 export const coordsToGeoHash = (
@@ -38,44 +59,24 @@ export const geoHashToCoords = (
   return latitude && longitude ? { latitude, longitude } : undefined;
 };
 
-export const storeLocationInLocal = (location: IAddress | null): undefined => {
-  if (location) {
-    window.localStorage.setItem("location", JSON.stringify(location));
+export const storeAddressInLocal = (address: IAddress | null): undefined => {
+  if (address) {
+    window.localStorage.setItem("address", JSON.stringify(address));
   } else {
-    window.localStorage.removeItem("location");
+    window.localStorage.removeItem("address");
   }
 };
 
-export const getLocationFromLocal = (): IAddress | null => {
-  const locationString = window.localStorage.getItem("location");
-  if (!locationString) {
+export const getAddressFromLocal = (): IAddress | null => {
+  const addressString = window.localStorage.getItem("address");
+  if (!addressString) {
     return null;
   }
-  const location = JSON.parse(locationString) as IAddress;
-  if (!location.description || !location.geom) {
+  const address = JSON.parse(addressString) as IAddress;
+  if (!address.description || !address.geom) {
     return null;
   }
-  return location;
-};
-
-export const storeRadiusInLocal = (radius: number | null): undefined => {
-  if (radius) {
-    window.localStorage.setItem("radius", radius.toString());
-  } else {
-    window.localStorage.removeItem("radius");
-  }
-};
-
-export const getRadiusFromLocal = (): IAddress | null => {
-  const locationString = window.localStorage.getItem("location");
-  if (!locationString) {
-    return null;
-  }
-  const location = JSON.parse(locationString) as IAddress;
-  if (!location.description || !location.geom) {
-    return null;
-  }
-  return location;
+  return address;
 };
 
 export const storeUserLocationAndRadiusFromUserSettings = (
@@ -84,17 +85,12 @@ export const storeUserLocationAndRadiusFromUserSettings = (
   if (location) {
     const latlon = geoHashToCoords(location.geohash);
     if (latlon) {
-      storeLocationInLocal({
+      storeAddressInLocal({
         ...new Address(),
         geom: `${latlon.longitude};${latlon.latitude}`,
         description: location.name || "",
         type: "administrative",
       });
-    }
-    if (location.range) {
-      storeRadiusInLocal(location.range);
-    } else {
-      console.debug("user has not set a radius");
     }
   } else {
     console.debug("user has not set a location");

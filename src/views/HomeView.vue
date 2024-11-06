@@ -28,11 +28,12 @@
   <!-- Search fields -->
   <search-fields
     v-model:search="search"
-    v-model:location="location"
+    v-model:address="userAddress"
     v-model:distance="distance"
-    :locationDefaultText="userLocation?.name"
-    v-on:update:location="updateLocation"
+    v-on:update:address="updateAddress"
     :fromLocalStorage="true"
+    :addressDefaultText="userLocation?.name"
+    :key="increated"
   />
   <!-- Categories preview -->
   <categories-preview />
@@ -185,7 +186,13 @@ import CategoriesPreview from "@/components/Home/CategoriesPreview.vue";
 import UnloggedIntroduction from "@/components/Home/UnloggedIntroduction.vue";
 import SearchFields from "@/components/Home/SearchFields.vue";
 import { useHead } from "@unhead/vue";
-import { addressToLocation, geoHashToCoords } from "@/utils/location";
+import {
+  addressToLocation,
+  geoHashToCoords,
+  getAddressFromLocal,
+  locationToAddress,
+  storeAddressInLocal,
+} from "@/utils/location";
 import { useServerProvidedLocation } from "@/composition/apollo/config";
 import { ABOUT } from "@/graphql/config";
 import { IConfig } from "@/types/config.model";
@@ -238,13 +245,14 @@ const currentUserParticipations = computed(
   () => loggedUser.value?.participations.elements
 );
 
-const location = ref(null);
+const increated = ref(0);
+const address = ref(null);
 const search = ref("");
-const noLocation = ref(false);
+const noAddress = ref(false);
 const current_distance = ref(null);
 
-watch(location, (newLoc, oldLoc) =>
-  console.debug("LOCATION UPDATED from", { ...oldLoc }, " to ", { ...newLoc })
+watch(address, (newAdd, oldAdd) =>
+  console.debug("ADDRESS UPDATED from", { ...oldAdd }, " to ", { ...newAdd })
 );
 
 const isToday = (date: string): boolean => {
@@ -401,13 +409,13 @@ const { result: reverseGeocodeResult } = useQuery<{
 }));
 
 const userSettingsLocation = computed(() => {
-  const address = reverseGeocodeResult.value?.reverseGeocode[0];
-  const placeName = address?.locality ?? address?.region ?? address?.country;
+  const location = reverseGeocodeResult.value?.reverseGeocode[0];
+  const placeName = location?.locality ?? location?.region ?? location?.country;
   return {
     lat: coords.value?.latitude,
     lon: coords.value?.longitude,
     name: placeName,
-    picture: address?.pictureInfo,
+    picture: location?.pictureInfo,
     isIPLocation: coords.value?.isIPLocation,
   };
 });
@@ -433,16 +441,20 @@ const currentUserLocation = computed(() => {
 
 const userLocation = computed(() => {
   console.debug("new userLocation");
-  if (noLocation.value) {
+  if (noAddress.value) {
     return {
       lon: null,
       lat: null,
       name: null,
     };
   }
-  if (location.value) {
+  if (address.value) {
     console.debug("userLocation is typed location");
-    return addressToLocation(location.value);
+    return addressToLocation(address.value);
+  }
+  const local_address = getAddressFromLocal();
+  if (local_address) {
+    return addressToLocation(local_address);
   }
   if (
     !userSettingsLocation.value ||
@@ -454,9 +466,36 @@ const userLocation = computed(() => {
   return userSettingsLocation.value;
 });
 
+const userAddress = computed({
+  get(): IAddress | null {
+    if (noAddress.value) {
+      return null;
+    }
+    if (address.value) {
+      return address.value;
+    }
+    const local_address = getAddressFromLocal();
+    if (local_address) {
+      return local_address;
+    }
+    if (
+      !userSettingsLocation.value ||
+      (userSettingsLocation.value?.isIPLocation &&
+        currentUserLocation.value?.name)
+    ) {
+      return locationToAddress(currentUserLocation.value);
+    }
+    return locationToAddress(userSettingsLocation.value);
+  },
+  set(newAddress: IAddress | null) {
+    address.value = newAddress;
+    noAddress.value = newAddress == null;
+  },
+});
+
 const distance = computed({
   get(): number | null {
-    if (noLocation.value || !userLocation.value?.name) {
+    if (noAddress.value || !userLocation.value?.name) {
       return null;
     } else if (current_distance.value == null) {
       return userLocation.value?.isIPLocation ? 150 : 25;
@@ -528,8 +567,13 @@ const performGeoLocation = () => {
   );
 };
 
-const updateLocation = (newlocation: IAddress | null) => {
-  noLocation.value = newlocation == null;
+const updateAddress = (newAddress: IAddress | null) => {
+  if (address.value?.geom != newAddress?.geom || newAddress == null) {
+    increated.value += 1;
+    storeAddressInLocal(newAddress);
+  }
+  address.value = newAddress;
+  noAddress.value = newAddress == null;
 };
 
 /**
