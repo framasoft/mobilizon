@@ -3,14 +3,6 @@
     <span>{{
       formatDateTimeString(beginsOn, timezoneToShow, showStartTime)
     }}</span>
-    <br />
-    <o-switch
-      size="small"
-      v-model="showLocalTimezone"
-      v-if="differentFromUserTimezone"
-    >
-      {{ singleTimeZone }}
-    </o-switch>
   </p>
   <!-- endsOn is set and isSameDay() -->
   <template v-else-if="isSameDay()">
@@ -18,24 +10,16 @@
       <span>{{
         t("On {date} from {startTime} to {endTime}", {
           date: formatDate(beginsOn),
-          startTime: formatTime(beginsOn, timezoneToShow),
-          endTime: formatTime(endsOn, timezoneToShow),
+          startTime: formatTime(beginsOn),
+          endTime: formatTime(endsOn),
         })
       }}</span>
-      <br />
-      <o-switch
-        size="small"
-        v-model="showLocalTimezone"
-        v-if="differentFromUserTimezone"
-      >
-        {{ singleTimeZone }}
-      </o-switch>
     </p>
     <p v-else-if="showStartTime && !showEndTime">
       {{
         t("On {date} starting at {startTime}", {
           date: formatDate(beginsOn),
-          startTime: formatTime(beginsOn, timezoneToShow),
+          startTime: formatTime(beginsOn),
         })
       }}
     </p>
@@ -43,7 +27,7 @@
       {{
         t("On {date} ending at {endTime}", {
           date: formatDate(beginsOn),
-          endTime: formatTime(endsOn, timezoneToShow),
+          endTime: formatTime(endsOn),
         })
       }}
     </p>
@@ -57,39 +41,23 @@
       {{
         t("From the {startDate} at {startTime} to the {endDate} at {endTime}", {
           startDate: formatDate(beginsOn),
-          startTime: formatTime(beginsOn, timezoneToShow),
+          startTime: formatTime(beginsOn),
           endDate: formatDate(endsOn),
-          endTime: formatTime(endsOn, timezoneToShow),
+          endTime: formatTime(endsOn),
         })
       }}
     </span>
-    <br />
-    <o-switch
-      size="small"
-      v-model="showLocalTimezone"
-      v-if="differentFromUserTimezone"
-    >
-      {{ multipleTimeZones }}
-    </o-switch>
   </p>
   <p v-else-if="showStartTime && !showEndTime">
     <span>
       {{
         t("From the {startDate} at {startTime} to the {endDate}", {
           startDate: formatDate(beginsOn),
-          startTime: formatTime(beginsOn, timezoneToShow),
+          startTime: formatTime(beginsOn),
           endDate: formatDate(endsOn),
         })
       }}
     </span>
-    <br />
-    <o-switch
-      size="small"
-      v-model="showLocalTimezone"
-      v-if="differentFromUserTimezone"
-    >
-      {{ singleTimeZone }}
-    </o-switch>
   </p>
   <p v-else-if="!showStartTime && showEndTime">
     <span>
@@ -97,18 +65,10 @@
         t("From the {startDate} to the {endDate} at {endTime}", {
           startDate: formatDate(beginsOn),
           endDate: formatDate(endsOn),
-          endTime: formatTime(endsOn, timezoneToShow),
+          endTime: formatTime(endsOn),
         })
       }}
     </span>
-    <br />
-    <o-switch
-      size="small"
-      v-model="showLocalTimezone"
-      v-if="differentFromUserTimezone"
-    >
-      {{ singleTimeZone }}
-    </o-switch>
   </p>
   <p v-else>
     {{
@@ -118,6 +78,13 @@
       })
     }}
   </p>
+  <o-switch
+    size="small"
+    v-model="showLocalTimezone"
+    v-if="differentFromUserTimezone"
+  >
+    {{ singleTimeZone }}
+  </o-switch>
 </template>
 <script lang="ts" setup>
 import {
@@ -163,33 +130,43 @@ const userActualTimezone = computed((): string => {
 });
 
 const formatDate = (value: string): string | undefined => {
-  return formatDateString(value);
+  return formatDateString(value, timezoneToShow.value ?? "Etc/UTC");
 };
 
-const formatTime = (
-  value: string,
-  timezone: string | undefined = undefined
-): string | undefined => {
-  return formatTimeString(value, timezone ?? "Etc/UTC");
+const formatTime = (value: string): string | undefined => {
+  return formatTimeString(value, timezoneToShow.value ?? "Etc/UTC");
 };
 
+// We need to compare date after the offset is applied
+// Because some date can be in the same day in a time zone, but different day in another.
+// Example : From 2025-11-30 at 23:00 to 2025-12-01 01:00 in Asia/Shanghai (different days)
+//           It is from 2025-11-30 at 16:00 to 2025-11-30 at 18:00 in Europe/Paris (same day)
 const isSameDay = (): boolean => {
   if (!props.endsOn) return false;
+
+  const offset =
+    getTimezoneOffset(timezoneToShow.value ?? "Etc/UTC", new Date()) /
+    (60 * 1000);
+
+  const beginsOnOffset = new Date(props.beginsOn);
+  beginsOnOffset.setUTCMinutes(beginsOnOffset.getUTCMinutes() + offset);
+
+  const endsOnOffset = new Date(props.endsOn);
+  endsOnOffset.setUTCMinutes(endsOnOffset.getUTCMinutes() + offset);
+
   return (
-    beginsOnDate.value.toDateString() === new Date(props.endsOn).toDateString()
+    beginsOnOffset.getUTCFullYear() === endsOnOffset.getUTCFullYear() &&
+    beginsOnOffset.getUTCMonth() === endsOnOffset.getUTCMonth() &&
+    beginsOnOffset.getUTCDate() === endsOnOffset.getUTCDate()
   );
 };
-
-const beginsOnDate = computed((): Date => {
-  return new Date(props.beginsOn);
-});
 
 const differentFromUserTimezone = computed((): boolean => {
   return (
     !!props.timezone &&
     !!userActualTimezone.value &&
-    getTimezoneOffset(props.timezone, beginsOnDate.value) !==
-      getTimezoneOffset(userActualTimezone.value, beginsOnDate.value) &&
+    getTimezoneOffset(props.timezone, new Date()) !==
+      getTimezoneOffset(userActualTimezone.value, new Date()) &&
     props.timezone !== userActualTimezone.value
   );
 });
@@ -201,17 +178,6 @@ const singleTimeZone = computed((): string => {
     });
   }
   return t("Time in your timezone ({timezone})", {
-    timezone: timezoneToShow.value,
-  });
-});
-
-const multipleTimeZones = computed((): string => {
-  if (showLocalTimezone.value) {
-    return t("Local times ({timezone})", {
-      timezone: timezoneToShow.value,
-    });
-  }
-  return t("Times in your timezone ({timezone})", {
     timezone: timezoneToShow.value,
   });
 });

@@ -8,12 +8,13 @@ function formatDateISOStringWithoutTime(value: string): string {
   return parseDateTime(value).toISOString().split("T")[0];
 }
 
-function formatDateString(value: string): string {
+function formatDateString(value: string, timeZone?: string): string {
   return parseDateTime(value).toLocaleString(locale(), {
     weekday: "long",
     year: "numeric",
     month: "long",
     day: "numeric",
+    timeZone: timeZone,
   });
 }
 
@@ -21,7 +22,7 @@ function formatTimeString(value: string, timeZone?: string): string {
   return parseDateTime(value).toLocaleTimeString(locale(), {
     hour: "numeric",
     minute: "numeric",
-    timeZone,
+    timeZone: timeZone,
   });
 }
 
