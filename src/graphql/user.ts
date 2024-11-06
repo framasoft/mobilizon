@@ -125,6 +125,25 @@ export const USER_SETTINGS_FRAGMENT = gql`
   }
 `;
 
+export const LOGGED_USER_AND_SETTINGS = gql`
+  query LoggedUserQuery {
+    loggedUser {
+      id
+      email
+      locale
+      provider
+      defaultActor {
+        ...ActorFragment
+      }
+      settings {
+        ...UserSettingFragment
+      }
+    }
+  }
+  ${ACTOR_FRAGMENT}
+  ${USER_SETTINGS_FRAGMENT}
+`;
+
 export const USER_SETTINGS = gql`
   query UserSetting {
     loggedUser {

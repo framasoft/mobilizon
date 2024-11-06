@@ -1,11 +1,10 @@
 import { IDENTITIES, REGISTER_PERSON } from "@/graphql/actor";
 import {
   CURRENT_USER_CLIENT,
-  LOGGED_USER,
+  LOGGED_USER_AND_SETTINGS,
   LOGGED_USER_LOCATION,
   SET_USER_SETTINGS,
   UPDATE_USER_LOCALE,
-  USER_SETTINGS,
 } from "@/graphql/user";
 import { IPerson } from "@/types/actor";
 import { ICurrentUser, IUser } from "@/types/current-user.model";
@@ -31,25 +30,14 @@ export function useCurrentUserClient() {
 export function useLoggedUser() {
   const { currentUser } = useCurrentUserClient();
 
-  const { result, error, onError } = useQuery<{ loggedUser: IUser }>(
-    LOGGED_USER,
+  const { result, error, onError, loading } = useQuery<{ loggedUser: IUser }>(
+    LOGGED_USER_AND_SETTINGS,
     {},
     () => ({ enabled: currentUser.value?.id != null })
   );
 
   const loggedUser = computed(() => result.value?.loggedUser);
-  return { loggedUser, error, onError };
-}
-
-export function useUserSettings() {
-  const {
-    result: userSettingsResult,
-    error,
-    loading,
-  } = useQuery<{ loggedUser: IUser }>(USER_SETTINGS);
-
-  const loggedUser = computed(() => userSettingsResult.value?.loggedUser);
-  return { loggedUser, error, loading };
+  return { loggedUser, error, onError, loading };
 }
 
 export function useUserLocation() {

@@ -55,7 +55,7 @@ import { useTimezones } from "@/composition/apollo/config";
 import {
   doUpdateSetting,
   updateLocale,
-  useUserSettings,
+  useLoggedUser,
 } from "@/composition/apollo/user";
 import { saveLocaleData } from "@/utils/auth";
 import { computed, onMounted, watch } from "vue";
@@ -68,7 +68,7 @@ const { t, locale } = useI18n({ useScope: "global" });
 
 const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-const { loggedUser } = useUserSettings();
+const { loggedUser } = useLoggedUser();
 
 const { mutate: doUpdateLocale } = updateLocale();
 

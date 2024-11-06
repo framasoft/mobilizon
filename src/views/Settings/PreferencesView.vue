@@ -147,7 +147,7 @@ import RouteName from "../../router/name";
 import { AddressSearchType } from "@/types/enums";
 import { Address, IAddress } from "@/types/address.model";
 import { useTimezones } from "@/composition/apollo/config";
-import { useUserSettings, updateLocale } from "@/composition/apollo/user";
+import { useLoggedUser, updateLocale } from "@/composition/apollo/user";
 import { useHead } from "@/utils/head";
 import { computed, defineAsyncComponent, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
@@ -159,7 +159,7 @@ const FullAddressAutoComplete = defineAsyncComponent(
 
 const { timezones: serverTimezones, loading: loadingTimezones } =
   useTimezones();
-const { loggedUser, loading: loadingUserSettings } = useUserSettings();
+const { loggedUser, loading: loadingUserSettings } = useLoggedUser();
 
 const { t } = useI18n({ useScope: "global" });
 

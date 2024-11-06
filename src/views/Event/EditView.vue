@@ -632,7 +632,7 @@ import {
   useCurrentUserIdentities,
   usePersonStatusGroup,
 } from "@/composition/apollo/actor";
-import { useUserSettings } from "@/composition/apollo/user";
+import { useLoggedUser } from "@/composition/apollo/user";
 import {
   computed,
   inject,
@@ -664,7 +664,7 @@ const DEFAULT_LIMIT_NUMBER_OF_PLACES = 10;
 const { eventCategories } = useEventCategories();
 const { anonymousParticipationConfig } = useAnonymousParticipationConfig();
 const { currentActor } = useCurrentActorClient();
-const { loggedUser } = useUserSettings();
+const { loggedUser } = useLoggedUser();
 const { identities } = useCurrentUserIdentities();
 
 const { features } = useFeatures();

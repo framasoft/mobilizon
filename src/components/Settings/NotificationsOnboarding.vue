@@ -41,12 +41,12 @@
 </template>
 <script lang="ts" setup>
 // import { SnackbarProgrammatic as Snackbar } from "buefy";
-import { doUpdateSetting, useUserSettings } from "@/composition/apollo/user";
+import { doUpdateSetting, useLoggedUser } from "@/composition/apollo/user";
 import { onMounted, ref } from "vue";
 
 const notificationOnDay = ref(true);
 
-const { loggedUser } = useUserSettings();
+const { loggedUser } = useLoggedUser();
 
 const updateSetting = async (
   variables: Record<string, unknown>
