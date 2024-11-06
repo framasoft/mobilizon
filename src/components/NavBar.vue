@@ -179,13 +179,6 @@
         <ul
           class="flex flex-col md:flex-row md:space-x-8 mt-2 md:mt-0 md:font-lightbold"
         >
-          <search-fields
-            v-if="showMobileMenu"
-            class="m-auto w-auto"
-            v-model:search="search"
-            v-model:location="location"
-          />
-
           <li class="m-auto">
             <router-link
               :to="{
@@ -257,13 +250,6 @@
               >{{ t("Register") }}</router-link
             >
           </li>
-
-          <search-fields
-            v-if="!showMobileMenu"
-            class="m-auto w-auto"
-            v-model:search="search"
-            v-model:location="location"
-          />
         </ul>
       </div>
     </div>

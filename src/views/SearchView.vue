@@ -943,7 +943,11 @@ const geoHashLocation = computed(() =>
 
 const radius = computed({
   get(): number | null {
-    return Number.parseInt(distance.value.slice(0, -3));
+    if (addressName.value) {
+      return Number.parseInt(distance.value.slice(0, -3));
+    } else {
+      return null;
+    }
   },
   set(newRadius: number) {
     distance.value = newRadius.toString() + "_km";
