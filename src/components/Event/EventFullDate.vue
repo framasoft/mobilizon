@@ -117,7 +117,7 @@ const showLocalTimezone = ref(true);
 
 const timezoneToShow = computed((): string | undefined => {
   if (showLocalTimezone.value) {
-    return props.timezone;
+    return props.timezone ?? userActualTimezone.value;
   }
   return userActualTimezone.value;
 });
