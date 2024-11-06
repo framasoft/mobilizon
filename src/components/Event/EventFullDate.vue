@@ -12,35 +12,47 @@
       {{ singleTimeZone }}
     </o-switch>
   </p>
-  <p v-else-if="isSameDay() && showStartTime && showEndTime">
-    <span>{{
-      t("On {date} from {startTime} to {endTime}", {
-        date: formatDate(beginsOn),
-        startTime: formatTime(beginsOn, timezoneToShow),
-        endTime: formatTime(endsOn, timezoneToShow),
-      })
-    }}</span>
-    <br />
-    <o-switch
-      size="small"
-      v-model="showLocalTimezone"
-      v-if="differentFromUserTimezone"
-    >
-      {{ singleTimeZone }}
-    </o-switch>
-  </p>
-  <p v-else-if="isSameDay() && showStartTime && !showEndTime">
-    {{
-      t("On {date} starting at {startTime}", {
-        date: formatDate(beginsOn),
-        startTime: formatTime(beginsOn, timezoneToShow),
-      })
-    }}
-  </p>
-  <p v-else-if="isSameDay()">
-    {{ t("On {date}", { date: formatDate(beginsOn) }) }}
-  </p>
-  <p v-else-if="endsOn && showStartTime && showEndTime">
+  <!-- endsOn is set and isSameDay() -->
+  <template v-else-if="isSameDay()">
+    <p v-if="showStartTime && showEndTime">
+      <span>{{
+        t("On {date} from {startTime} to {endTime}", {
+          date: formatDate(beginsOn),
+          startTime: formatTime(beginsOn, timezoneToShow),
+          endTime: formatTime(endsOn, timezoneToShow),
+        })
+      }}</span>
+      <br />
+      <o-switch
+        size="small"
+        v-model="showLocalTimezone"
+        v-if="differentFromUserTimezone"
+      >
+        {{ singleTimeZone }}
+      </o-switch>
+    </p>
+    <p v-else-if="showStartTime && !showEndTime">
+      {{
+        t("On {date} starting at {startTime}", {
+          date: formatDate(beginsOn),
+          startTime: formatTime(beginsOn, timezoneToShow),
+        })
+      }}
+    </p>
+    <p v-else-if="!showStartTime && showEndTime">
+      {{
+        t("On {date} ending at {endTime}", {
+          date: formatDate(beginsOn),
+          endTime: formatTime(endsOn, timezoneToShow),
+        })
+      }}
+    </p>
+    <p v-else>
+      {{ t("On {date}", { date: formatDate(beginsOn) }) }}
+    </p>
+  </template>
+  <!-- endsOn is set and !isSameDay() -->
+  <p v-else-if="showStartTime && showEndTime">
     <span>
       {{
         t("From the {startDate} at {startTime} to the {endDate} at {endTime}", {
@@ -60,7 +72,7 @@
       {{ multipleTimeZones }}
     </o-switch>
   </p>
-  <p v-else-if="endsOn && showStartTime">
+  <p v-else-if="showStartTime && !showEndTime">
     <span>
       {{
         t("From the {startDate} at {startTime} to the {endDate}", {
@@ -79,7 +91,26 @@
       {{ singleTimeZone }}
     </o-switch>
   </p>
-  <p v-else-if="endsOn">
+  <p v-else-if="!showStartTime && showEndTime">
+    <span>
+      {{
+        t("From the {startDate} to the {endDate} at {endTime}", {
+          startDate: formatDate(beginsOn),
+          endDate: formatDate(endsOn),
+          endTime: formatTime(endsOn, timezoneToShow),
+        })
+      }}
+    </span>
+    <br />
+    <o-switch
+      size="small"
+      v-model="showLocalTimezone"
+      v-if="differentFromUserTimezone"
+    >
+      {{ singleTimeZone }}
+    </o-switch>
+  </p>
+  <p v-else>
     {{
       t("From the {startDate} to the {endDate}", {
         startDate: formatDate(beginsOn),
