@@ -30,8 +30,13 @@
       v-on:update:modelValue="modelValueUpdate"
     >
       <o-dropdown v-model="distance" position="bottom-right" v-if="distance">
-        <template #trigger>
-          <o-button :title="t('Select distance')">{{ distanceText }}</o-button>
+        <template #trigger="{ active }">
+          <o-button
+            :title="t('Select distance')"
+            :icon-right="active ? 'menu-up' : 'menu-down'"
+          >
+            {{ distanceText }}
+          </o-button>
         </template>
         <o-dropdown-item
           v-for="distance_item in distanceList"
