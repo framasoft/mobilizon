@@ -113,9 +113,9 @@ defmodule Mobilizon.GraphQL.Resolvers.ConfigTest do
       assert res["data"]["config"]["long_description"] == nil
       assert res["data"]["config"]["slogan"] == nil
       assert res["data"]["config"]["languages"] == []
-      assert length(res["data"]["config"]["timezones"]) == 596
+      assert length(res["data"]["config"]["timezones"]) == 594
       assert res["data"]["config"]["rules"] == nil
-      assert String.slice(res["data"]["config"]["version"], 0, 5) == "5.0.0"
+      assert String.slice(res["data"]["config"]["version"], 0, 5) == "5.0.1"
       assert res["data"]["config"]["federating"] == true
     end
 
