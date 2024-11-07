@@ -716,9 +716,11 @@ const setEventTimezoneToUserTimezoneIfUnset = () => {
 // usefull if the page is loaded from scratch
 watch(loggedUser, setEventTimezoneToUserTimezoneIfUnset);
 
-const initializeEvent = () => {
+const initializeNewEvent = () => {
   // usefull if the data is already cached
   setEventTimezoneToUserTimezoneIfUnset();
+
+  // Default values for beginsOn and endsOn
 
   const roundUpTo15Minutes = (time: Date) => {
     time.setUTCMilliseconds(
@@ -736,6 +738,13 @@ const initializeEvent = () => {
 
   beginsOn.value = now;
   endsOn.value = end;
+
+  // Default values for showStartTime and showEndTime
+  showStartTime.value = false;
+  showEndTime.value = false;
+
+  // Default values for hideParticipants
+  hideParticipants.value = true;
 };
 
 const organizerActor = computed({
@@ -793,7 +802,7 @@ onMounted(async () => {
   pictureFile.value = await buildFileFromIMedia(event.value.picture);
   limitedPlaces.value = eventOptions.value.maximumAttendeeCapacity > 0;
   if (!(props.isUpdate || props.isDuplicate)) {
-    initializeEvent();
+    initializeNewEvent();
   } else {
     event.value = new EventModel({
       ...event.value,
