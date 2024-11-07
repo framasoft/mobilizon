@@ -695,7 +695,6 @@ enum ViewMode {
 }
 
 enum EventSortValues {
-  MATCH_DESC = "MATCH_DESC",
   CREATED_AT_ASC = "CREATED_AT_ASC",
   CREATED_AT_DESC = "CREATED_AT_DESC",
   START_TIME_ASC = "START_TIME_ASC",
@@ -704,10 +703,7 @@ enum EventSortValues {
 }
 
 enum GroupSortValues {
-  MATCH_DESC = "MATCH_DESC",
-  CREATED_AT_ASC = "CREATED_AT_ASC",
   CREATED_AT_DESC = "CREATED_AT_DESC",
-  MEMBER_COUNT_ASC = "MEMBER_COUNT_ASC",
   MEMBER_COUNT_DESC = "MEMBER_COUNT_DESC",
   LAST_EVENT_ACTIVITY = "LAST_EVENT_ACTIVITY",
 }
@@ -747,12 +743,12 @@ const searchTarget = useRouteQuery(
 const mode = useRouteQuery("mode", ViewMode.LIST, enumTransformer(ViewMode));
 const sortByEvents = useRouteQuery(
   "sortByEvents",
-  EventSortValues.MATCH_DESC,
+  EventSortValues.START_TIME_ASC,
   enumTransformer(EventSortValues)
 );
 const sortByGroups = useRouteQuery(
   "sortByGroups",
-  GroupSortValues.MATCH_DESC,
+  GroupSortValues.LAST_EVENT_ACTIVITY,
   enumTransformer(GroupSortValues)
 );
 const bbox = useRouteQuery("bbox", undefined);
@@ -971,28 +967,16 @@ const totalCount = computed(() => {
 const sortOptionsGroups = computed(() => {
   const options = [
     {
-      key: GroupSortValues.MATCH_DESC,
-      label: t("Best match"),
-    },
-    {
-      key: GroupSortValues.MEMBER_COUNT_ASC,
-      label: t("Increasing number of members"),
+      key: GroupSortValues.LAST_EVENT_ACTIVITY,
+      label: t("Last event activity"),
     },
     {
       key: GroupSortValues.MEMBER_COUNT_DESC,
       label: t("Decreasing number of members"),
     },
     {
-      key: GroupSortValues.CREATED_AT_ASC,
-      label: t("Increasing creation date"),
-    },
-    {
       key: GroupSortValues.CREATED_AT_DESC,
       label: t("Decreasing creation date"),
-    },
-    {
-      key: GroupSortValues.LAST_EVENT_ACTIVITY,
-      label: t("Last event activity"),
     },
   ];
 
@@ -1001,10 +985,6 @@ const sortOptionsGroups = computed(() => {
 
 const sortOptionsEvents = computed(() => {
   const options = [
-    {
-      key: EventSortValues.MATCH_DESC,
-      label: t("Best match"),
-    },
     {
       key: EventSortValues.START_TIME_ASC,
       label: t("Event date"),
