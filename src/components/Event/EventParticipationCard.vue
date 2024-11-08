@@ -206,16 +206,14 @@
                 ParticipantRole.NOT_APPROVED,
               ].includes(participation.role)
             "
+            @click="
+              gotToWithCheck(participation, {
+                name: RouteName.EDIT_EVENT,
+                params: { eventId: participation.event.uuid },
+              })
+            "
           >
-            <div
-              class="flex gap-1"
-              @click="
-                gotToWithCheck(participation, {
-                  name: RouteName.EDIT_EVENT,
-                  params: { eventId: participation.event.uuid },
-                })
-              "
-            >
+            <div class="flex gap-1">
               <Pencil />
               {{ t("Edit") }}
             </div>
@@ -224,16 +222,14 @@
           <o-dropdown-item
             aria-role="listitem"
             v-if="participation.role === ParticipantRole.CREATOR"
+            @click="
+              gotToWithCheck(participation, {
+                name: RouteName.DUPLICATE_EVENT,
+                params: { eventId: participation.event.uuid },
+              })
+            "
           >
-            <div
-              class="flex gap-1"
-              @click="
-                gotToWithCheck(participation, {
-                  name: RouteName.DUPLICATE_EVENT,
-                  params: { eventId: participation.event.uuid },
-                })
-              "
-            >
+            <div class="flex gap-1">
               <ContentDuplicate />
               {{ t("Duplicate") }}
             </div>
@@ -247,8 +243,9 @@
                 ParticipantRole.NOT_APPROVED,
               ].includes(participation.role)
             "
+            @click="openDeleteEventModalWrapper"
           >
-            <div @click="openDeleteEventModalWrapper" class="flex gap-1">
+            <div class="flex gap-1">
               <Delete />
               {{ t("Delete") }}
             </div>
@@ -262,16 +259,14 @@
                 ParticipantRole.NOT_APPROVED,
               ].includes(participation.role)
             "
+            @click="
+              gotToWithCheck(participation, {
+                name: RouteName.PARTICIPATIONS,
+                params: { eventId: participation.event.uuid },
+              })
+            "
           >
-            <div
-              class="flex gap-1"
-              @click="
-                gotToWithCheck(participation, {
-                  name: RouteName.PARTICIPATIONS,
-                  params: { eventId: participation.event.uuid },
-                })
-              "
-            >
+            <div class="flex gap-1">
               <AccountMultiplePlus />
               {{ t("Manage participations") }}
             </div>
@@ -286,30 +281,28 @@
                 ParticipantRole.NOT_APPROVED,
               ].includes(participation.role)
             "
-          >
-            <router-link
-              class="flex gap-1"
-              :to="{
+            @click="
+              router.push({
                 name: RouteName.ANNOUNCEMENTS,
                 params: { eventId: participation.event?.uuid },
-              }"
-            >
-              <Bullhorn />
-              {{ t("Announcements") }}
-            </router-link>
+              })
+            "
+          >
+            <Bullhorn />
+            {{ t("Announcements") }}
           </o-dropdown-item>
 
-          <o-dropdown-item aria-role="listitem">
-            <router-link
-              class="flex gap-1"
-              :to="{
+          <o-dropdown-item
+            aria-role="listitem"
+            @click="
+              router.push({
                 name: RouteName.EVENT,
-                params: { uuid: participation.event.uuid },
-              }"
-            >
-              <ViewCompact />
-              {{ t("View event page") }}
-            </router-link>
+                params: { eventId: participation.event.uuid },
+              })
+            "
+          >
+            <ViewCompact />
+            {{ t("View event page") }}
           </o-dropdown-item>
         </o-dropdown>
       </div>

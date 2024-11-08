@@ -110,67 +110,66 @@
             {{ t("Actions") }}
           </o-button>
         </template>
-        <o-dropdown-item aria-role="listitem" has-link v-if="canManageEvent">
-          <router-link
-            class="flex gap-1"
-            :to="{
+        <o-dropdown-item
+          aria-role="listitem"
+          has-link
+          v-if="canManageEvent"
+          @click="
+            router.push({
               name: RouteName.PARTICIPATIONS,
               params: { eventId: event?.uuid },
-            }"
-          >
-            <AccountMultiple />
-            {{ t("Participations") }}
-          </router-link>
+            })
+          "
+        >
+          <AccountMultiple />
+          {{ t("Participations") }}
         </o-dropdown-item>
-        <o-dropdown-item aria-role="listitem" has-link v-if="canManageEvent">
-          <router-link
-            class="flex gap-1"
-            :to="{
+        <o-dropdown-item
+          aria-role="listitem"
+          has-link
+          v-if="canManageEvent"
+          @click="
+            router.push({
               name: RouteName.ANNOUNCEMENTS,
               params: { eventId: event?.uuid },
-            }"
-          >
-            <Bullhorn />
-            {{ t("Announcements") }}
-          </router-link>
+            })
+          "
+        >
+          <Bullhorn />
+          {{ t("Announcements") }}
         </o-dropdown-item>
         <o-dropdown-item
           aria-role="listitem"
           has-link
           v-if="canManageEvent || event?.draft"
-        >
-          <router-link
-            class="flex gap-1"
-            :to="{
+          @click="
+            router.push({
               name: RouteName.EDIT_EVENT,
               params: { eventId: event?.uuid },
-            }"
-          >
-            <Pencil />
-            {{ t("Edit") }}
-          </router-link>
+            })
+          "
+        >
+          <Pencil />
+          {{ t("Edit") }}
         </o-dropdown-item>
         <o-dropdown-item
           aria-role="listitem"
           has-link
           v-if="canManageEvent || event?.draft"
-        >
-          <router-link
-            class="flex gap-1"
-            :to="{
+          @click="
+            router.push({
               name: RouteName.DUPLICATE_EVENT,
               params: { eventId: event?.uuid },
-            }"
-          >
-            <ContentDuplicate />
-            {{ t("Duplicate") }}
-          </router-link>
+            })
+          "
+        >
+          <ContentDuplicate />
+          {{ t("Duplicate") }}
         </o-dropdown-item>
         <o-dropdown-item
           aria-role="listitem"
           v-if="canManageEvent || event?.draft"
           @click="openDeleteEventModal"
-          @keyup.enter="openDeleteEventModal"
           ><span class="flex gap-1">
             <Delete />
             {{ t("Delete") }}
