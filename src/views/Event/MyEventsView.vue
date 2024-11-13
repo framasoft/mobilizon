@@ -18,7 +18,6 @@
         >{{ t("Create event") }}</o-button
       >
     </div>
-    <!-- <o-loading v-model:active="$apollo.loading"></o-loading> -->
     <div class="flex flex-wrap gap-4 items-start">
       <div
         class="rounded p-3 flex-auto md:flex-none bg-zinc-300 dark:bg-zinc-700"
@@ -137,13 +136,18 @@
             >
           </div>
         </section>
+        <section v-if="loading">
+          <div class="text-center prose dark:prose-invert max-w-full">
+            <p>{{ t("Loading…") }}</p>
+          </div>
+        </section>
         <section
           class="text-center not-found"
           v-if="
             showUpcoming &&
             monthlyFutureEvents &&
             monthlyFutureEvents.size === 0 &&
-            true // !$apollo.loading
+            !loading
           "
         >
           <div class="text-center prose dark:prose-invert max-w-full">
@@ -291,6 +295,7 @@ const hasMorePastParticipations = ref(true);
 const {
   result: loggedUserUpcomingEventsResult,
   fetchMore: fetchMoreUpcomingEvents,
+  loading,
 } = useQuery<{
   loggedUser: IUser;
 }>(LOGGED_USER_UPCOMING_EVENTS, () => ({
