@@ -250,7 +250,7 @@ body {
   @apply mr-2;
 }
 .form-radio {
-  @apply bg-none text-primary accent-primary;
+  @apply bg-none text-primary border-primary accent-primary;
 }
 .radio-label {
   @apply pl-2;
