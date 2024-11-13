@@ -9,6 +9,7 @@
       t("Keyword, event title, group name, etc.")
     }}</label>
     <o-input
+      v-if="search != null"
       v-model="search"
       :placeholder="t('Keyword, event title, group name, etc.')"
       id="search_field_input"
@@ -46,16 +47,40 @@
         />
       </o-dropdown>
     </full-address-auto-complete>
-    <o-button native-type="submit" icon-left="magnify">
+    <o-button native-type="submit" icon-left="magnify" v-if="search != null">
       <template v-if="search">{{ t("Go!") }}</template>
       <template v-else>{{ t("Explore!") }}</template>
+    </o-button>
+    <o-button
+      class="search-Event min-w-60 mr-1 mb-1"
+      native-type="submit"
+      icon-left="calendar"
+      v-if="search == null"
+    >
+      {{ t("Event filter") }}
+    </o-button>
+    <o-button
+      class="search-Activity min-w-60 mr-1 mb-1"
+      native-type="submit"
+      icon-left="calendar-star"
+      v-if="search == null && islongEvents"
+    >
+      {{ t("Find other activities") }}
+    </o-button>
+    <o-button
+      class="search-Group min-w-60 mr-1 mb-1"
+      native-type="submit"
+      icon-left="account-multiple"
+      v-if="search == null"
+    >
+      {{ t("Find groups") }}
     </o-button>
   </form>
 </template>
 
 <script lang="ts" setup>
 import { IAddress } from "@/types/address.model";
-import { AddressSearchType } from "@/types/enums";
+import { AddressSearchType, ContentType } from "@/types/enums";
 import {
   addressToLocation,
   getAddressFromLocal,
@@ -65,6 +90,7 @@ import { computed, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter, useRoute } from "vue-router";
 import RouteName from "@/router/name";
+import { useIsLongEvents } from "@/composition/apollo/config";
 
 const FullAddressAutoComplete = defineAsyncComponent(
   () => import("@/components/Event/FullAddressAutoComplete.vue")
@@ -73,13 +99,14 @@ const FullAddressAutoComplete = defineAsyncComponent(
 const props = defineProps<{
   address: IAddress | null;
   addressDefaultText?: string | null;
-  search: string;
+  search: string | null;
   distance: number | null;
   fromLocalStorage?: boolean | false;
 }>();
 
 const router = useRouter();
 const route = useRoute();
+const { islongEvents } = useIsLongEvents();
 
 const emit = defineEmits<{
   (event: "update:address", address: IAddress | null): void;
@@ -152,14 +179,16 @@ const modelValueUpdate = (newaddress: IAddress | null) => {
   emit("update:address", newaddress);
 };
 
-const submit = () => {
+const submit = (event) => {
   emit("submit");
+  const btn_classes = event.submitter.getAttribute("class").split(" ");
   const search_query = {
     locationName: undefined,
     lat: undefined,
     lon: undefined,
     search: undefined,
     distance: undefined,
+    contentType: undefined,
   };
   if (search.value != "") {
     search_query.search = search.value;
@@ -172,6 +201,15 @@ const submit = () => {
     if (distance.value != null) {
       search_query.distance = distance.value.toString() + "_km";
     }
+  }
+  if (btn_classes.includes("search-Event")) {
+    search_query.contentType = ContentType.EVENTS;
+  }
+  if (btn_classes.includes("search-Activity")) {
+    search_query.contentType = ContentType.LONGEVENTS;
+  }
+  if (btn_classes.includes("search-Group")) {
+    search_query.contentType = ContentType.GROUPS;
   }
   router.push({
     name: RouteName.SEARCH,
