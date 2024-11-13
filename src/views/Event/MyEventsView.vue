@@ -246,7 +246,7 @@ const pastPage = ref(1);
 const limit = ref(10);
 
 function startOfDay(d: Date): string {
-  const pad = (n: int): string => {
+  const pad = (n: number): string => {
     return (n > 9 ? "" : "0") + n.toString();
   };
   return (
@@ -376,7 +376,7 @@ const monthlyFutureEvents = computed((): Map<string, Eventable[]> => {
 });
 
 const monthlyPastParticipations = computed((): Map<string, Eventable[]> => {
-  return monthlyEvents(pastParticipations.value.elements, true);
+  return monthlyEvents(pastParticipations.value.elements);
 });
 
 const monthParticipationsIds = (elements: Eventable[]): string[] => {
