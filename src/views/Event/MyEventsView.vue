@@ -33,11 +33,11 @@
           "
           labelFor="events-start-datepicker"
         >
-          <o-datepicker
-            v-model="datePick"
-            :first-day-of-week="firstDayOfWeek"
+          <event-date-picker
             id="events-start-datepicker"
-          />
+            :time="false"
+            v-model="datePick"
+          ></event-date-picker>
           <o-button
             @click="datePick = new Date()"
             class="reset-area !h-auto"
@@ -221,17 +221,17 @@ import {
   LOGGED_USER_UPCOMING_EVENTS,
 } from "@/graphql/participant";
 import { useApolloClient, useQuery } from "@vue/apollo-composable";
-import { computed, inject, ref, defineAsyncComponent } from "vue";
+import { computed, ref, defineAsyncComponent } from "vue";
 import { IUser } from "@/types/current-user.model";
 import {
   booleanTransformer,
   integerTransformer,
   useRouteQuery,
 } from "vue-use-route-query";
-import { Locale } from "date-fns";
 import { useI18n } from "vue-i18n";
 import { useRestrictions } from "@/composition/apollo/config";
 import { useHead } from "@/utils/head";
+import EventDatePicker from "@/components/Event/EventDatePicker.vue";
 
 const EventParticipationCard = defineAsyncComponent(
   () => import("@/components/Event/EventParticipationCard.vue")
@@ -488,12 +488,6 @@ const { restrictions } = useRestrictions();
 
 const hideCreateEventButton = computed((): boolean => {
   return restrictions.value?.onlyGroupsCanCreateEvents === true;
-});
-
-const dateFnsLocale = inject<Locale>("dateFnsLocale");
-
-const firstDayOfWeek = computed((): number => {
-  return dateFnsLocale?.options?.weekStartsOn ?? 0;
 });
 
 useHead({
