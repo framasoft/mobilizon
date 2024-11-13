@@ -210,7 +210,7 @@ body {
 }
 
 .checkbox-check {
-  @apply appearance-none bg-primary border-primary;
+  @apply appearance-none border-primary;
 }
 
 .checkbox-checked {
