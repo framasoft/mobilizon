@@ -199,7 +199,13 @@
         </o-checkbox>
       </fieldset>
 
-      <o-button variant="primary" native-type="submit" class="mt-3">
+      <o-button
+        variant="primary"
+        :disabled="loading"
+        :loading="loading"
+        native-type="submit"
+        class="mt-3"
+      >
         {{ t("Create my group") }}
       </o-button>
     </form>
@@ -370,7 +376,7 @@ const preferredUsernameErrors = computed(() => {
   return [message, type];
 });
 
-const { onDone, onError, mutate } = useCreateGroup();
+const { onDone, onError, mutate, loading } = useCreateGroup();
 
 onDone(() => {
   notifier?.success(
