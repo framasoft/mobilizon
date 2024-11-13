@@ -247,7 +247,7 @@ const currentUserParticipations = computed(
 
 const increated = ref(0);
 const address = ref(null);
-const search = ref("");
+const search = ref(null);
 const noAddress = ref(false);
 const current_distance = ref(null);
 
