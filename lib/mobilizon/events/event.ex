@@ -66,6 +66,7 @@ defmodule Mobilizon.Events.Event do
           participants: [Actor.t()],
           contacts: [Actor.t()],
           language: String.t(),
+          long_event: boolean,
           metadata: [EventMetadata.t()]
         }
 
@@ -89,7 +90,8 @@ defmodule Mobilizon.Events.Event do
     :picture_id,
     :physical_address_id,
     :attributed_to_id,
-    :language
+    :language,
+    :long_event
   ]
   @attrs @required_attrs ++ @optional_attrs
 
@@ -102,6 +104,7 @@ defmodule Mobilizon.Events.Event do
     field(:slug, :string)
     field(:description, :string)
     field(:ends_on, :utc_datetime)
+    field(:long_event, :boolean, virtual: true, default: nil)
     field(:title, :string)
     field(:status, EventStatus, default: :confirmed)
     field(:draft, :boolean, default: false)

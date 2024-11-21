@@ -17,6 +17,11 @@ defmodule Mobilizon.GraphQL.Schema.SearchType do
     field(:title, :string, description: "The event's title")
     field(:begins_on, :datetime, description: "Datetime for when the event begins")
     field(:ends_on, :datetime, description: "Datetime for when the event ends")
+
+    field(:long_event, :boolean,
+      description: "Whether the event is a long event (activity) or not"
+    )
+
     field(:status, :event_status, description: "Status of the event")
     field(:picture, :media, description: "The event's picture")
     field(:physical_address, :address, description: "The event's physical address")
@@ -52,6 +57,11 @@ defmodule Mobilizon.GraphQL.Schema.SearchType do
     field(:title, :string, description: "The event's title")
     field(:begins_on, :datetime, description: "Datetime for when the event begins")
     field(:ends_on, :datetime, description: "Datetime for when the event ends")
+
+    field(:long_event, :boolean,
+      description: "Whether the event is a long event (activity) or not"
+    )
+
     field(:status, :event_status, description: "Status of the event")
     field(:picture, :media, description: "The event's picture")
     field(:physical_address, :address, description: "The event's physical address")
