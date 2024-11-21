@@ -417,13 +417,17 @@ const userSettingsLocation = computed(() => {
     coords.value,
     placeName
   );
-  return {
-    lat: coords.value?.latitude,
-    lon: coords.value?.longitude,
-    name: placeName,
-    picture: location?.pictureInfo,
-    isIPLocation: coords.value?.isIPLocation,
-  };
+  if (placeName) {
+    return {
+      lat: coords.value?.latitude,
+      lon: coords.value?.longitude,
+      name: placeName,
+      picture: location?.pictureInfo,
+      isIPLocation: coords.value?.isIPLocation,
+    };
+  } else {
+    return {};
+  }
 });
 
 const { result: currentUserLocationResult } = useQuery<{
