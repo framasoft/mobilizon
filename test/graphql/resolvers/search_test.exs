@@ -18,8 +18,8 @@ defmodule Mobilizon.GraphQL.Resolvers.SearchTest do
 
   describe "search events/3" do
     @search_events_query """
-    query SearchEvents($location: String, $radius: Float, $tags: String, $term: String, $beginsOn: DateTime, $endsOn: DateTime, $longevents:Boolean, $searchTarget: SearchTarget) {
-      searchEvents(location: $location, radius: $radius, tags: $tags, term: $term, beginsOn: $beginsOn, endsOn: $endsOn, longevents: $longevents, searchTarget: $searchTarget) {
+    query SearchEvents($location: String, $radius: Float, $tags: String, $term: String, $beginsOn: DateTime, $endsOn: DateTime, $longEvents:Boolean, $searchTarget: SearchTarget) {
+      searchEvents(location: $location, radius: $radius, tags: $tags, term: $term, beginsOn: $beginsOn, endsOn: $endsOn, longEvents: $longEvents, searchTarget: $searchTarget) {
         total,
         elements {
           id
@@ -224,7 +224,7 @@ defmodule Mobilizon.GraphQL.Resolvers.SearchTest do
       res =
         AbsintheHelpers.graphql_query(conn,
           query: @search_events_query,
-          variables: %{longevents: false}
+          variables: %{longEvents: false}
         )
 
       assert res["errors"] == nil
@@ -241,7 +241,7 @@ defmodule Mobilizon.GraphQL.Resolvers.SearchTest do
       res =
         AbsintheHelpers.graphql_query(conn,
           query: @search_events_query,
-          variables: %{longevents: true}
+          variables: %{longEvents: true}
         )
 
       assert res["errors"] == nil
@@ -296,7 +296,7 @@ defmodule Mobilizon.GraphQL.Resolvers.SearchTest do
       res =
         AbsintheHelpers.graphql_query(conn,
           query: @search_events_query,
-          variables: %{longevents: false}
+          variables: %{longEvents: false}
         )
 
       assert res["errors"] == nil
@@ -311,7 +311,7 @@ defmodule Mobilizon.GraphQL.Resolvers.SearchTest do
       res =
         AbsintheHelpers.graphql_query(conn,
           query: @search_events_query,
-          variables: %{longevents: true}
+          variables: %{longEvents: true}
         )
 
       assert res["errors"] == nil
@@ -364,7 +364,7 @@ defmodule Mobilizon.GraphQL.Resolvers.SearchTest do
       res =
         AbsintheHelpers.graphql_query(conn,
           query: @search_events_query,
-          variables: %{longevents: false}
+          variables: %{longEvents: false}
         )
 
       assert res["errors"] == nil
@@ -378,7 +378,7 @@ defmodule Mobilizon.GraphQL.Resolvers.SearchTest do
       res =
         AbsintheHelpers.graphql_query(conn,
           query: @search_events_query,
-          variables: %{longevents: true}
+          variables: %{longEvents: true}
         )
 
       assert res["errors"] == nil
