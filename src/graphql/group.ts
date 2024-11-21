@@ -150,6 +150,7 @@ export const GROUP_BASIC_FIELDS_FRAGMENTS = gql`
         beginsOn
         status
         draft
+        longEvent
         language
         options {
           maximumAttendeeCapacity

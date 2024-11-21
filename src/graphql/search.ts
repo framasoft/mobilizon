@@ -70,6 +70,7 @@ export const SEARCH_EVENTS_AND_GROUPS = gql`
         uuid
         beginsOn
         endsOn
+        longEvent
         picture {
           id
           url

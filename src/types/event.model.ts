@@ -71,6 +71,7 @@ export interface IEvent {
   beginsOn: string;
   endsOn: string | null;
   publishAt: string;
+  longEvent: boolean;
   status: EventStatus;
   visibility: EventVisibility;
   joinOptions: EventJoinOptions;
@@ -143,6 +144,8 @@ export class EventModel implements IEvent {
   draft = true;
 
   publishAt = new Date().toISOString();
+
+  longEvent = false;
 
   language = "und";
 

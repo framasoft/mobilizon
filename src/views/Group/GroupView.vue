@@ -373,7 +373,7 @@
         </div>
       </header>
     </div>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-2 mb-2">
+    <div v-if="group" class="grid grid-cols-1 md:grid-cols-3 gap-2 mb-2">
       <!-- Public thing: Members -->
       <group-section :title="t('Members')" icon="account-group">
         <template #default>
@@ -526,11 +526,24 @@
       </group-section>
     </div>
     <div v-if="group">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mb-2">
+      <div
+        :class="[
+          'grid grid-cols-1 gap-2 mb-2',
+          { 'xl:grid-cols-3': isLongEvents, 'md:grid-cols-2': !isLongEvents },
+        ]"
+      >
+        <!-- Public thing: Long Events -->
+        <Events
+          v-if="isLongEvents"
+          :group="group"
+          :isModerator="isCurrentActorAGroupModerator && !previewPublic"
+          :longEvent="true"
+        />
         <!-- Public thing: Events -->
         <Events
           :group="group"
           :isModerator="isCurrentActorAGroupModerator && !previewPublic"
+          :longEvent="false"
         />
         <!-- Public thing: Posts -->
         <Posts
@@ -538,6 +551,8 @@
           :isModerator="isCurrentActorAGroupModerator && !previewPublic"
           :isMember="isCurrentActorAGroupMember && !previewPublic"
         />
+      </div>
+      <div class="grid grid-cols-1 gap-2 mb-2 md:grid-cols-2">
         <!-- Private thing: Group discussions -->
         <Discussions
           v-if="isCurrentActorAGroupMember && !previewPublic"
@@ -656,6 +671,7 @@ import { Notifier } from "@/plugins/notifier";
 import { useGroupResourcesList } from "@/composition/apollo/resources";
 import { useGroupMembers } from "@/composition/apollo/members";
 import GroupSection from "@/components/Group/GroupSection.vue";
+import { useIsLongEvents } from "@/composition/apollo/config";
 
 const props = defineProps<{
   preferredUsername: string;
@@ -679,6 +695,8 @@ const { group: resourcesGroup } = useGroupResourcesList(preferredUsername, {
 });
 
 const { t } = useI18n({ useScope: "global" });
+
+const { isLongEvents } = useIsLongEvents();
 
 // const { person } = usePersonStatusGroup(group);
 
