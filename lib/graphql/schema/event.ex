@@ -400,7 +400,7 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
         description: "Direction for the sort"
       )
 
-      arg(:longevents, :boolean,
+      arg(:long_events, :boolean,
         default_value: nil,
         description: "if mention filter in or out long events"
       )

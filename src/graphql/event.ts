@@ -109,7 +109,7 @@ export const FETCH_EVENTS = gql`
     $direction: SortDirection
     $page: Int
     $limit: Int
-    $longevents: Boolean
+    $longEvents: Boolean
   ) {
     events(
       location: $location
@@ -118,7 +118,7 @@ export const FETCH_EVENTS = gql`
       direction: $direction
       page: $page
       limit: $limit
-      longevents: $longevents
+      longEvents: $longEvents
     ) {
       total
       elements {

@@ -2268,7 +2268,7 @@ type RootQueryType {
     endsOn: DateTime
 
     "Filter for long events in function of configuration parameter 'duration_of_long_event'"
-    longevents: Boolean
+    longEvents: Boolean
   ): Events
 
   "Interact with an URI"

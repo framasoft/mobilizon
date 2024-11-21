@@ -383,7 +383,7 @@ defmodule Mobilizon.Events do
         sort \\ :begins_on,
         direction \\ :asc,
         is_future \\ true,
-        longevents \\ nil,
+        long_events \\ nil,
         location \\ nil,
         radius \\ nil
       ) do
@@ -394,7 +394,7 @@ defmodule Mobilizon.Events do
     |> maybe_join_address(%{location: location, radius: radius})
     |> events_for_location(%{location: location, radius: radius})
     |> filter_future_events(is_future)
-    |> events_for_longevents(longevents)
+    |> events_for_long_events(long_events)
     |> filter_public_visibility()
     |> filter_draft()
     |> filter_cancelled_events()
@@ -604,7 +604,7 @@ defmodule Mobilizon.Events do
     |> events_for_search_query()
     |> events_for_begins_on(Map.get(args, :begins_on, DateTime.utc_now()))
     |> events_for_ends_on(Map.get(args, :ends_on))
-    |> events_for_longevents(Map.get(args, :longevents))
+    |> events_for_long_events(Map.get(args, :long_events))
     |> events_for_category(args)
     |> events_for_categories(args)
     |> events_for_languages(args)
@@ -1414,14 +1414,14 @@ defmodule Mobilizon.Events do
     end
   end
 
-  @spec events_for_longevents(Ecto.Queryable.t(), Boolean.t() | nil) :: Ecto.Query.t()
-  defp events_for_longevents(query, longevents) do
+  @spec events_for_long_events(Ecto.Queryable.t(), Boolean.t() | nil) :: Ecto.Query.t()
+  defp events_for_long_events(query, long_events) do
     duration = Config.get([:instance, :duration_of_long_event], 0)
 
     if duration <= 0 do
       query
     else
-      case longevents do
+      case long_events do
         nil ->
           query
 

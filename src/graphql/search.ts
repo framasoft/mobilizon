@@ -33,7 +33,7 @@ export const SEARCH_EVENTS_AND_GROUPS = gql`
     $searchTarget: SearchTarget
     $beginsOn: DateTime
     $endsOn: DateTime
-    $longevents: Boolean
+    $longEvents: Boolean
     $bbox: String
     $zoom: Int
     $eventPage: Int
@@ -55,7 +55,7 @@ export const SEARCH_EVENTS_AND_GROUPS = gql`
       searchTarget: $searchTarget
       beginsOn: $beginsOn
       endsOn: $endsOn
-      longevents: $longevents
+      longEvents: $longEvents
       bbox: $bbox
       zoom: $zoom
       page: $eventPage
@@ -155,7 +155,7 @@ export const SEARCH_EVENTS = gql`
     $endsOn: DateTime
     $eventPage: Int
     $limit: Int
-    $longevents: Boolean
+    $longEvents: Boolean
   ) {
     searchEvents(
       location: $location
@@ -168,7 +168,7 @@ export const SEARCH_EVENTS = gql`
       endsOn: $endsOn
       page: $eventPage
       limit: $limit
-      longevents: $longevents
+      longEvents: $longEvents
     ) {
       total
       elements {
@@ -218,7 +218,7 @@ export const SEARCH_CALENDAR_EVENTS = gql`
       endsOn: $endsOn
       page: $eventPage
       limit: $limit
-      longevents: false
+      longEvents: false
     ) {
       total
       elements {
