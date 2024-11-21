@@ -12,6 +12,8 @@ defmodule Mobilizon.Events do
   import Mobilizon.Storage.Ecto
   import Mobilizon.Events.Utils, only: [calculate_notification_time: 1]
 
+  require Logger
+
   alias Ecto.{Changeset, Multi}
 
   alias Mobilizon.Actors.{Actor, Follower}
@@ -141,6 +143,7 @@ defmodule Mobilizon.Events do
     url
     |> event_by_url_query()
     |> Repo.one()
+    |> with_virtual_fields()
   end
 
   @doc """
@@ -153,6 +156,7 @@ defmodule Mobilizon.Events do
     |> event_by_url_query()
     |> preload_for_event()
     |> Repo.one!()
+    |> with_virtual_fields()
   end
 
   @doc """
@@ -167,6 +171,7 @@ defmodule Mobilizon.Events do
     |> filter_draft()
     |> preload_for_event()
     |> Repo.one!()
+    |> with_virtual_fields()
   end
 
   @doc """
@@ -180,6 +185,7 @@ defmodule Mobilizon.Events do
     |> filter_draft()
     |> preload_for_event()
     |> Repo.one()
+    |> with_virtual_fields()
   end
 
   @spec check_if_event_has_instance_follow(String.t(), integer()) :: boolean()
@@ -199,6 +205,7 @@ defmodule Mobilizon.Events do
     |> event_by_uuid_query()
     |> preload_for_event()
     |> Repo.one()
+    |> with_virtual_fields()
   end
 
   @doc """
@@ -212,6 +219,7 @@ defmodule Mobilizon.Events do
     |> filter_not_event_uuid(not_event_uuid)
     |> filter_draft()
     |> Repo.one()
+    |> with_virtual_fields()
   end
 
   @doc """
@@ -392,6 +400,7 @@ defmodule Mobilizon.Events do
     |> filter_cancelled_events()
     |> filter_local_or_from_followed_instances_events()
     |> Page.build_page(page, limit)
+    |> with_virtual_fields()
   end
 
   @spec stream_events_for_sitemap :: Enum.t()
@@ -413,6 +422,7 @@ defmodule Mobilizon.Events do
     |> preload_for_event()
     |> event_order_by(sort, direction)
     |> Page.build_page(page, limit)
+    |> with_virtual_fields()
   end
 
   @doc """
@@ -425,6 +435,7 @@ defmodule Mobilizon.Events do
     |> events_by_tags_query(limit)
     |> filter_draft()
     |> Repo.all()
+    |> with_virtual_fields()
   end
 
   @doc """
@@ -440,6 +451,7 @@ defmodule Mobilizon.Events do
     actor_id
     |> do_list_public_events_for_actor()
     |> Page.build_page(page, limit)
+    |> with_virtual_fields()
   end
 
   @doc """
@@ -467,6 +479,7 @@ defmodule Mobilizon.Events do
     |> do_list_public_events_for_actor()
     |> event_filter_begins_on(DateTime.utc_now(), nil)
     |> Page.build_page(page, limit)
+    |> with_virtual_fields()
   end
 
   @spec do_list_public_events_for_actor(integer()) :: Ecto.Query.t()
@@ -485,6 +498,7 @@ defmodule Mobilizon.Events do
     |> event_for_actor_query(desc: :begins_on)
     |> preload_for_event()
     |> Page.build_page(page, limit)
+    |> with_virtual_fields()
   end
 
   @spec list_simple_organized_events_for_group(Actor.t(), integer | nil, integer | nil) ::
@@ -520,6 +534,7 @@ defmodule Mobilizon.Events do
     |> event_order_by(order_by, order_direction)
     |> preload_for_event()
     |> Page.build_page(page, limit)
+    |> with_virtual_fields()
   end
 
   @spec list_drafts_for_user(integer, integer | nil, integer | nil) :: Page.t(Event.t())
@@ -529,6 +544,7 @@ defmodule Mobilizon.Events do
     |> filter_draft(true)
     |> order_by(desc: :updated_at)
     |> Page.build_page(page, limit)
+    |> with_virtual_fields()
   end
 
   @spec user_moderator_for_event?(integer | String.t(), integer | String.t()) :: boolean
@@ -552,6 +568,7 @@ defmodule Mobilizon.Events do
     |> close_events_query(radius)
     |> filter_draft()
     |> Repo.all()
+    |> with_virtual_fields()
   end
 
   @doc """
@@ -603,6 +620,7 @@ defmodule Mobilizon.Events do
     |> filter_public_visibility()
     |> event_order(Map.get(args, :sort_by, :match_desc), search_string)
     |> Page.build_page(page, limit)
+    |> with_virtual_fields()
   end
 
   @doc """
@@ -978,6 +996,7 @@ defmodule Mobilizon.Events do
     actor_id
     |> event_participations_for_actor_query()
     |> Page.build_page(page, limit)
+    |> with_virtual_fields()
   end
 
   @doc """
@@ -993,6 +1012,7 @@ defmodule Mobilizon.Events do
     actor_id
     |> event_participations_for_actor_query(DateTime.utc_now())
     |> Page.build_page(page, limit)
+    |> with_virtual_fields()
   end
 
   @doc """
@@ -1871,6 +1891,7 @@ defmodule Mobilizon.Events do
       )
     )
     |> Repo.all()
+    |> with_virtual_fields()
   end
 
   @spec list_participations_for_user_query(integer()) :: Ecto.Query.t()
@@ -2097,5 +2118,41 @@ defmodule Mobilizon.Events do
     |> filter_local(local)
     |> preload_for_event()
     |> Page.chunk(chunk_size)
+  end
+
+  # Handling the case where Repo.XXXX() return nil
+  def with_virtual_fields(nil), do: nil
+
+  # Handling the case where there is an event
+  # Using Repo.one(), for example
+  def with_virtual_fields(%Event{} = event) do
+    duration = Config.get([:instance, :duration_of_long_event], 0)
+
+    event_duration = DateTime.diff(event.ends_on, event.begins_on, :day)
+
+    # duration need to be > 0 for long event to be activated
+    long_event = duration > 0 && event_duration > duration
+
+    %{event | long_event: long_event}
+  end
+
+  # Handling the case where there is a list of events
+  # Using Repo.all(), for example
+  def with_virtual_fields(events) when is_list(events) do
+    Enum.map(events, &with_virtual_fields/1)
+  end
+
+  # Handling the case of a paginated list of events
+  def with_virtual_fields(%Page{total: _total, elements: elements} = page) do
+    elements_with_virtual_fields = Enum.map(elements, &with_virtual_fields/1)
+    %{page | elements: elements_with_virtual_fields}
+  end
+
+  # In case the function is called on an element without virtual_fields
+  def with_virtual_fields(invalid) do
+    Logger.warning("with_virtual_fields called on invalid element : #{inspect(invalid)}")
+
+    # Return the element without modification
+    invalid
   end
 end

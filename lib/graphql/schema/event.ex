@@ -32,6 +32,11 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
     field(:description, :string, description: "The event's description")
     field(:begins_on, :datetime, description: "Datetime for when the event begins")
     field(:ends_on, :datetime, description: "Datetime for when the event ends")
+
+    field(:long_event, :boolean,
+      description: "Whether the event is a long event (activity) or not"
+    )
+
     field(:status, :event_status, description: "Status of the event")
     field(:visibility, :event_visibility, description: "The event's visibility")
     field(:join_options, :event_join_options, description: "The event's visibility")
