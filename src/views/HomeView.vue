@@ -413,7 +413,8 @@ const userSettingsLocation = computed(() => {
   const placeName = location?.locality ?? location?.region ?? location?.country;
   console.debug(
     "userSettingsLocation from reverseGeocode",
-    location,
+    reverseGeocodeResult.value,
+    coords.value,
     placeName
   );
   return {
