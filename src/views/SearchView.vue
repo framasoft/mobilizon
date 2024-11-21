@@ -760,7 +760,7 @@ const GROUP_PAGE_LIMIT = 16;
 
 const { features } = useFeatures();
 const { eventCategories } = useEventCategories();
-const { islongEvents } = useIsLongEvents();
+const { isLongEvents } = useIsLongEvents();
 
 const orderedCategories = computed(() => {
   if (!eventCategories.value) return [];
@@ -874,7 +874,7 @@ const searchIsUrl = computed((): boolean => {
 });
 
 const contentTypeMapping = computed(() => {
-  if (islongEvents.value) {
+  if (isLongEvents.value) {
     return [
       {
         contentType: ContentType.EVENTS,

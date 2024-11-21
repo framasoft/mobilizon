@@ -190,7 +190,7 @@
               >{{ t("Events") }}</router-link
             >
           </li>
-          <li class="m-auto" v-if="islongEvents">
+          <li class="m-auto" v-if="isLongEvents">
             <router-link
               :to="{
                 ...$route,
@@ -286,7 +286,7 @@ import {
 } from "@/graphql/user";
 import { ICurrentUser } from "@/types/current-user.model";
 
-const { islongEvents } = useIsLongEvents();
+const { isLongEvents } = useIsLongEvents();
 
 const { currentUser } = useCurrentUserClient();
 const { currentActor } = useCurrentActorClient();
