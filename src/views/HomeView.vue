@@ -411,6 +411,11 @@ const { result: reverseGeocodeResult } = useQuery<{
 const userSettingsLocation = computed(() => {
   const location = reverseGeocodeResult.value?.reverseGeocode[0];
   const placeName = location?.locality ?? location?.region ?? location?.country;
+  console.debug(
+    "userSettingsLocation from reverseGeocode",
+    location,
+    placeName
+  );
   return {
     lat: coords.value?.latitude,
     lon: coords.value?.longitude,
@@ -426,6 +431,10 @@ const { result: currentUserLocationResult } = useQuery<{
 
 // The user's location currently in the Apollo cache
 const currentUserLocation = computed(() => {
+  console.debug(
+    "currentUserLocation from LocationType",
+    currentUserLocationResult.value
+  );
   return {
     ...(currentUserLocationResult.value?.currentUserLocation ?? {
       lat: undefined,
