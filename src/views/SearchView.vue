@@ -716,6 +716,7 @@ const GROUP_PAGE_LIMIT = 16;
 
 const { features } = useFeatures();
 const { eventCategories } = useEventCategories();
+const { isLongEvents } = useIsLongEvents();
 
 const orderedCategories = computed(() => {
   if (!eventCategories.value) return [];
@@ -826,6 +827,36 @@ const searchIsUrl = computed((): boolean => {
   }
 
   return url.protocol === "http:" || url.protocol === "https:";
+});
+
+const contentTypeMapping = computed(() => {
+  if (isLongEvents.value) {
+    return [
+      {
+        contentType: ContentType.EVENTS,
+        label: t("Events"),
+      },
+      {
+        contentType: ContentType.LONGEVENTS,
+        label: t("Activities"),
+      },
+      {
+        contentType: ContentType.GROUPS,
+        label: t("Groups"),
+      },
+    ];
+  } else {
+    return [
+      {
+        contentType: ContentType.EVENTS,
+        label: t("Events"),
+      },
+      {
+        contentType: ContentType.GROUPS,
+        label: t("Groups"),
+      },
+    ];
+  }
 });
 
 const eventStatuses = computed(() => {

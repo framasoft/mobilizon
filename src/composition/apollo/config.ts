@@ -227,8 +227,8 @@ export function useIsLongEvents() {
     config: Pick<IConfig, "longEvents">;
   }>(LONG_EVENTS);
 
-  const islongEvents = computed(() => result.value?.config.longEvents);
-  return { islongEvents, error, loading };
+  const isLongEvents = computed(() => result.value?.config.longEvents);
+  return { isLongEvents, error, loading };
 }
 
 export function useAnalytics() {

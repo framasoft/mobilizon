@@ -58,7 +58,7 @@
       class="search-Activity min-w-40 mr-1 mb-1"
       native-type="submit"
       icon-left="calendar-star"
-      v-if="islongEvents"
+      v-if="search == null && isLongEvents"
     >
       {{ t("Activities") }}
     </o-button>
@@ -100,7 +100,7 @@ const props = defineProps<{
 
 const router = useRouter();
 const route = useRoute();
-const { islongEvents } = useIsLongEvents();
+const { isLongEvents } = useIsLongEvents();
 
 const emit = defineEmits<{
   (event: "update:address", address: IAddress | null): void;
