@@ -530,7 +530,9 @@ defmodule Mobilizon.Events do
     group_id
     |> event_for_group_query()
     |> event_filter_visibility(visibility)
-    |> event_filter_begins_on(after_datetime, before_datetime)
+    # We want future and ongoing events, so we use ends_on
+    # See issue #1567
+    |> event_filter_ends_on(after_datetime, before_datetime)
     |> event_order_by(order_by, order_direction)
     |> preload_for_event()
     |> Page.build_page(page, limit)
@@ -2022,6 +2024,26 @@ defmodule Mobilizon.Events do
     query
     |> where([e], e.begins_on < ^before_datetime)
     |> where([e], e.begins_on > ^after_datetime)
+  end
+
+  defp event_filter_ends_on(query, nil, nil), do: query
+
+  defp event_filter_ends_on(query, %DateTime{} = after_datetime, nil) do
+    where(query, [e], e.ends_on > ^after_datetime)
+  end
+
+  defp event_filter_ends_on(query, nil, %DateTime{} = before_datetime) do
+    where(query, [e], e.ends_on < ^before_datetime)
+  end
+
+  defp event_filter_ends_on(
+         query,
+         %DateTime{} = after_datetime,
+         %DateTime{} = before_datetime
+       ) do
+    query
+    |> where([e], e.ends_on < ^before_datetime)
+    |> where([e], e.ends_on > ^after_datetime)
   end
 
   defp event_order_by(query, order_by, direction)
