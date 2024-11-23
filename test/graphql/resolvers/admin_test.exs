@@ -4,6 +4,7 @@ defmodule Mobilizon.GraphQL.Resolvers.AdminTest do
   import Swoosh.TestAssertions
 
   alias Mobilizon.Actors.Actor
+  alias Mobilizon.Config
   alias Mobilizon.Events.Event
   alias Mobilizon.Federation.ActivityPub.Relay
   alias Mobilizon.Reports.{Note, Report}
@@ -568,7 +569,7 @@ defmodule Mobilizon.GraphQL.Resolvers.AdminTest do
       assert_email_sent(
         to: user.email,
         subject:
-          "An administrator manually changed the email attached to your account on Test instance"
+          "An administrator manually changed the email attached to your account on #{Config.instance_name()}"
       )
 
       # # Swoosh.TestAssertions can't test multiple emails sent
