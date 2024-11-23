@@ -56,7 +56,8 @@ defmodule Mobilizon.GraphQL.API.SearchTest do
             current_actor_id: nil,
             exclude_my_groups: false,
             exclude_stale_actors: true,
-            local_only: false
+            local_only: false,
+            sort_by: nil
           ],
           1,
           10
