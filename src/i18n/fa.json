@@ -422,7 +422,7 @@
   "Identity {displayName} deleted": "هویت {displayName} حذف شد",
   "Identity {displayName} updated": "هویت {displayName} به‌روزرسانی شد",
   "If allowed by organizer": "",
-  "If an account with this email exists, we just sent another confirmation email to {email}": "اگر اکانتی با این ایمیل موجود باشد، ما ایمیل تأیید دیگری به {email} ارسال می کنیم",
+  "If an account with this email exists, we just sent another confirmation email to {email}": "اگر حسابی با این ایمیل موجود باشد، ایمیل تأیید دیگری را به {email} فرستاده‌ایم",
   "If this identity is the only administrator of some groups, you need to delete them before being able to delete this identity.": "اگر این هویت تنها مدیر برخی از گروه ها است، باید قبل از اینکه بتوانید این هویت را حذف کنید، آنها را حذف کنید.",
   "If you are being asked for your federated indentity, it's composed of your username and your instance. For instance, the federated identity for your first profile is:": "",
   "If you have opted for manual validation of participants, Mobilizon will send you an email to inform you of new participations to be processed. You can choose the frequency of these notifications below.": "",
