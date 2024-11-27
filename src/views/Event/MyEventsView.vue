@@ -18,7 +18,6 @@
         >{{ t("Create event") }}</o-button
       >
     </div>
-    <!-- <o-loading v-model:active="$apollo.loading"></o-loading> -->
     <div class="flex flex-wrap gap-4 items-start">
       <div
         class="rounded p-3 flex-auto md:flex-none bg-zinc-300 dark:bg-zinc-700"
@@ -33,11 +32,11 @@
           "
           labelFor="events-start-datepicker"
         >
-          <o-datepicker
-            v-model="datePick"
-            :first-day-of-week="firstDayOfWeek"
+          <event-date-picker
             id="events-start-datepicker"
-          />
+            :time="false"
+            v-model="datePick"
+          ></event-date-picker>
           <o-button
             @click="datePick = new Date()"
             class="reset-area !h-auto"
@@ -137,13 +136,18 @@
             >
           </div>
         </section>
+        <section v-if="loading">
+          <div class="text-center prose dark:prose-invert max-w-full">
+            <p>{{ t("Loading…") }}</p>
+          </div>
+        </section>
         <section
           class="text-center not-found"
           v-if="
             showUpcoming &&
             monthlyFutureEvents &&
             monthlyFutureEvents.size === 0 &&
-            true // !$apollo.loading
+            !loading
           "
         >
           <div class="text-center prose dark:prose-invert max-w-full">
@@ -221,17 +225,17 @@ import {
   LOGGED_USER_UPCOMING_EVENTS,
 } from "@/graphql/participant";
 import { useApolloClient, useQuery } from "@vue/apollo-composable";
-import { computed, inject, ref, defineAsyncComponent } from "vue";
+import { computed, ref, defineAsyncComponent } from "vue";
 import { IUser } from "@/types/current-user.model";
 import {
   booleanTransformer,
   integerTransformer,
   useRouteQuery,
 } from "vue-use-route-query";
-import { Locale } from "date-fns";
 import { useI18n } from "vue-i18n";
 import { useRestrictions } from "@/composition/apollo/config";
 import { useHead } from "@/utils/head";
+import EventDatePicker from "@/components/Event/EventDatePicker.vue";
 
 const EventParticipationCard = defineAsyncComponent(
   () => import("@/components/Event/EventParticipationCard.vue")
@@ -246,7 +250,7 @@ const pastPage = ref(1);
 const limit = ref(10);
 
 function startOfDay(d: Date): string {
-  const pad = (n: int): string => {
+  const pad = (n: number): string => {
     return (n > 9 ? "" : "0") + n.toString();
   };
   return (
@@ -291,6 +295,7 @@ const hasMorePastParticipations = ref(true);
 const {
   result: loggedUserUpcomingEventsResult,
   fetchMore: fetchMoreUpcomingEvents,
+  loading,
 } = useQuery<{
   loggedUser: IUser;
 }>(LOGGED_USER_UPCOMING_EVENTS, () => ({
@@ -376,7 +381,7 @@ const monthlyFutureEvents = computed((): Map<string, Eventable[]> => {
 });
 
 const monthlyPastParticipations = computed((): Map<string, Eventable[]> => {
-  return monthlyEvents(pastParticipations.value.elements, true);
+  return monthlyEvents(pastParticipations.value.elements);
 });
 
 const monthParticipationsIds = (elements: Eventable[]): string[] => {
@@ -488,12 +493,6 @@ const { restrictions } = useRestrictions();
 
 const hideCreateEventButton = computed((): boolean => {
   return restrictions.value?.onlyGroupsCanCreateEvents === true;
-});
-
-const dateFnsLocale = inject<Locale>("dateFnsLocale");
-
-const firstDayOfWeek = computed((): number => {
-  return dateFnsLocale?.options?.weekStartsOn ?? 0;
 });
 
 useHead({

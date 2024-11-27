@@ -122,8 +122,8 @@ const eventsQuery = useQuery<{
 }>(FETCH_EVENTS, () => ({
   orderBy: EventSortField.BEGINS_ON,
   direction: SortDirection.ASC,
-  longevents: false,
-  location: geoHash.value,
+  longEvents: false,
+  location: geoHash.value ?? "",
   radius: distance.value,
   limit: 93,
 }));

@@ -411,13 +411,23 @@ const { result: reverseGeocodeResult } = useQuery<{
 const userSettingsLocation = computed(() => {
   const location = reverseGeocodeResult.value?.reverseGeocode[0];
   const placeName = location?.locality ?? location?.region ?? location?.country;
-  return {
-    lat: coords.value?.latitude,
-    lon: coords.value?.longitude,
-    name: placeName,
-    picture: location?.pictureInfo,
-    isIPLocation: coords.value?.isIPLocation,
-  };
+  console.debug(
+    "userSettingsLocation from reverseGeocode",
+    reverseGeocodeResult.value,
+    coords.value,
+    placeName
+  );
+  if (placeName) {
+    return {
+      lat: coords.value?.latitude,
+      lon: coords.value?.longitude,
+      name: placeName,
+      picture: location?.pictureInfo,
+      isIPLocation: coords.value?.isIPLocation,
+    };
+  } else {
+    return {};
+  }
 });
 
 const { result: currentUserLocationResult } = useQuery<{
@@ -426,6 +436,10 @@ const { result: currentUserLocationResult } = useQuery<{
 
 // The user's location currently in the Apollo cache
 const currentUserLocation = computed(() => {
+  console.debug(
+    "currentUserLocation from LocationType",
+    currentUserLocationResult.value
+  );
   return {
     ...(currentUserLocationResult.value?.currentUserLocation ?? {
       lat: undefined,

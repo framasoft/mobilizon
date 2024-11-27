@@ -1049,7 +1049,7 @@ const { result: searchElementsResult, loading: searchLoading } = useQuery<{
   location: geoHashLocation.value,
   beginsOn: start.value,
   endsOn: end.value,
-  longevents: longEvents.value,
+  longEvents: longEvents.value,
   radius: geoHashLocation.value ? radius.value : undefined,
   eventPage: eventPage.value,
   groupPage: groupPage.value,

@@ -548,12 +548,14 @@
             outlined
             @click="createOrUpdateDraft"
             :disabled="saving"
+            :loading="saving"
             >{{ t("Save draft") }}</o-button
           >
           <o-button
             expanded
             variant="primary"
             :disabled="saving"
+            :loading="saving"
             @click="createOrUpdatePublish"
             @keyup.enter="createOrUpdatePublish"
           >

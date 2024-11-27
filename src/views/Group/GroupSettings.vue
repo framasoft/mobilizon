@@ -165,9 +165,12 @@
         />
 
         <div class="flex flex-wrap gap-2 my-2">
-          <o-button native-type="submit" variant="primary">{{
-            t("Update group")
-          }}</o-button>
+          <o-button
+            :loading="loadingUpdateGroup"
+            native-type="submit"
+            variant="primary"
+            >{{ t("Update group") }}</o-button
+          >
           <o-button @click="confirmDeleteGroup" variant="danger">{{
             t("Delete group")
           }}</o-button>
@@ -243,7 +246,12 @@ const showCopiedTooltip = ref(false);
 
 const editableGroup = ref<IGroup>();
 
-const { onDone, onError, mutate: updateGroup } = useUpdateGroup();
+const {
+  onDone,
+  onError,
+  mutate: updateGroup,
+  loading: loadingUpdateGroup,
+} = useUpdateGroup();
 
 onDone(() => {
   notifier?.success(t("Group settings saved"));

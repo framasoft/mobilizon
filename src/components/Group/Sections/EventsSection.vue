@@ -1,6 +1,6 @@
 <template>
   <group-section
-    :title="t('Events')"
+    :title="longEvent ? t('Activities') : t('Events')"
     icon="calendar"
     :route="{
       name: RouteName.GROUP_EVENTS,
@@ -13,13 +13,19 @@
         v-if="group && group.organizedEvents.total > 0"
       >
         <event-minimalist-card
-          v-for="event in group.organizedEvents.elements.slice(0, 3)"
+          v-for="event in group.organizedEvents.elements
+            .filter((event) => (longEvent ? event.longEvent : !event.longEvent))
+            .slice(0, 3)"
           :event="event"
           :key="event.uuid"
         />
       </div>
-      <empty-content v-else-if="group" icon="calendar" :inline="true">
-        {{ t("No public upcoming events") }}
+      <empty-content v-else-if="group" icon="calendar" :inline="true"
+        >{{
+          longEvent
+            ? t("No public upcoming activities")
+            : t("No public upcoming events")
+        }}
       </empty-content>
       <!-- <o-skeleton animated v-else></o-skeleton> -->
     </template>
@@ -33,7 +39,9 @@
           params: { preferredUsername: usernameWithDomain(group) },
           query: { showPassedEvents: true },
         }"
-        >{{ t("View past events") }}</o-button
+        >{{
+          longEvent ? t("+ View past activities") : t("+ View past events")
+        }}</o-button
       >
       <o-button
         tag="router-link"
@@ -43,7 +51,9 @@
           query: { actorId: group?.id },
         }"
         class="button is-primary"
-        >{{ t("+ Create an event") }}</o-button
+        >{{
+          longEvent ? t("+ Create an activity") : t("+ Create an event")
+        }}</o-button
       >
     </template>
   </group-section>
@@ -60,5 +70,9 @@ import GroupSection from "@/components/Group/GroupSection.vue";
 
 const { t } = useI18n({ useScope: "global" });
 
-defineProps<{ group: IGroup; isModerator: boolean }>();
+defineProps<{
+  group: IGroup;
+  isModerator: boolean;
+  longEvent: boolean;
+}>();
 </script>
