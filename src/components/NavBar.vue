@@ -181,39 +181,6 @@
         >
           <li class="m-auto">
             <router-link
-              :to="{
-                ...$route,
-                name: RouteName.SEARCH,
-                query: { ...$route.query, contentType: 'EVENTS' },
-              }"
-              class="block py-2 pr-4 pl-3 text-zinc-700 border-b border-gray-100 hover:bg-zinc-50 md:hover:bg-transparent md:border-0 md:hover:text-mbz-purple-700 md:p-0 dark:text-zinc-400 md:dark:hover:text-white dark:hover:bg-zinc-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
-              >{{ t("Events") }}</router-link
-            >
-          </li>
-          <li class="m-auto" v-if="islongEvents">
-            <router-link
-              :to="{
-                ...$route,
-                name: RouteName.SEARCH,
-                query: { ...$route.query, contentType: 'LONGEVENTS' },
-              }"
-              class="block py-2 pr-4 pl-3 text-zinc-700 border-b border-gray-100 hover:bg-zinc-50 md:hover:bg-transparent md:border-0 md:hover:text-mbz-purple-700 md:p-0 dark:text-zinc-400 md:dark:hover:text-white dark:hover:bg-zinc-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
-              >{{ t("Activities") }}</router-link
-            >
-          </li>
-          <li class="m-auto">
-            <router-link
-              :to="{
-                ...$route,
-                name: RouteName.SEARCH,
-                query: { ...$route.query, contentType: 'GROUPS' },
-              }"
-              class="block py-2 pr-4 pl-3 text-zinc-700 border-b border-gray-100 hover:bg-zinc-50 md:hover:bg-transparent md:border-0 md:hover:text-mbz-purple-700 md:p-0 dark:text-zinc-400 md:dark:hover:text-white dark:hover:bg-zinc-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
-              >{{ t("Groups") }}</router-link
-            >
-          </li>
-          <li class="m-auto">
-            <router-link
               :to="{ name: RouteName.EVENT_CALENDAR }"
               class="block relative py-2 pr-4 pl-3 text-zinc-700 border-b border-gray-100 hover:bg-zinc-50 md:hover:bg-transparent md:border-0 md:hover:text-mbz-purple-700 md:p-0 dark:text-zinc-400 md:dark:hover:text-white dark:hover:bg-zinc-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
               >{{ t("Calendar")
@@ -275,18 +242,13 @@ import {
 import { useLazyQuery, useMutation } from "@vue/apollo-composable";
 import { UPDATE_DEFAULT_ACTOR } from "@/graphql/actor";
 import { changeIdentity } from "@/utils/identity";
-import {
-  useRegistrationConfig,
-  useIsLongEvents,
-} from "@/composition/apollo/config";
+import { useRegistrationConfig } from "@/composition/apollo/config";
 import { useOruga } from "@oruga-ui/oruga-next";
 import {
   UNREAD_ACTOR_CONVERSATIONS,
   UNREAD_ACTOR_CONVERSATIONS_SUBSCRIPTION,
 } from "@/graphql/user";
 import { ICurrentUser } from "@/types/current-user.model";
-
-const { islongEvents } = useIsLongEvents();
 
 const { currentUser } = useCurrentUserClient();
 const { currentActor } = useCurrentActorClient();

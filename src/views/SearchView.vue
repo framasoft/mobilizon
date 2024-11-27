@@ -28,46 +28,6 @@
         :class="{ hidden: filtersPanelOpened }"
         class="lg:block mt-4 px-2"
       >
-        <p class="sr-only">{{ t("Type") }}</p>
-        <ul
-          class="font-medium text-gray-900 dark:text-slate-100 space-y-4 pb-4 border-b border-gray-200 dark:border-gray-500"
-        >
-          <li
-            v-for="content in contentTypeMapping"
-            :key="content.contentType"
-            class="flex gap-1 items-center"
-          >
-            <input
-              :id="'contentType' + content.contentType"
-              v-model="contentType"
-              type="radio"
-              name="contentType"
-              :value="content.contentType"
-              class="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600"
-            />
-
-            <label
-              :for="'contentType' + content.contentType"
-              class="cursor-pointer w-full font-medium text-gray-900 dark:text-gray-300 flex gap-1"
-            >
-              <Calendar
-                v-if="content.contentType === ContentType.EVENTS"
-                :size="24"
-              />
-
-              <CalendarStar
-                v-if="content.contentType === ContentType.LONGEVENTS"
-                :size="24"
-              />
-
-              <AccountMultiple
-                v-if="content.contentType === ContentType.GROUPS"
-                :size="24"
-              /><span>{{ content.label }}</span></label
-            >
-          </li>
-        </ul>
-
         <div
           class="py-4 border-b border-gray-200 dark:border-gray-500"
           v-show="globalSearchEnabled"
@@ -627,9 +587,6 @@ import {
   enumTransformer,
   booleanTransformer,
 } from "vue-use-route-query";
-import Calendar from "vue-material-design-icons/Calendar.vue";
-import CalendarStar from "vue-material-design-icons/CalendarStar.vue";
-import AccountMultiple from "vue-material-design-icons/AccountMultiple.vue";
 
 import { useHead } from "@/utils/head";
 import type { Locale } from "date-fns";
@@ -639,7 +596,6 @@ import langs from "@/i18n/langs.json";
 import {
   useEventCategories,
   useFeatures,
-  useIsLongEvents,
   useSearchConfig,
 } from "@/composition/apollo/config";
 import { coordsToGeoHash } from "@/utils/location";
@@ -760,7 +716,6 @@ const GROUP_PAGE_LIMIT = 16;
 
 const { features } = useFeatures();
 const { eventCategories } = useEventCategories();
-const { islongEvents } = useIsLongEvents();
 
 const orderedCategories = computed(() => {
   if (!eventCategories.value) return [];
@@ -871,36 +826,6 @@ const searchIsUrl = computed((): boolean => {
   }
 
   return url.protocol === "http:" || url.protocol === "https:";
-});
-
-const contentTypeMapping = computed(() => {
-  if (islongEvents.value) {
-    return [
-      {
-        contentType: ContentType.EVENTS,
-        label: t("Events"),
-      },
-      {
-        contentType: ContentType.LONGEVENTS,
-        label: t("Activities"),
-      },
-      {
-        contentType: ContentType.GROUPS,
-        label: t("Groups"),
-      },
-    ];
-  } else {
-    return [
-      {
-        contentType: ContentType.EVENTS,
-        label: t("Events"),
-      },
-      {
-        contentType: ContentType.GROUPS,
-        label: t("Groups"),
-      },
-    ];
-  }
 });
 
 const eventStatuses = computed(() => {
