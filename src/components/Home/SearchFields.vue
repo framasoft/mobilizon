@@ -84,6 +84,7 @@ import { computed, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter, useRoute } from "vue-router";
 import RouteName from "@/router/name";
+import { useIsLongEvents } from "@/composition/apollo/config";
 
 const FullAddressAutoComplete = defineAsyncComponent(
   () => import("@/components/Event/FullAddressAutoComplete.vue")
@@ -99,6 +100,7 @@ const props = defineProps<{
 
 const router = useRouter();
 const route = useRoute();
+const { islongEvents } = useIsLongEvents();
 
 const emit = defineEmits<{
   (event: "update:address", address: IAddress | null): void;
