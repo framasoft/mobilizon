@@ -58,7 +58,7 @@
       class="search-Activity min-w-40 mr-1 mb-1"
       native-type="submit"
       icon-left="calendar-star"
-      v-if="search == null && isLongEvents"
+      v-if="isLongEvents"
     >
       {{ t("Activities") }}
     </o-button>
