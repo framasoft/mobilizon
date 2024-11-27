@@ -35,8 +35,6 @@
     :addressDefaultText="userLocation?.name"
     :key="increated"
   />
-  <!-- Categories preview -->
-  <categories-preview />
   <!-- Welcome back -->
   <section
     class="container mx-auto"
@@ -182,7 +180,6 @@ import {
   UPDATE_CURRENT_USER_LOCATION_CLIENT,
 } from "@/graphql/location";
 import { LocationType } from "@/types/user-location.model";
-import CategoriesPreview from "@/components/Home/CategoriesPreview.vue";
 import UnloggedIntroduction from "@/components/Home/UnloggedIntroduction.vue";
 import SearchFields from "@/components/Home/SearchFields.vue";
 import { useHead } from "@unhead/vue";
