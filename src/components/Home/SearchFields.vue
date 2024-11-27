@@ -47,33 +47,27 @@
         />
       </o-dropdown>
     </full-address-auto-complete>
-    <o-button native-type="submit" icon-left="magnify" v-if="search != null">
-      <template v-if="search">{{ t("Go!") }}</template>
-      <template v-else>{{ t("Explore!") }}</template>
-    </o-button>
     <o-button
-      class="search-Event min-w-60 mr-1 mb-1"
+      class="search-Event min-w-40 mr-1 mb-1"
       native-type="submit"
       icon-left="calendar"
-      v-if="search == null"
     >
-      {{ t("Event filter") }}
+      {{ t("Events") }}
     </o-button>
     <o-button
-      class="search-Activity min-w-60 mr-1 mb-1"
+      class="search-Activity min-w-40 mr-1 mb-1"
       native-type="submit"
       icon-left="calendar-star"
-      v-if="search == null && islongEvents"
+      v-if="islongEvents"
     >
-      {{ t("Find other activities") }}
+      {{ t("Activities") }}
     </o-button>
     <o-button
-      class="search-Group min-w-60 mr-1 mb-1"
+      class="search-Group min-w-40 mr-1 mb-1"
       native-type="submit"
       icon-left="account-multiple"
-      v-if="search == null"
     >
-      {{ t("Find groups") }}
+      {{ t("Groups") }}
     </o-button>
   </form>
 </template>
