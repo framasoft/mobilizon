@@ -6,8 +6,23 @@
   >
     <div class="event-preview mr-0 ml-0">
       <div class="relative w-full">
-        <div class="flex absolute bottom-2 left-2 z-10 date-component">
+        <div
+          class="flex absolute bottom-2 left-2 z-10 date-component"
+          :class="{
+            'calendar-double': isDifferentBeginsEndsDate,
+          }"
+        >
           <date-calendar-icon :date="event.beginsOn.toString()" :small="true" />
+          <MenuDown
+            :small="true"
+            class="left-3 relative"
+            v-if="isDifferentBeginsEndsDate"
+          />
+          <date-calendar-icon
+            :date="event.endsOn?.toString()"
+            :small="true"
+            v-if="isDifferentBeginsEndsDate"
+          />
         </div>
         <lazy-image-wrapper
           :picture="event.picture"
@@ -126,6 +141,7 @@
 <script lang="ts" setup>
 import { IEvent, organizer, organizerDisplayName } from "@/types/event.model";
 import DateCalendarIcon from "@/components/Event/DateCalendarIcon.vue";
+import MenuDown from "vue-material-design-icons/MenuDown.vue";
 import { EventStatus, ParticipantRole } from "@/types/enums";
 import RouteName from "../../router/name";
 import LazyImageWrapper from "@/components/Image/LazyImageWrapper.vue";
@@ -134,17 +150,38 @@ import Video from "vue-material-design-icons/Video.vue";
 import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
 import AccountMultiple from "vue-material-design-icons/AccountMultiple.vue";
 import Tag from "@/components/TagElement.vue";
+import { computed, inject } from "vue";
+import type { Locale } from "date-fns";
+import { formatDateForEvent } from "@/utils/datetime";
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     event: IEvent;
     showOrganizer?: boolean;
   }>(),
   { showOrganizer: false }
 );
+
+const dateFnsLocale = inject<Locale>("dateFnsLocale");
+
+const isDifferentBeginsEndsDate = computed(() => {
+  if (!dateFnsLocale) return;
+  const beginsOnStr = formatDateForEvent(
+    new Date(props.event.beginsOn),
+    dateFnsLocale
+  );
+  const endsOnStr = props.event.endsOn
+    ? formatDateForEvent(new Date(props.event.endsOn), dateFnsLocale)
+    : null;
+  return endsOnStr && endsOnStr != beginsOnStr;
+});
 </script>
 <style lang="scss" scoped>
 @use "@/styles/_mixins" as *;
+
+.calendar-double {
+  display: block;
+}
 
 .event-minimalist-card-wrapper {
   // display: grid;

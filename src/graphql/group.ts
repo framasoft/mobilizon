@@ -148,6 +148,7 @@ export const GROUP_BASIC_FIELDS_FRAGMENTS = gql`
         uuid
         title
         beginsOn
+        endsOn
         status
         draft
         longEvent
