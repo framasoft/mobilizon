@@ -115,11 +115,12 @@ defmodule Mobilizon.Web.FeedControllerTest do
           begins_on: DateTime.add(DateTime.utc_now(), 4, :day)
         )
 
-      event3 =
+      event_in_the_past =
         insert(:event,
           organizer_actor: actor,
           attributed_to: group,
           title: "Event Three",
+          ends_on: DateTime.add(DateTime.utc_now(), -3, :day),
           begins_on: DateTime.add(DateTime.utc_now(), -2, :day)
         )
 
@@ -135,7 +136,7 @@ defmodule Mobilizon.Web.FeedControllerTest do
 
       Enum.each(entries, fn entry ->
         assert entry.summary in [event1.title, event2.title]
-        refute entry.summary == event3.title
+        refute entry.summary == event_in_the_past.title
       end)
 
       assert entry1.categories == [tag1.title]

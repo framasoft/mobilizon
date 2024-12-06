@@ -374,7 +374,7 @@ defmodule Mobilizon.Events do
           atom,
           boolean,
           boolean | nil,
-          string | nil,
+          String.t() | nil,
           float | nil
         ) :: Page.t(Event.t())
   def list_events(
@@ -2029,11 +2029,20 @@ defmodule Mobilizon.Events do
   defp event_filter_ends_on(query, nil, nil), do: query
 
   defp event_filter_ends_on(query, %DateTime{} = after_datetime, nil) do
-    where(query, [e], e.ends_on > ^after_datetime)
+    where(
+      query,
+      [e],
+      (is_nil(e.ends_on) and e.begins_on >= ^after_datetime) or
+        e.ends_on >= ^after_datetime
+    )
   end
 
   defp event_filter_ends_on(query, nil, %DateTime{} = before_datetime) do
-    where(query, [e], e.ends_on < ^before_datetime)
+    where(
+      query,
+      [e],
+      (is_nil(e.ends_on) and e.begins_on <= ^before_datetime) or e.ends_on <= ^before_datetime
+    )
   end
 
   defp event_filter_ends_on(
@@ -2042,8 +2051,8 @@ defmodule Mobilizon.Events do
          %DateTime{} = before_datetime
        ) do
     query
-    |> where([e], e.ends_on < ^before_datetime)
-    |> where([e], e.ends_on > ^after_datetime)
+    |> event_filter_ends_on(after_datetime, nil)
+    |> event_filter_ends_on(nil, before_datetime)
   end
 
   defp event_order_by(query, order_by, direction)
@@ -2144,6 +2153,10 @@ defmodule Mobilizon.Events do
 
   # Handling the case where Repo.XXXX() return nil
   def with_virtual_fields(nil), do: nil
+
+  # if envent has no end date, it can not be a long events
+  def with_virtual_fields(%Event{} = event) when is_nil(event.ends_on),
+    do: %{event | long_event: false}
 
   # Handling the case where there is an event
   # Using Repo.one(), for example
