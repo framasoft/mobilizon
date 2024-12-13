@@ -20,16 +20,16 @@ import Clock from "vue-material-design-icons/ClockTimeTenOutline.vue";
 const props = withDefaults(
   defineProps<{
     date: string;
-    timezone?: string;
+    timezone: string | null;
     small?: boolean;
   }>(),
-  { small: false, timezone: "Etc/UTC" }
+  { small: false }
 );
 
 const dateObj = computed<Date>(() => new Date(props.date));
 
 const time = computed<string>(() =>
-  formatTimeString(props.date, props.timezone)
+  formatTimeString(props.date, props.timezone ?? undefined)
 );
 
 const smallStyle = computed<string>(() => (props.small ? "0.9" : "2"));
