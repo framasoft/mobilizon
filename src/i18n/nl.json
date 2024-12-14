@@ -1143,7 +1143,7 @@
   "This post is accessible only for members. You have access to it for moderation purposes only because you are an instance moderator.": "Dit bericht is alleen toegankelijk voor leden. Omdat u een instance-moderator bent heeft u alleen toegang i.v.m. moderatiedoeleinden.",
   "This post is accessible only through it's link. Be careful where you post this link.": "Dit bericht is alleen toegankelijk via de bijbehorende link. Wees voorzichtig met het posten van deze link.",
   "This profile is from another instance, the informations shown here may be incomplete.": "Dit groepsprofiel is van een andere instantie, de informatie die hier wordt weergegeven kan onvolledig zijn.",
-  "This profile is located on this instance, so you need to {access_the_corresponding_account} to suspend it.": "Dit profiel bevindt zich op deze instance, dus je moet {access_the_correspondering_account} om het op te schorten.",
+  "This profile is located on this instance, so you need to {access_the_corresponding_account} to suspend it.": "Dit profiel bevindt zich op deze instance, {access_the_corresponding_account} om het op te schorten.",
   "This profile was not found": "Dit profiel is niet gevonden",
   "This setting will be used to display the website and send you emails in the correct language.": "Deze instelling wordt gebruikt om de website weer te geven en u e-mails in de juiste taal te sturen.",
   "This user doesn't have any profiles": "Deze gebruiker heeft geen profielen",
