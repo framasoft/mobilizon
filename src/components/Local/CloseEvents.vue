@@ -7,13 +7,13 @@
     <template #title>
       <template v-if="userLocation?.name">
         {{
-          t("Incoming events nearby {position}", {
+          t("Upcoming events nearby {position}", {
             position: userLocation?.name,
           })
         }}
       </template>
       <template v-else>
-        {{ t("Incoming events") }}
+        {{ t("Upcoming events") }}
       </template>
     </template>
     <template #subtitle>
