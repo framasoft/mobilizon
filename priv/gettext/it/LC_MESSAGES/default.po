@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:40+0000\n"
-"PO-Revision-Date: 2023-10-16 08:36+0000\n"
-"Last-Translator: coronabond <coronabond@airmail.cc>\n"
+"PO-Revision-Date: 2024-07-09 10:47+0000\n"
+"Last-Translator: omar lazzari <olazzari@gmail.com>\n"
 "Language-Team: Italian <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/it/>\n"
 "Language: it\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.0.1\n"
+"X-Generator: Weblate 5.6.2\n"
 
 #: lib/web/templates/email/password_reset.html.heex:66
 #, elixir-autogen, elixir-format
@@ -2192,7 +2192,7 @@ msgstr "Comunità"
 #: lib/mobilizon/events/categories.ex:52
 #, elixir-autogen, elixir-format
 msgid "Crafts"
-msgstr "Arti"
+msgstr "Artigianato"
 
 #: lib/mobilizon/events/categories.ex:76
 #, elixir-autogen, elixir-format
@@ -2347,55 +2347,57 @@ msgid "Events"
 msgstr "Eventi"
 
 #: lib/web/templates/email/report.html.heex:115
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Flagged events"
-msgstr "Commenti contrassegnati"
+msgstr "Eventi contrassegnati"
 
 #: lib/service/export/participants/common.ex:65
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Participant registration date"
-msgstr "Stato partecipante"
+msgstr "Data registrazione del partecipante"
 
 #: lib/web/templates/email/anonymous_participation_confirmation.html.heex:113
 #: lib/web/templates/email/event_participation_confirmed.html.heex:122
 #, elixir-autogen, elixir-format
 msgid "Cancel my attendance"
-msgstr ""
+msgstr "Cancella la mia partecipazione"
 
 #: lib/web/templates/email/anonymous_participation_confirmation.html.heex:90
 #: lib/web/templates/email/event_participation_confirmed.html.heex:99
 #, elixir-autogen, elixir-format
 msgid "If you wish to cancel your participation, simply click on the link below."
 msgstr ""
+"Se desideri annullare la tua partecipazione, è sufficiente fare clic sul "
+"collegamento sottostante."
 
 #: lib/web/email/admin.ex:142
 #, elixir-autogen, elixir-format
 msgid "Email configuration test for %{instance}"
-msgstr ""
+msgstr "Test configurazione email per %{instance}"
 
 #: lib/web/templates/email/email_configuration_test.html.heex:47
 #: lib/web/templates/email/email_configuration_test.text.eex:3
 #, elixir-autogen, elixir-format
 msgid "If you received this email, the email configuration seems to be correct."
 msgstr ""
+"Se hai ricevuto questa email, la configurazione dell'email sembra essere "
+"corretta."
 
 #: lib/web/templates/email/email_configuration_test.html.heex:18
 #: lib/web/templates/email/email_configuration_test.text.eex:1
 #, elixir-autogen, elixir-format
 msgid "Well done!"
-msgstr ""
+msgstr "Ben fatto!"
 
 #: lib/web/templates/api/terms.html.heex:55
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "When we say “we”, “our”, or “us” in this document, we are referring to the owners, operators and administrators of this Mobilizon instance. The Mobilizon software is provided by the team of Mobilizon contributors. Unless explicitly stated, this Mobilizon instance is an independent service using Mobilizon's source code. You may find more information about this instance on the <a href=\"/about/instance\">\"About this instance\"</a> page."
 msgstr ""
 "Quando diciamo \"noi\" o \"nostro\" in questo documento, ci riferiamo ai "
 "proprietari, operatori e amministratori di questa istanza di Mobilizon. Il "
-"software Mobilizon è fornito dal team di collaboratori di Mobilizon, "
-"supportato da <a href=\"https://framasoft.org\">Framasoft</a>, "
-"un'organizzazione francese senza scopo di lucro che sostiene il software "
-"gratuito/libero. Se non diversamente specificato, questa istanza di "
-"Mobilizon è un servizio indipendente che utilizza il codice sorgente di "
-"Mobilizon. Puoi trovare ulteriori informazioni su questa istanza nella "
-"pagina <a href=\"/about/instance\">\"Informazioni su questa istanza\"</a>."
+"software Mobilizon è fornito dal team di collaboratori di Mobilizon. Se non "
+"diversamente specificato, questa istanza di Mobilizon è un servizio "
+"indipendente che utilizza il codice sorgente di Mobilizon. Puoi trovare "
+"ulteriori informazioni su questa istanza nella pagina <a href=\"/about/"
+"instance\">\"Informazioni su questa istanza\"</a>."

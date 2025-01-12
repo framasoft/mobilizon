@@ -8,15 +8,15 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2020-11-24 21:52+0000\n"
-"Last-Translator: Joan Luci Labòrda <joanluc.laborda@free.fr>\n"
+"PO-Revision-Date: 2025-01-04 23:42+0000\n"
+"Last-Translator: Quentin PAGÈS <quentinantonin@free.fr>\n"
 "Language-Team: Occitan <https://weblate.framasoft.org/projects/mobilizon/"
 "backend-errors/oc/>\n"
 "Language: oc\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.1\n"
+"X-Generator: Weblate 5.9.1\n"
 
 #: lib/mobilizon/discussions/discussion.ex:68
 #, elixir-autogen
@@ -290,7 +290,7 @@ msgstr "Devetz d'esser conectat per rejónher un grop"
 #: lib/graphql/resolvers/group.ex:355
 #, elixir-autogen, elixir-format
 msgid "You need to be logged-in to leave a group"
-msgstr "Devetz d'esser conectat per quitar un grop"
+msgstr "Devètz d'èsser connectat per quitar un grop"
 
 #: lib/graphql/resolvers/group.ex:249
 #, elixir-autogen, elixir-format
