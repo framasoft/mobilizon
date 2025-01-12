@@ -30,18 +30,19 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Media do
   """
   @spec find_or_create_media(map(), String.t() | integer()) ::
           {:ok, MediaModel.t()} | {:error, atom() | String.t() | Ecto.Changeset.t()}
-  def find_or_create_media(%{"type" => "Link", "href" => url}, actor_id),
-    do:
-      find_or_create_media(
-        %{"type" => "Document", "url" => url, "name" => "External media"},
-        actor_id
-      )
+  def find_or_create_media(%{"type" => type, "href" => url}, actor_id)
+      when type in ["Image", "Document"],
+      do:
+        find_or_create_media(
+          %{"type" => type, "url" => url, "name" => "External media"},
+          actor_id
+        )
 
   def find_or_create_media(
-        %{"type" => "Document", "url" => media_url, "name" => name},
+        %{"type" => type, "url" => media_url, "name" => name},
         actor_id
       )
-      when is_binary(media_url) do
+      when type in ["Image", "Document"] and is_binary(media_url) do
     with {:ok, %{url: url} = uploaded} <- upload_media(media_url, name) do
       case Medias.get_media_by_url(url) do
         %MediaModel{file: _file} = media ->
