@@ -79,9 +79,9 @@
         >
           <start-time-icon
             :small="true"
-            v-if="!mergedOptions.hideDate && event.options.showStartTime"
+            v-if="!mergedOptions.hideDate && event.options?.showStartTime"
             :date="event.beginsOn.toString()"
-            :timezone="event.options.timezone"
+            :timezone="event.options?.timezone"
           />
         </div>
         <span
