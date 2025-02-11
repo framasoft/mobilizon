@@ -202,6 +202,9 @@ type Config {
   "Whether the long events mode is enabled"
   longEvents: Boolean
 
+  "Events longer than this duration are considered long events"
+  durationOfLongEvent: Int
+
   "The country code from the IP"
   countryCode: String
 

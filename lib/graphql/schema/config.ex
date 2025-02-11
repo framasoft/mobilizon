@@ -32,6 +32,11 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
 
     field(:demo_mode, :boolean, description: "Whether the demo mode is enabled")
     field(:long_events, :boolean, description: "Whether the long events mode is enabled")
+
+    field(:duration_of_long_event, :integer,
+      description: "Events longer than this duration are considered long events"
+    )
+
     field(:country_code, :string, description: "The country code from the IP")
     field(:location, :lonlat, description: "The IP's location")
     field(:geocoding, :geocoding, description: "The instance's geocoding settings")

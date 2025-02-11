@@ -181,6 +181,9 @@ defmodule Mobilizon.Config do
   @spec instance_long_events? :: boolean
   def instance_long_events?, do: instance_config()[:duration_of_long_event] > 0
 
+  @spec instance_duration_of_long_event :: boolean
+  def instance_duration_of_long_event, do: instance_config()[:duration_of_long_event]
+
   @spec instance_repository :: String.t()
   def instance_repository, do: instance_config()[:repository]
 

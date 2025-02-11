@@ -94,6 +94,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Config do
       contact: Config.contact(),
       demo_mode: Config.instance_demo_mode?(),
       long_events: Config.instance_long_events?(),
+      duration_of_long_event: Config.instance_duration_of_long_event(),
       description: Config.instance_description(),
       long_description: Config.instance_long_description(),
       slogan: Config.instance_slogan(),
