@@ -70,6 +70,7 @@
   "Activate notifications": "Activer les notifications",
   "Activated": "Activé",
   "Active": "Actif·ive",
+  "Activities are disabled on this instance.|An event with a duration of more than one day will be categorized as an activity.|An event with a duration of more than {number} days will be categorized as an activity.": "Les activités sont désactivées sur cette instance.|Un événement avec une durée de plus d'un jour sera considéré comme une activité.|Un événement avec une durée de plus de {number} jours sera considéré comme une activité.",
   "Activity": "Activité",
   "Actor": "Acteur",
   "Adapt to system theme": "S’adapter au thème du système",

@@ -99,6 +99,21 @@
         </div>
       </o-field>
 
+      <p
+        v-if="
+          configResult?.config.longEvents &&
+          configResult?.config.durationOfLongEvent > 0
+        "
+      >
+        {{
+          t(
+            "Activities are disabled on this instance.|An event with a duration of more than one day will be categorized as an activity.|An event with a duration of more than {number} days will be categorized as an activity.",
+            { number: configResult.config.durationOfLongEvent },
+            configResult.config.durationOfLongEvent
+          )
+        }}
+      </p>
+
       <o-button class="block" variant="text" @click="dateSettingsIsOpen = true">
         {{ t("Timezone parameters") }}
       </o-button>
@@ -652,7 +667,7 @@ import {
   useFeatures,
   useTimezones,
 } from "@/composition/apollo/config";
-import { useMutation } from "@vue/apollo-composable";
+import { useMutation, useQuery } from "@vue/apollo-composable";
 import { Dialog } from "@/plugins/dialog";
 import { Notifier } from "@/plugins/notifier";
 import { useHead } from "@/utils/head";
@@ -660,6 +675,8 @@ import { useOruga } from "@oruga-ui/oruga-next";
 import sortBy from "lodash/sortBy";
 import { escapeHtml } from "@/utils/html";
 import EventDatePicker from "@/components/Event/EventDatePicker.vue";
+import { CONFIG } from "@/graphql/config";
+import { IConfig } from "@/types/config.model";
 
 const DEFAULT_LIMIT_NUMBER_OF_PLACES = 10;
 
@@ -693,6 +710,8 @@ useHead({
     props.isUpdate ? t("Event edition") : t("Event creation")
   ),
 });
+
+const { result: configResult } = useQuery<{ config: IConfig }>(CONFIG);
 
 const event = ref<IEditableEvent>(new EventModel());
 const unmodifiedEvent = ref<IEditableEvent>(new EventModel());
