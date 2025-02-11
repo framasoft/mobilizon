@@ -1250,6 +1250,7 @@
   "Time in your timezone ({timezone})": "Heure dans votre fuseau horaire ({timezone})",
   "Times in your timezone ({timezone})": "Heures dans votre fuseau horaire ({timezone})",
   "Timezone": "Fuseau horaire",
+  "Timezone parameters": "Paramètres de fuseau horaire",
   "Timezone detected as {timezone}.": "Fuseau horaire détecté en tant que {timezone}.",
   "Title": "Titre",
   "To activate more notifications, head over to the notification settings.": "Pour activer plus de notifications, rendez-vous dans vos paramètres de notification.",
