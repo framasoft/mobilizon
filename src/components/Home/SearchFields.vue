@@ -48,14 +48,19 @@
       </o-dropdown>
     </full-address-auto-complete>
     <o-button
-      class="search-Event min-w-40 mr-1 mb-1"
+      :class="
+        'search-Event min-w-40 mr-1 mb-1 ' + select_button_class('EVENTS')
+      "
       native-type="submit"
       icon-left="calendar"
     >
       {{ t("Events") }}
     </o-button>
     <o-button
-      class="search-Activity min-w-40 mr-1 mb-1"
+      :class="
+        'search-Activity min-w-40 mr-1 mb-1 ' +
+        select_button_class('LONGEVENTS')
+      "
       native-type="submit"
       icon-left="calendar-star"
       v-if="isLongEvents"
@@ -63,7 +68,9 @@
       {{ t("Activities") }}
     </o-button>
     <o-button
-      class="search-Group min-w-40 mr-1 mb-1"
+      :class="
+        'search-Group min-w-40 mr-1 mb-1 ' + select_button_class('GROUPS')
+      "
       native-type="submit"
       icon-left="account-multiple"
     >
@@ -167,6 +174,16 @@ const distanceList = computed(() => {
   return distances;
 });
 
+const select_button_class = (current_content_type: string) => {
+  if (route.query.contentType === undefined) {
+    return "";
+  } else {
+    return current_content_type === route.query.contentType
+      ? "active"
+      : "disactive";
+  }
+};
+
 console.debug("initial", distance.value, search.value, address.value);
 
 const modelValueUpdate = (newaddress: IAddress | null) => {
@@ -219,5 +236,13 @@ const { t } = useI18n({ useScope: "global" });
 <style scoped>
 #search-anchor :deep(.o-input__wrapper) {
   flex: 1;
+}
+.active {
+  text-decoration: underline;
+  font-weight: bold;
+}
+.disactive {
+  color: #eee;
+  font-weight: 300;
 }
 </style>
