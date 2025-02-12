@@ -54,7 +54,7 @@
       native-type="submit"
       icon-left="calendar"
     >
-      {{ t("Events") }}
+      {{ t("Events") + number_result("EVENTS") }}
     </o-button>
     <o-button
       :class="
@@ -65,7 +65,7 @@
       icon-left="calendar-star"
       v-if="isLongEvents"
     >
-      {{ t("Activities") }}
+      {{ t("Activities") + number_result("LONGEVENTS") }}
     </o-button>
     <o-button
       :class="
@@ -74,7 +74,7 @@
       native-type="submit"
       icon-left="account-multiple"
     >
-      {{ t("Groups") }}
+      {{ t("Groups") + number_result("GROUPS") }}
     </o-button>
   </form>
 </template>
@@ -103,6 +103,7 @@ const props = defineProps<{
   search: string | null;
   distance: number | null;
   fromLocalStorage?: boolean | false;
+  numberOfSearch: object | null;
 }>();
 
 const router = useRouter();
@@ -182,6 +183,18 @@ const select_button_class = (current_content_type: string) => {
       ? "active"
       : "disactive";
   }
+};
+
+const number_result = (current_content_type: string) => {
+  console.log(">> number_result", props.numberOfSearch);
+  if (props.numberOfSearch == undefined) {
+    return "";
+  }
+  const nb_value = props.numberOfSearch[current_content_type];
+  if (nb_value == undefined) {
+    return "";
+  }
+  return " (" + nb_value.toString() + ")";
 };
 
 console.debug("initial", distance.value, search.value, address.value);

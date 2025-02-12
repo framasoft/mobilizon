@@ -5,6 +5,7 @@
       v-model:search="search"
       v-model:address="address"
       v-model:distance="radius"
+      :numberOfSearch="numberOfSearch"
       :addressDefaultText="addressName"
       :fromLocalStorage="true"
     />
@@ -571,7 +572,7 @@ import {
 import { ContentType, EventStatus, SearchTargets } from "@/types/enums";
 import EventCard from "@/components/Event/EventCard.vue";
 import { IEvent } from "@/types/event.model";
-import { SEARCH_EVENTS_AND_GROUPS } from "@/graphql/search";
+import { SEARCH_EVENTS_AND_GROUPS, SEARCH_EVENTS } from "@/graphql/search";
 import { Paginate } from "@/types/paginate";
 import { IGroup } from "@/types/actor";
 import GroupCard from "@/components/Group/GroupCard.vue";
@@ -723,7 +724,21 @@ const orderedCategories = computed(() => {
 });
 
 const searchEvents = computed(() => searchElementsResult.value?.searchEvents);
+const searchShortEvents = computed(
+  () => searchShortElementsResult.value?.searchEvents
+);
+const searchLongEvents = computed(
+  () => searchLongElementsResult.value?.searchEvents
+);
 const searchGroups = computed(() => searchElementsResult.value?.searchGroups);
+
+const numberOfSearch = computed(() => {
+  return {
+    EVENTS: searchShortEvents.value?.total,
+    LONGEVENTS: searchLongEvents.value?.total,
+    GROUPS: searchGroups.value?.total,
+  };
+});
 
 const { result: currentUserResult } = useQuery<{ currentUser: ICurrentUser }>(
   CURRENT_USER_CLIENT
@@ -1063,6 +1078,48 @@ const { result: searchElementsResult, loading: searchLoading } = useQuery<{
   zoom: zoom.value,
   sortByEvents: sortByForType(sortByEvents.value, EventSortValues),
   sortByGroups: sortByGroups.value,
+  boostLanguages: boostLanguagesQuery.value,
+}));
+
+const { result: searchShortElementsResult } = useQuery<{
+  searchEvents: Paginate<TypeNamed<IEvent>>;
+}>(SEARCH_EVENTS, () => ({
+  term: searchDebounced.value,
+  tags: tag.value,
+  location: geoHashLocation.value,
+  beginsOn: start.value,
+  endsOn: end.value,
+  longEvents: false,
+  radius: geoHashLocation.value ? radius.value : undefined,
+  limit: 0,
+  type: isOnline.value ? "ONLINE" : undefined,
+  categoryOneOf: categoryOneOf.value,
+  statusOneOf: statusOneOf.value,
+  languageOneOf: languageOneOf.value,
+  searchTarget: searchTarget.value,
+  bbox: mode.value === ViewMode.MAP ? bbox.value : undefined,
+  zoom: zoom.value,
+  boostLanguages: boostLanguagesQuery.value,
+}));
+
+const { result: searchLongElementsResult } = useQuery<{
+  searchEvents: Paginate<TypeNamed<IEvent>>;
+}>(SEARCH_EVENTS, () => ({
+  term: searchDebounced.value,
+  tags: tag.value,
+  location: geoHashLocation.value,
+  beginsOn: start.value,
+  endsOn: end.value,
+  longEvents: true,
+  radius: geoHashLocation.value ? radius.value : undefined,
+  limit: 0,
+  type: isOnline.value ? "ONLINE" : undefined,
+  categoryOneOf: categoryOneOf.value,
+  statusOneOf: statusOneOf.value,
+  languageOneOf: languageOneOf.value,
+  searchTarget: searchTarget.value,
+  bbox: mode.value === ViewMode.MAP ? bbox.value : undefined,
+  zoom: zoom.value,
   boostLanguages: boostLanguagesQuery.value,
 }));
 </script>
