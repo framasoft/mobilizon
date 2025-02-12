@@ -31,6 +31,7 @@
   <unlogged-introduction :config="config" v-if="config && !isLoggedIn" />
 
   <!-- Search fields -->
+  <short-search></short-search>
   <search-fields
     v-model:search="search"
     v-model:address="userAddress"
@@ -197,6 +198,7 @@ import {
 } from "@/utils/location";
 import { useServerProvidedLocation } from "@/composition/apollo/config";
 import QuickPublish from "@/components/Home/QuickPublish.vue";
+import ShortSearch from "@/components/Home/ShortSearch.vue";
 import { ABOUT } from "@/graphql/config";
 import { IConfig } from "@/types/config.model";
 import { useI18n } from "vue-i18n";
