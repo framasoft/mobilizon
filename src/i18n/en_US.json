@@ -1660,5 +1660,8 @@
   "From this instance only": "From this instance only",
   "view more events and activities": "view more events and activities",
   "Upcoming events nearby {position}": "Upcoming events nearby {position}",
-  "View more events and activities around {position}": "View more events and activities around {position}"
+  "View more events and activities around {position}": "View more events and activities around {position}",
+  "Choose publishing" : "Choose publishing",
+  "Publish from a group" : "Publish from a group",
+  "Publish as individual" : "Publish as individual"
 }
