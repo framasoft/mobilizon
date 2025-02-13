@@ -1,7 +1,6 @@
 <template>
   <div class="max-w-4xl mx-auto">
     <search-fields
-      class="md:ml-10 mr-2"
       v-model:search="search"
       v-model:address="address"
       v-model:distance="radius"

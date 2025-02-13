@@ -1,81 +1,79 @@
 <template>
   <form
     id="search-anchor"
-    class="container mx-auto my-3 px-2 flex flex-wrap flex-col sm:flex-row items-stretch gap-2 text-center justify-center dark:text-slate-100"
+    class="container mx-auto p-2 flex flex-col flex-wrap items-stretch gap-2 justify-center dark:text-slate-100"
     role="search"
     @submit.prevent="submit"
   >
-    <label class="sr-only" for="search_field_input">{{
-      t("Keyword, event title, group name, etc.")
-    }}</label>
-    <o-input
-      v-if="search != null"
-      v-model="search"
-      :placeholder="t('Keyword, event title, group name, etc.')"
-      id="search_field_input"
-      autofocus
-      autocapitalize="off"
-      autocomplete="off"
-      autocorrect="off"
-      maxlength="1024"
-      expanded
-    />
-    <full-address-auto-complete
-      :resultType="AddressSearchType.ADMINISTRATIVE"
-      v-model="address"
-      :hide-map="true"
-      :hide-selected="true"
-      :default-text="addressDefaultText"
-      labelClass="sr-only"
-      :placeholder="t('e.g. Nantes, Berlin, Cork, …')"
-      v-on:update:modelValue="modelValueUpdate"
-    >
-      <o-dropdown v-model="distance" position="bottom-right" v-if="distance">
-        <template #trigger="{ active }">
-          <o-button
-            :title="t('Select distance')"
-            :icon-right="active ? 'menu-up' : 'menu-down'"
-          >
-            {{ distanceText }}
-          </o-button>
-        </template>
-        <o-dropdown-item
-          v-for="distance_item in distanceList"
-          :value="distance_item.distance"
-          :label="distance_item.label"
-          :key="distance_item.distance"
-        />
-      </o-dropdown>
-    </full-address-auto-complete>
-    <o-button
-      :class="
-        'search-Event min-w-40 mr-1 mb-1 ' + select_button_class('EVENTS')
-      "
-      native-type="submit"
-      icon-left="calendar"
-    >
-      {{ t("Events") + number_result("EVENTS") }}
-    </o-button>
-    <o-button
-      :class="
-        'search-Activity min-w-40 mr-1 mb-1 ' +
-        select_button_class('LONGEVENTS')
-      "
-      native-type="submit"
-      icon-left="calendar-star"
-      v-if="isLongEvents"
-    >
-      {{ t("Activities") + number_result("LONGEVENTS") }}
-    </o-button>
-    <o-button
-      :class="
-        'search-Group min-w-40 mr-1 mb-1 ' + select_button_class('GROUPS')
-      "
-      native-type="submit"
-      icon-left="account-multiple"
-    >
-      {{ t("Groups") + number_result("GROUPS") }}
-    </o-button>
+    <div class="flex flex-col flex-wrap sm:flex-row gap-2 justify-center">
+      <label class="sr-only" for="search_field_input">{{
+        t("Keyword, event title, group name, etc.")
+      }}</label>
+      <o-input
+        class="min-w-48"
+        v-if="search != null"
+        v-model="search"
+        :placeholder="t('Keyword, event title, group name, etc.')"
+        id="search_field_input"
+        autofocus
+        autocapitalize="off"
+        autocomplete="off"
+        autocorrect="off"
+        maxlength="1024"
+        expanded
+      />
+      <full-address-auto-complete
+        :resultType="AddressSearchType.ADMINISTRATIVE"
+        v-model="address"
+        :hide-map="true"
+        :hide-selected="true"
+        :default-text="addressDefaultText"
+        labelClass="sr-only"
+        :placeholder="t('e.g. Nantes, Berlin, Cork, …')"
+        v-on:update:modelValue="modelValueUpdate"
+      >
+        <o-dropdown v-model="distance" position="bottom-right" v-if="distance">
+          <template #trigger="{ active }">
+            <o-button
+              :title="t('Select distance')"
+              :icon-right="active ? 'menu-up' : 'menu-down'"
+            >
+              {{ distanceText }}
+            </o-button>
+          </template>
+          <o-dropdown-item
+            v-for="distance_item in distanceList"
+            :value="distance_item.distance"
+            :label="distance_item.label"
+            :key="distance_item.distance"
+          />
+        </o-dropdown>
+      </full-address-auto-complete>
+    </div>
+    <div class="flex flex-col flex-wrap sm:flex-row gap-2 justify-center">
+      <o-button
+        :class="'search-Event min-w-40 ' + select_button_class('EVENTS')"
+        native-type="submit"
+        icon-left="calendar"
+      >
+        {{ t("Events") + number_result("EVENTS") }}
+      </o-button>
+      <o-button
+        :class="'search-Activity min-w-40 ' + select_button_class('LONGEVENTS')"
+        native-type="submit"
+        icon-left="calendar-star"
+        v-if="isLongEvents"
+      >
+        {{ t("Activities") + number_result("LONGEVENTS") }}
+      </o-button>
+      <o-button
+        :class="'search-Group min-w-40 ' + select_button_class('GROUPS')"
+        native-type="submit"
+        icon-left="account-multiple"
+      >
+        {{ t("Groups") + number_result("GROUPS") }}
+      </o-button>
+    </div>
   </form>
 </template>
 
