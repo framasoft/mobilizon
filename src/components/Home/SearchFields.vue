@@ -35,6 +35,7 @@
         <o-dropdown v-model="distance" position="bottom-right" v-if="distance">
           <template #trigger="{ active }">
             <o-button
+              class="!h-full"
               :title="t('Select distance')"
               :icon-right="active ? 'menu-up' : 'menu-down'"
             >

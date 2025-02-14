@@ -1,187 +1,179 @@
 <template>
   <div class="address-autocomplete">
-    <div class="">
-      <o-field
-        :label-for="id"
-        :message="fieldErrors"
-        :variant="fieldErrors ? 'danger' : ''"
-        class="!-mt-2"
-        :labelClass="labelClass"
+    <o-field
+      :label-for="id"
+      :message="fieldErrors"
+      :variant="fieldErrors ? 'danger' : ''"
+      class="!-mt-2"
+      :labelClass="labelClass"
+    >
+      <template #label>
+        {{ actualLabel }}
+      </template>
+      <o-button
+        v-if="canShowLocateMeButton"
+        class="!h-auto"
+        ref="mapMarker"
+        icon-right="map-marker"
+        @click="locateMe"
+        :title="t('Use my location')"
+      />
+      <o-autocomplete
+        :data="addressData"
+        v-model="queryTextWithDefault"
+        :placeholder="placeholderWithDefault"
+        :formatter="(elem: IAddress) => addressFullName(elem)"
+        :debounce="debounceDelay"
+        @input="asyncData"
+        :icon="canShowLocateMeButton ? null : 'map-marker'"
+        expanded
+        @select="setSelected"
+        :id="id"
+        :disabled="disabled"
+        dir="auto"
+        class="!mt-0 !h-full"
       >
-        <template #label>
-          {{ actualLabel }}
+        <template #default="{ option }">
+          <p class="flex gap-1">
+            <o-icon :icon="addressToPoiInfos(option).poiIcon.icon" />
+            <b>{{ addressToPoiInfos(option).name }}</b>
+          </p>
+          <p class="text-small">
+            {{ addressToPoiInfos(option).alternativeName }}
+          </p>
         </template>
-        <o-button
-          v-if="canShowLocateMeButton"
-          class="!h-auto"
-          ref="mapMarker"
-          icon-right="map-marker"
-          @click="locateMe"
-          :title="t('Use my location')"
-        />
-        <o-autocomplete
-          :data="addressData"
-          v-model="queryTextWithDefault"
-          :placeholder="placeholderWithDefault"
-          :formatter="(elem: IAddress) => addressFullName(elem)"
-          :debounce="debounceDelay"
-          @input="asyncData"
-          :icon="canShowLocateMeButton ? null : 'map-marker'"
-          expanded
-          @select="setSelected"
-          :id="id"
-          :disabled="disabled"
-          dir="auto"
-          class="!mt-0"
-        >
-          <template #default="{ option }">
-            <p class="flex gap-1">
-              <o-icon :icon="addressToPoiInfos(option).poiIcon.icon" />
-              <b>{{ addressToPoiInfos(option).name }}</b>
+        <template #empty>
+          <template v-if="isFetching">{{ t("Searching…") }}</template>
+          <template v-else-if="queryTextWithDefault.length >= 3">
+            <p>
+              {{
+                t('No results for "{queryText}"', {
+                  queryText: queryTextWithDefault,
+                })
+              }}
             </p>
-            <p class="text-small">
-              {{ addressToPoiInfos(option).alternativeName }}
+            <p>
+              {{
+                t(
+                  "You can try another search term or add the address details manually below."
+                )
+              }}
             </p>
           </template>
-          <template #empty>
-            <template v-if="isFetching">{{ t("Searching…") }}</template>
-            <template v-else-if="queryTextWithDefault.length >= 3">
-              <p>
-                {{
-                  t('No results for "{queryText}"', {
-                    queryText: queryTextWithDefault,
-                  })
-                }}
-              </p>
-              <p>
-                {{
-                  t(
-                    "You can try another search term or add the address details manually below."
-                  )
-                }}
-              </p>
-            </template>
-          </template>
-        </o-autocomplete>
-        <slot></slot>
-        <o-button
-          :disabled="!queryTextWithDefault"
-          @click="resetAddress"
-          class="reset-area !h-auto"
-          icon-left="close"
-          :title="t('Clear address field')"
+        </template>
+      </o-autocomplete>
+      <slot></slot>
+      <o-button
+        :disabled="!queryTextWithDefault"
+        @click="resetAddress"
+        class="reset-area !h-auto"
+        icon-left="close"
+        :title="t('Clear address field')"
+      />
+    </o-field>
+    <p v-if="gettingLocation" class="flex gap-2">
+      <Loading class="animate-spin" />
+      {{ t("Getting location") }}
+    </p>
+    <div
+      class="mt-2 p-2 rounded-lg shadow-md bg-white dark:bg-violet-3"
+      v-if="!hideSelected && (selected?.originId || selected?.url)"
+    >
+      <div class="">
+        <address-info
+          :address="selected"
+          :show-icon="true"
+          :show-timezone="true"
+          :user-timezone="userTimezone"
         />
-      </o-field>
-      <p v-if="gettingLocation" class="flex gap-2">
-        <Loading class="animate-spin" />
-        {{ t("Getting location") }}
-      </p>
-      <div
-        class="mt-2 p-2 rounded-lg shadow-md bg-white dark:bg-violet-3"
-        v-if="!hideSelected && (selected?.originId || selected?.url)"
-      >
-        <div class="">
-          <address-info
-            :address="selected"
-            :show-icon="true"
-            :show-timezone="true"
-            :user-timezone="userTimezone"
-          />
-        </div>
       </div>
     </div>
-    <o-collapse
-      v-model:open="detailsAddress"
-      :aria-id="`${id}-address-details`"
-      class="my-3"
-      v-if="allowManualDetails"
-    >
-      <template #trigger>
-        <o-button
-          variant="primary"
-          outlined
-          :aria-controls="`${id}-address-details`"
-          :icon-right="detailsAddress ? 'chevron-up' : 'chevron-down'"
-        >
-          {{ t("Details") }}
-        </o-button>
-      </template>
-      <form @submit.prevent="saveManualAddress">
-        <header>
-          <h2>{{ t("Manually enter address") }}</h2>
-        </header>
-        <section>
-          <o-field :label="t('Name')" labelFor="addressNameInput">
+  </div>
+  <o-collapse
+    v-model:open="detailsAddress"
+    :aria-id="`${id}-address-details`"
+    class="my-3"
+    v-if="allowManualDetails"
+  >
+    <template #trigger>
+      <o-button
+        variant="primary"
+        outlined
+        :aria-controls="`${id}-address-details`"
+        :icon-right="detailsAddress ? 'chevron-up' : 'chevron-down'"
+      >
+        {{ t("Details") }}
+      </o-button>
+    </template>
+    <form @submit.prevent="saveManualAddress">
+      <header>
+        <h2>{{ t("Manually enter address") }}</h2>
+      </header>
+      <section>
+        <o-field :label="t('Name')" labelFor="addressNameInput">
+          <o-input
+            aria-required="true"
+            required
+            v-model="selected.description"
+            id="addressNameInput"
+            expanded
+          />
+        </o-field>
+
+        <o-field :label="t('Street')" labelFor="streetInput">
+          <o-input v-model="selected.street" id="streetInput" expanded />
+        </o-field>
+
+        <o-field grouped>
+          <o-field :label="t('Postal Code')" labelFor="postalCodeInput">
             <o-input
-              aria-required="true"
-              required
-              v-model="selected.description"
-              id="addressNameInput"
+              v-model="selected.postalCode"
+              id="postalCodeInput"
               expanded
             />
           </o-field>
 
-          <o-field :label="t('Street')" labelFor="streetInput">
-            <o-input v-model="selected.street" id="streetInput" expanded />
+          <o-field :label="t('Locality')" labelFor="localityInput">
+            <o-input v-model="selected.locality" id="localityInput" expanded />
+          </o-field>
+        </o-field>
+
+        <o-field grouped>
+          <o-field :label="t('Region')" labelFor="regionInput">
+            <o-input v-model="selected.region" id="regionInput" expanded />
           </o-field>
 
-          <o-field grouped>
-            <o-field :label="t('Postal Code')" labelFor="postalCodeInput">
-              <o-input
-                v-model="selected.postalCode"
-                id="postalCodeInput"
-                expanded
-              />
-            </o-field>
-
-            <o-field :label="t('Locality')" labelFor="localityInput">
-              <o-input
-                v-model="selected.locality"
-                id="localityInput"
-                expanded
-              />
-            </o-field>
+          <o-field :label="t('Country')" labelFor="countryInput">
+            <o-input v-model="selected.country" id="countryInput" expanded />
           </o-field>
-
-          <o-field grouped>
-            <o-field :label="t('Region')" labelFor="regionInput">
-              <o-input v-model="selected.region" id="regionInput" expanded />
-            </o-field>
-
-            <o-field :label="t('Country')" labelFor="countryInput">
-              <o-input v-model="selected.country" id="countryInput" expanded />
-            </o-field>
-          </o-field>
-        </section>
-        <footer class="mt-3 flex gap-2 items-center">
-          <o-button native-type="submit">
-            {{ t("Save") }}
-          </o-button>
-          <o-button outlined type="button" @click="resetAddress">
-            {{ t("Clear") }}
-          </o-button>
-          <p>
-            {{
-              t(
-                "You can drag and drop the marker below to the desired location"
-              )
-            }}
-          </p>
-        </footer>
-      </form>
-    </o-collapse>
-    <div
-      class="map"
-      v-if="!hideMap && !disabled && (selected.geom || detailsAddress)"
-    >
-      <map-leaflet
-        :coords="selected.geom ?? defaultCoords"
-        :marker="mapMarkerValue"
-        :updateDraggableMarkerCallback="reverseGeoCode"
-        :options="{ zoom: mapDefaultZoom }"
-        :readOnly="false"
-      />
-    </div>
+        </o-field>
+      </section>
+      <footer class="mt-3 flex gap-2 items-center">
+        <o-button native-type="submit">
+          {{ t("Save") }}
+        </o-button>
+        <o-button outlined type="button" @click="resetAddress">
+          {{ t("Clear") }}
+        </o-button>
+        <p>
+          {{
+            t("You can drag and drop the marker below to the desired location")
+          }}
+        </p>
+      </footer>
+    </form>
+  </o-collapse>
+  <div
+    class="map"
+    v-if="!hideMap && !disabled && (selected.geom || detailsAddress)"
+  >
+    <map-leaflet
+      :coords="selected.geom ?? defaultCoords"
+      :marker="mapMarkerValue"
+      :updateDraggableMarkerCallback="reverseGeoCode"
+      :options="{ zoom: mapDefaultZoom }"
+      :readOnly="false"
+    />
   </div>
 </template>
 <script lang="ts" setup>
