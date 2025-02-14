@@ -39,9 +39,7 @@
           params: { preferredUsername: usernameWithDomain(group) },
           query: { showPassedEvents: true },
         }"
-        >{{
-          longEvent ? t("+ View past activities") : t("+ View past events")
-        }}</o-button
+        >{{ longEvent ? t("Past activities") : t("Past events") }}</o-button
       >
       <o-button
         tag="router-link"
