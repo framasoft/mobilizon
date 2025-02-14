@@ -1,6 +1,7 @@
 <template>
   <div class="address-autocomplete">
     <o-field
+      id="FullAddressAutoComplete-o-field"
       :label-for="id"
       :message="fieldErrors"
       :variant="fieldErrors ? 'danger' : ''"
@@ -31,7 +32,7 @@
         :id="id"
         :disabled="disabled"
         dir="auto"
-        class="!mt-0 !h-full"
+        class="FullAddressAutoComplete-o-autocomplete !mt-0 !h-full"
       >
         <template #default="{ option }">
           <p class="flex gap-1">
@@ -501,6 +502,17 @@ const fieldErrors = computed(() => {
     opacity: 1 !important;
     cursor: auto;
   }
+}
+
+// Change border-color of the input to match the global component color
+.FullAddressAutoComplete-o-autocomplete {
+  border-color: rgb(30 125 151 / var(--tw-bg-opacity));
+}
+
+// Try to remove an alignment glitch
+// https://framagit.org/framasoft/mobilizon/-/issues/1621
+#FullAddressAutoComplete-o-field .o-input__wrapper {
+  height: 100% !important;
 }
 
 .read-only {
