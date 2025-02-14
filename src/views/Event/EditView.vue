@@ -1,9 +1,12 @@
 <template>
   <div class="container mx-auto" v-if="hasCurrentActorPermissionsToEdit">
-    <h1 class="" v-if="isUpdate === true">
+    <h1 v-if="isUpdate === true">
       {{ t("Update event {name}", { name: event.title }) }}
     </h1>
-    <h1 class="" v-else>
+    <h1 v-else-if="configResult?.config.longEvents">
+      {{ t("Create a new event or a new activity") }}
+    </h1>
+    <h1 v-else>
       {{ t("Create a new event") }}
     </h1>
 
