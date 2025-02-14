@@ -1,9 +1,9 @@
 <template>
-  <div class="quick-publish">
+  <div class="quick-publish flex justify-end">
     <o-button @click="$router.push({ name: ActorRouteName.MY_GROUPS })">
       {{ t("Publish from a group") }}
     </o-button>
-    <o-dropdown :teleport="teleport" position="bottom-right">
+    <o-dropdown position="bottom-right">
       <template #trigger="{ active }">
         <o-button
           :title="t('Choose publishing')"
@@ -30,11 +30,6 @@ import { EventRouteName } from "@/router/event";
 const { t } = useI18n({ useScope: "global" });
 </script>
 <style scoped>
-.quick-publish {
-  display: flex;
-  position: fixed;
-  right: 5%;
-}
 .quick-publish > div.o-drop {
   left: -5px;
 }
