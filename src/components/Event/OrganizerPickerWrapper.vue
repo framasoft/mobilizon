@@ -186,6 +186,14 @@ const { currentActor } = useCurrentActorClient();
 
 const route = useRoute();
 
+// TODO: Remove fetchPolicy: "no-cache" and successfully make the query to automatically trigger when groupId changes.
+// The doc says : "This will re-fetch the query each time a property from the variables object changes."
+// https://apollo.vuejs.org/guide-composable/query#variables
+// But it is not true in our case : when groupId changes, the query still returns the old cached result (related to another group).
+// I found this bug, but I'm not sure it is related : https://github.com/vuejs/apollo/issues/1540
+// All my attempts to trigger a refetch when groupId or other variables change have failed.
+// As a workaround, I changed the fetchPolicy to "no-cache". This way, the query is always triggered and updated.
+// Related issue : https://framagit.org/framasoft/mobilizon/-/issues/1683
 const { result: personMembershipsResult } = useQuery(
   PERSON_GROUP_MEMBERSHIPS,
   () => ({
@@ -196,6 +204,7 @@ const { result: personMembershipsResult } = useQuery(
   }),
   () => ({
     enabled: currentActor.value?.id !== undefined,
+    fetchPolicy: "no-cache",
   })
 );
 
