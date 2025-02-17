@@ -1,7 +1,7 @@
 <template>
   <div class="quick-publish flex justify-end">
     <o-button @click="$router.push({ name: ActorRouteName.MY_GROUPS })">
-      {{ t("Publish from a group") }}
+      {{ t("Publish") }}
     </o-button>
     <o-dropdown position="bottom-right">
       <template #trigger="{ active }">
