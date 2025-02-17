@@ -277,13 +277,20 @@ const setContactFilter = (newContactFilter: string) => {
 
 const debounceSetFilterByName = debounce(setContactFilter, 1000);
 
-watch(personMemberships, () => {
-  if (
-    personMemberships.value?.elements[0]?.parent?.id === route.query?.actorId
-  ) {
-    selectedActor.value = personMemberships.value?.elements[0]?.parent;
-  }
-});
+// When the app loads for the first time, personMemberships is set and cached.
+// If the app is already loaded, personMemberships remains unchanged.
+// To ensure the watch() function runs at least once, set "immediate: true".
+watch(
+  personMemberships,
+  () => {
+    if (
+      personMemberships.value?.elements[0]?.parent?.id === route.query?.actorId
+    ) {
+      selectedActor.value = personMemberships.value?.elements[0]?.parent;
+    }
+  },
+  { immediate: true }
+);
 
 const relay = async (group: IGroup): Promise<void> => {
   actualContacts.value = [];
