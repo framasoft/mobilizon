@@ -111,7 +111,7 @@
     <section>
       <div class="mt-3 grid xl:grid-cols-2 gap-4">
         <div
-          class="border bg-white dark:bg-mbz-purple-500 dark:border-mbz-purple-700 p-6 shadow-md rounded-md"
+          class="border bg-white dark:bg-mbz-purple-500 dark:border-mbz-purple-700 p-6 shadow-md rounded-md flex flex-col gap-2 justify-center"
           v-if="
             instance.hasRelay &&
             !['mastodon', 'peertube'].includes(
@@ -149,11 +149,14 @@
             {{ t("Follow instance") }}
           </button>
         </div>
-        <div v-else class="md:h-48 py-16 text-center opacity-50">
+        <div
+          v-else
+          class="border bg-white dark:bg-mbz-purple-500 dark:border-mbz-purple-700 p-6 shadow-md rounded-md flex flex-col gap-2 justify-center"
+        >
           {{ t("Only instances with an application actor can be followed") }}
         </div>
         <div
-          class="border bg-white dark:bg-mbz-purple-500 dark:border-mbz-purple-700 p-6 shadow-md rounded-md flex flex-col gap-2"
+          class="border bg-white dark:bg-mbz-purple-500 dark:border-mbz-purple-700 p-6 shadow-md rounded-md flex flex-col gap-2 justify-center"
         >
           <button
             @click="
@@ -172,7 +175,10 @@
                 address: instance?.relayAddress,
               })
             "
-            v-if="instance.followerStatus != InstanceFollowStatus.NONE"
+            v-if="
+              instance.followerStatus == InstanceFollowStatus.PENDING ||
+              instance.followerStatus == InstanceFollowStatus.APPROVED
+            "
             class="bg-red-700 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-gray-50 text-white hover:text-white font-semibold h-12 px-6 rounded-lg w-full flex items-center justify-center sm:w-auto"
           >
             {{ t("Reject follow") }}
