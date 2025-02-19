@@ -536,8 +536,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
         %{
           has_relay: false,
           relay_address: nil,
-          follower_status: nil,
-          followed_status: nil,
+          follower_status: :none,
+          followed_status: :none,
           software: nil,
           software_version: nil
         }
