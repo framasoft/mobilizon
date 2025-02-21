@@ -120,6 +120,13 @@ defmodule Mobilizon.Instances do
     |> Map.put(:follower_status, follow_status(following, following_approved))
     |> Map.put(:followed_status, follow_status(follower, follower_approved))
     |> Map.put(:has_relay, has_relay)
+    |> Map.put(
+      :relay_address,
+      if(is_nil(instance_actor),
+        do: nil,
+        else: Actor.preferred_username_and_domain(instance_actor)
+      )
+    )
     |> Map.put(:instance_actor, instance_actor)
     |> add_metadata_details(instance_meta)
   end
