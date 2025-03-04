@@ -391,7 +391,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
         {:ok, updated_user}
 
       {:error, %Ecto.Changeset{} = err} ->
-        Logger.debug(inspect(err))
+        Logger.error(inspect(err))
         {:error, dgettext("errors", "Failed to update user email")}
     end
   end
