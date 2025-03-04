@@ -23,6 +23,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   alias Mobilizon.Federation.ActivityStream.{Converter, Convertible}
   alias Mobilizon.Service.ErrorReporting.Sentry
   alias Mobilizon.Service.Workers.Background
+  alias Mobilizon.Service.Workers.RefreshInstances
   alias Mobilizon.Tombstone
   alias Mobilizon.Web.Email.Participation
   alias Mobilizon.Web.Endpoint
@@ -218,6 +219,14 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
          {:ok, %Actor{} = follower} <- ActivityPubActor.get_or_fetch_actor_by_url(follower),
          {:ok, activity, object} <-
            Actions.Follow.follow(follower, followed, id, false) do
+      # We need to refresh the instance_actors table to directly allow the instance admin
+      # to accept or refuse the follow request and to follow the instance in return.
+      #
+      # If this refresh is missing, we need to wait the RefreshInstances oban job
+      # executed once a day.
+      #
+      # https://framagit.org/framasoft/mobilizon/-/issues/1638
+      RefreshInstances.refresh_instance_actor(follower.domain)
       {:ok, activity, object}
     else
       {:error, :person_no_follow} ->
