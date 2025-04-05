@@ -2,6 +2,8 @@ defmodule Mobilizon.GraphQL.Resolvers.FeedToken do
   @moduledoc """
   Handles the feed tokens-related GraphQL calls.
   """
+  import Ecto.Query
+  alias Mobilizon.Storage.Repo
 
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events
@@ -39,6 +41,40 @@ defmodule Mobilizon.GraphQL.Resolvers.FeedToken do
   @spec create_feed_token(any, map, map) :: {:error, String.t()}
   def create_feed_token(_parent, _args, %{}) do
     {:error, dgettext("errors", "You are not allowed to create a feed token if not connected")}
+  end
+
+  @doc """
+  Retrieve a feed token for actor, if actor belongs to logged user
+  """
+  @spec actor_tokens(any, map, map) :: {:ok, map} | {:error, String.t()}
+  def actor_tokens(
+        %Actor{id: actor_id},
+        _args,
+        %{context: %{current_user: %User{} = user}}
+      ) do
+    case User.owns_actor(user, actor_id) do
+      {:is_owned, %Actor{}} ->
+        res =
+          actor_id
+          |> feed_token_for_actor_query()
+          |> Repo.all()
+          |> Enum.map(&to_short_uuid/1)
+
+        {:ok, res}
+
+      {:is_owned, _} ->
+        {:error, dgettext("errors", "You don't have permission to get this token")}
+    end
+  end
+
+  @spec actor_tokens(any, map, map) :: {:error, String.t()}
+  def actor_tokens(_parent, _args, %{}) do
+    {:error, dgettext("errors", "You are not allowed to get a feed token if not connected")}
+  end
+
+  @spec feed_token_for_actor_query(integer) :: Ecto.Query.t()
+  defp feed_token_for_actor_query(actor_id) do
+    from(tk in FeedToken, where: tk.actor_id == ^actor_id, preload: [:actor, :user])
   end
 
   @doc """

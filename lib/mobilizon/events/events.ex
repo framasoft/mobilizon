@@ -1280,26 +1280,6 @@ defmodule Mobilizon.Events do
   @spec delete_feed_token(FeedToken.t()) :: {:ok, FeedToken.t()} | {:error, Changeset.t()}
   def delete_feed_token(%FeedToken{} = feed_token), do: Repo.delete(feed_token)
 
-  @doc """
-  Returns the list of feed tokens for an user.
-  """
-  @spec list_feed_tokens_for_user(User.t()) :: [FeedTokens.t()]
-  def list_feed_tokens_for_user(%User{id: user_id}) do
-    user_id
-    |> feed_token_for_user_query()
-    |> Repo.all()
-  end
-
-  @doc """
-  Returns the list of feed tokens for an actor.
-  """
-  @spec list_feed_tokens_for_actor(Actor.t()) :: [FeedTokens.t()]
-  def list_feed_tokens_for_actor(%Actor{id: actor_id, domain: nil}) do
-    actor_id
-    |> feed_token_for_actor_query()
-    |> Repo.all()
-  end
-
   @spec event_by_url_query(String.t()) :: Ecto.Query.t()
   defp event_by_url_query(url) do
     from(e in Event, where: e.url == ^url)
@@ -1908,16 +1888,6 @@ defmodule Mobilizon.Events do
   @spec feed_token_query(String.t()) :: Ecto.Query.t()
   defp feed_token_query(token) do
     from(ftk in FeedToken, where: ftk.token == ^token, preload: [:actor, :user])
-  end
-
-  @spec feed_token_for_user_query(integer) :: Ecto.Query.t()
-  defp feed_token_for_user_query(user_id) do
-    from(tk in FeedToken, where: tk.user_id == ^user_id, preload: [:actor, :user])
-  end
-
-  @spec feed_token_for_actor_query(integer) :: Ecto.Query.t()
-  defp feed_token_for_actor_query(actor_id) do
-    from(tk in FeedToken, where: tk.actor_id == ^actor_id, preload: [:actor, :user])
   end
 
   @spec filter_public_visibility(Ecto.Queryable.t()) :: Ecto.Query.t()

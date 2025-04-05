@@ -507,14 +507,14 @@ const copyURL = (e: Event, url: string, format: "ics" | "atom"): void => {
 };
 
 const generateFeedTokens = async (): Promise<void> => {
-  await createNewFeedToken({ actorId: identity.value?.id });
+  await createNewFeedToken({ actor_id: identity.value?.id });
 };
 
 const regenerateFeedTokens = async (): Promise<void> => {
   if (identity.value?.feedTokens.length < 1) return;
   await deleteFeedToken({ token: identity.value.feedTokens[0].token });
   await createNewFeedToken(
-    { actorId: identity.value?.id },
+    { actor_id: identity.value?.id },
     {
       update(cache, { data }) {
         const actorId = data?.createFeedToken.actor?.id;
